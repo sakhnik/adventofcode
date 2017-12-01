@@ -1,0 +1,3 @@
+# White list of files to scan:
+#  <directory>    <regex>
+.		\.cpp$
