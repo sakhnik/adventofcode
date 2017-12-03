@@ -1,57 +1,106 @@
 #include <iostream>
 #include <cassert>
+#include <map>
 
-unsigned CountUntil(unsigned n)
+// Walk the storage in increasing order while checking the predicate on each step.
+template <typename PredT>
+unsigned Find(PredT pred)
 {
 	int x{0}, y{0}, a{0};
 	unsigned c{1};
 
-	auto dist = [](int x, int y) {
-		return (x > 0 ? x : -x) + (y > 0 ? y : -y);
-	};
-
 	while (true)
 	{
-		++x;
 		a += 1;
-		if (++c == n)
-			return dist(x, y);
+		if (unsigned r = pred(++x, y, ++c))
+			return r;
 		while (y < a)
 		{
-			++y;
-			if (++c == n)
-				return dist(x, y);
+			if (unsigned r = pred(x, ++y, ++c))
+				return r;
 		}
 		while (x > -a)
 		{
-			--x;
-			if (++c == n)
-				return dist(x, y);
+			if (unsigned r = pred(--x, y, ++c))
+				return r;
 		}
 		while (y > -a)
 		{
-			--y;
-			if (++c == n)
-				return dist(x, y);
+			if (unsigned r = pred(x, --y, ++c))
+				return r;
 		}
 		while (x < a)
 		{
-			++x;
-			if (++c == n)
-				return dist(x, y);
+			if (unsigned r = pred(++x, y, ++c))
+				return r;
 		}
 	}
 }
 
+struct NumberIs
+{
+	unsigned n;
+
+	NumberIs(unsigned n): n(n) {}
+
+	unsigned operator()(int x, int y, unsigned c)
+	{
+		if (c == n)
+			return (x > 0 ? x : -x) + (y > 0 ? y : -y);
+		return 0;
+	}
+};
+
+struct CheckSumGreatherThan
+{
+	std::map<std::pair<int,int>, unsigned> storage;
+	unsigned target;
+
+	CheckSumGreatherThan(unsigned target)
+		: target(target)
+	{
+		storage[{0,0}] = 1;
+	}
+
+	unsigned operator()(int x, int y, unsigned /*c*/)
+	{
+		auto cs = _CalcCs(x, y);
+		if (cs > target)
+			return cs;
+		storage[{x,y}] = cs;
+		return 0;
+	}
+
+private:
+	unsigned _CalcCs(int x, int y)
+	{
+		unsigned cs = 0;
+		for (int dx = -1; dx <= 1; ++dx)
+		{
+			for (int dy = -1; dy <= 1; ++dy)
+			{
+				if (dx || dy)
+				{
+					auto i = storage.find({x+dx, y+dy});
+					if (i != storage.end())
+						cs += i->second;
+				}
+			}
+		}
+		return cs;
+	}
+};
+
 int main()
 {
-	assert(CountUntil(2) == 1);
-	assert(CountUntil(3) == 2);
-	assert(CountUntil(4) == 1);
-	assert(CountUntil(5) == 2);
-	assert(CountUntil(12) == 3);
-	assert(CountUntil(23) == 2);
-	assert(CountUntil(1024) == 31);
+	assert(Find(NumberIs{2}) == 1);
+	assert(Find(NumberIs{3}) == 2);
+	assert(Find(NumberIs{4}) == 1);
+	assert(Find(NumberIs{5}) == 2);
+	assert(Find(NumberIs{12}) == 3);
+	assert(Find(NumberIs{23}) == 2);
+	assert(Find(NumberIs{1024}) == 31);
 
-	std::cout << CountUntil(289326) << std::endl;
+	std::cout << Find(NumberIs{289326}) << std::endl;
+	std::cout << Find(CheckSumGreatherThan{289326}) << std::endl;
 }
