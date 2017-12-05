@@ -2,7 +2,8 @@
 #include <vector>
 #include <cassert>
 
-unsigned CountJumps(std::vector<int> offsets)
+template <typename ModifierT>
+unsigned CountJumps(std::vector<int> offsets, ModifierT modifier)
 {
 	unsigned count{0};
 	unsigned ip{0};
@@ -12,7 +13,7 @@ unsigned CountJumps(std::vector<int> offsets)
 		while (true)
 		{
 			auto &offset = offsets.at(ip);
-			ip += offset++;
+			ip += modifier(offset);
 			++count;
 		}
 	}
@@ -22,14 +23,25 @@ unsigned CountJumps(std::vector<int> offsets)
 	}
 }
 
+int IncreaseModifier(int &offset)
+{
+	return offset++;
+}
+
+int WeirdModifier(int &offset)
+{
+	return offset >= 3 ? offset-- : offset++;
+}
+
 int main()
 {
-	assert(CountJumps({0, 3, 0, 1, -3}) == 5);
+	assert(CountJumps({0, 3, 0, 1, -3}, IncreaseModifier) == 5);
 
 	std::vector<int> offsets;
 	int o{0};
 	while (std::cin >> o)
 		offsets.emplace_back(o);
 
-	std::cout << CountJumps(offsets) << std::endl;
+	std::cout << CountJumps(offsets, IncreaseModifier) << std::endl;
+	std::cout << CountJumps(offsets, WeirdModifier) << std::endl;
 }
