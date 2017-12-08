@@ -4,8 +4,15 @@
 #include <algorithm>
 #include <sstream>
 
-int Calculate(std::istream &is)
+struct Result
 {
+    int max = 0;
+    int max_ever = 0;
+};
+
+Result Calculate(std::istream &is)
+{
+    Result result;
     std::unordered_map<std::string, int> registers;
 
     //b inc 5 if a > 1
@@ -58,25 +65,32 @@ int Calculate(std::istream &is)
         }
         else
             assert(!"Operation not implemented");
+
+        if (result.max_ever < registers[reg1])
+            result.max_ever = registers[reg1];
     }
 
-
-    return std::max_element(registers.begin(), registers.end(),
-                            [](const auto &a, const auto &b) { return a.second < b.second; })
+    result.max = std::max_element(registers.begin(), registers.end(),
+                                  [](const auto &a, const auto &b) { return a.second < b.second; })
         ->second;
+    return result;
 }
 
-int Calculate(std::istream &&is)
+Result Calculate(std::istream &&is)
 {
     return Calculate(is);
 }
 
 int main()
 {
-    assert(Calculate(std::istringstream(R"(b inc 5 if a > 1
+    auto test = Calculate(std::istringstream(R"(b inc 5 if a > 1
 a inc 1 if b < 5
 c dec -10 if a >= 1
-c inc -20 if c == 10)")) == 1);
+c inc -20 if c == 10)"));
+    assert(test.max == 1);
+    assert(test.max_ever == 10);
 
-    std::cout << Calculate(std::cin) << std::endl;
+    auto res = Calculate(std::cin);
+    std::cout << res.max << std::endl;
+    std::cout << res.max_ever << std::endl;
 }
