@@ -1,6 +1,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
 #include <iostream>
+#include <fstream>
 
 template <typename ModifierT>
 unsigned CountJumps(std::vector<int> offsets, ModifierT modifier)
@@ -37,9 +38,10 @@ TEST_CASE("main")
 {
 	REQUIRE(CountJumps({0, 3, 0, 1, -3}, IncreaseModifier) == 5);
 
+	std::ifstream ifs(INPUT);
 	std::vector<int> offsets;
 	int o{0};
-	while (std::cin >> o)
+	while (ifs >> o)
 		offsets.emplace_back(o);
 
 	std::cout << CountJumps(offsets, IncreaseModifier) << std::endl;

@@ -1,2 +1,3 @@
 # List of additional compiler options
 -std=c++17
+-DINPUT="asdf"

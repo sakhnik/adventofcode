@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <iostream>
 #include <algorithm>
+#include <fstream>
 
 struct Result
 {
@@ -90,7 +91,8 @@ c inc -20 if c == 10)"));
     REQUIRE(test.max == 1);
     REQUIRE(test.max_ever == 10);
 
-    auto res = Calculate(std::cin);
+    std::ifstream ifs(INPUT);
+    auto res = Calculate(ifs);
     std::cout << res.max << std::endl;
     std::cout << res.max_ever << std::endl;
 }

@@ -1,6 +1,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
 #include <iostream>
+#include <fstream>
 #include <boost/functional/hash.hpp>
 
 template <typename T>
@@ -54,9 +55,10 @@ TEST_CASE("main")
 	REQUIRE(Count(std::array<unsigned,4>({0, 2, 7, 0})).first == 5);
 	REQUIRE(Count(std::array<unsigned,4>({0, 2, 7, 0})).second == 4);
 
+	std::ifstream ifs(INPUT);
 	std::array<unsigned, 16> banks;
 	for (auto &i : banks)
-		std::cin >> i;
+		ifs >> i;
 
 	auto res = Count(banks);
 	std::cout << res.first << std::endl;

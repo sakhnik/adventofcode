@@ -1,6 +1,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
 #include <iostream>
+#include <fstream>
 
 struct Result
 {
@@ -60,7 +61,8 @@ TEST_CASE("main")
 	REQUIRE(Count("{{<!!>},{<!!>},{<!!>},{<!!>}}") == Result(9, 0));
 	REQUIRE(Count("{{<a!>},{<a!>},{<a!>},{<ab>}}").score == 3);
 
-	std::string str((std::istreambuf_iterator<char>(std::cin)),
+	std::ifstream ifs(INPUT);
+	std::string str((std::istreambuf_iterator<char>(ifs)),
 					std::istreambuf_iterator<char>());
 	std::cout << Count(str.c_str()).score << std::endl;
 	std::cout << Count(str.c_str()).garbage << std::endl;

@@ -1,6 +1,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
 #include <iostream>
+#include <fstream>
 
 unsigned Checksum(const std::string &input)
 {
@@ -68,7 +69,8 @@ TEST_CASE("main")
 	REQUIRE(Checksum("5 1 9 5\n7 5 3\n2 4 6 8") == 18);
 	REQUIRE(Checksum2("5 9 2 8\n9 4 7 3\n3 8 6 5") == 9);
 
-	std::string str((std::istreambuf_iterator<char>(std::cin)),
+	std::ifstream ifs(INPUT);
+	std::string str((std::istreambuf_iterator<char>(ifs)),
 					std::istreambuf_iterator<char>());
 	std::cout << Checksum(str) << std::endl;
 	std::cout << Checksum2(str) << std::endl;

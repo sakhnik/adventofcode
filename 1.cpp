@@ -1,6 +1,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
 #include <iostream>
+#include <fstream>
 
 unsigned Sum(std::string_view s, unsigned dist)
 {
@@ -28,7 +29,7 @@ TEST_CASE("main")
 	REQUIRE(Sum("12131415", 4) == 4);
 
 	std::string input;
-	getline(std::cin, input);
+	getline(std::ifstream(INPUT), input);
 	std::cout << Sum(input, 1) << std::endl;
 	std::cout << Sum(input, input.size() / 2) << std::endl;
 }

@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <numeric>
 #include <iostream>
+#include <fstream>
 
 struct Data
 {
@@ -116,7 +117,8 @@ cntj (57))";
 		REQUIRE(res == 60);
 	}
 
-	auto tree = ParseInput(std::cin);
+	std::ifstream ifs(INPUT);
+	auto tree = ParseInput(ifs);
 	auto root = FindRoot(tree);
 	std::cout << root << std::endl;
 	try

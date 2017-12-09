@@ -3,6 +3,7 @@
 #include <unordered_set>
 #include <iostream>
 #include <algorithm>
+#include <fstream>
 
 template <typename FilterT>
 unsigned Count(const std::string &input)
@@ -56,7 +57,8 @@ TEST_CASE("main")
 	REQUIRE(Count<ExactFilter>("aa bb cc dd aa") == 0);
 	REQUIRE(Count<ExactFilter>("aa bb cc dd aaa") == 1);
 
-	std::string input((std::istreambuf_iterator<char>(std::cin)),
+	std::ifstream ifs(INPUT);
+	std::string input((std::istreambuf_iterator<char>(ifs)),
 					  std::istreambuf_iterator<char>());
 	std::cout << Count<ExactFilter>(input) << std::endl;
 	std::cout << Count<AnagramFilter>(input) << std::endl;
