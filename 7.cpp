@@ -1,8 +1,6 @@
-#include <iostream>
+#define CATCH_CONFIG_MAIN
+#include <catch.hpp>
 #include <unordered_map>
-#include <sstream>
-#include <cassert>
-#include <vector>
 #include <algorithm>
 #include <numeric>
 
@@ -88,7 +86,7 @@ unsigned CheckWeight(const TreeT &tree, const std::string &node)
 	return it->second.weight + total;
 }
 
-int main()
+TEST_CASE("main", "")
 {
 	const char *const test =
 		R"(pbga (66)
@@ -106,15 +104,15 @@ gyxo (61)
 cntj (57))";
 
 	auto testTree = ParseInput(std::istringstream(test));
-	assert(FindRoot(testTree) == "tknk");
+	REQUIRE(FindRoot(testTree) == "tknk");
 	try
 	{
 		CheckWeight(testTree, FindRoot(testTree));
-		assert(!"Should get here");
+		REQUIRE(!"Should get here");
 	}
 	catch (unsigned res)
 	{
-		assert(res == 60);
+		REQUIRE(res == 60);
 	}
 
 	auto tree = ParseInput(std::cin);

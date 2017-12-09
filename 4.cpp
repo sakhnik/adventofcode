@@ -1,8 +1,6 @@
-#include <iostream>
-#include <sstream>
-#include <cassert>
+#define CATCH_CONFIG_MAIN
+#include <catch.hpp>
 #include <unordered_set>
-#include <algorithm>
 
 template <typename FilterT>
 unsigned Count(const std::string &input)
@@ -50,11 +48,11 @@ private:
 	std::unordered_set<std::string> _words;
 };
 
-int main()
+TEST_CASE("main", "")
 {
-	assert(Count<ExactFilter>("aa bb cc dd ee") == 1);
-	assert(Count<ExactFilter>("aa bb cc dd aa") == 0);
-	assert(Count<ExactFilter>("aa bb cc dd aaa") == 1);
+	REQUIRE(Count<ExactFilter>("aa bb cc dd ee") == 1);
+	REQUIRE(Count<ExactFilter>("aa bb cc dd aa") == 0);
+	REQUIRE(Count<ExactFilter>("aa bb cc dd aaa") == 1);
 
 	std::string input((std::istreambuf_iterator<char>(std::cin)),
 					  std::istreambuf_iterator<char>());

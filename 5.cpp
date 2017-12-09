@@ -1,6 +1,5 @@
-#include <iostream>
-#include <vector>
-#include <cassert>
+#define CATCH_CONFIG_MAIN
+#include <catch.hpp>
 
 template <typename ModifierT>
 unsigned CountJumps(std::vector<int> offsets, ModifierT modifier)
@@ -33,9 +32,9 @@ int WeirdModifier(int &offset)
 	return offset >= 3 ? offset-- : offset++;
 }
 
-int main()
+TEST_CASE("main", "")
 {
-	assert(CountJumps({0, 3, 0, 1, -3}, IncreaseModifier) == 5);
+	REQUIRE(CountJumps({0, 3, 0, 1, -3}, IncreaseModifier) == 5);
 
 	std::vector<int> offsets;
 	int o{0};

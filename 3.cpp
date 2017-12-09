@@ -1,6 +1,5 @@
-#include <iostream>
-#include <cassert>
-#include <map>
+#define CATCH_CONFIG_MAIN
+#include <catch.hpp>
 
 // Walk the storage in increasing order while checking the predicate on each step.
 template <typename PredT>
@@ -91,15 +90,15 @@ private:
 	}
 };
 
-int main()
+TEST_CASE("main", "")
 {
-	assert(Find(NumberIs{2}) == 1);
-	assert(Find(NumberIs{3}) == 2);
-	assert(Find(NumberIs{4}) == 1);
-	assert(Find(NumberIs{5}) == 2);
-	assert(Find(NumberIs{12}) == 3);
-	assert(Find(NumberIs{23}) == 2);
-	assert(Find(NumberIs{1024}) == 31);
+	REQUIRE(Find(NumberIs{2}) == 1);
+	REQUIRE(Find(NumberIs{3}) == 2);
+	REQUIRE(Find(NumberIs{4}) == 1);
+	REQUIRE(Find(NumberIs{5}) == 2);
+	REQUIRE(Find(NumberIs{12}) == 3);
+	REQUIRE(Find(NumberIs{23}) == 2);
+	REQUIRE(Find(NumberIs{1024}) == 31);
 
 	std::cout << Find(NumberIs{289326}) << std::endl;
 	std::cout << Find(CheckSumGreatherThan{289326}) << std::endl;

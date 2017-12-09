@@ -1,8 +1,6 @@
-#include <iostream>
+#define CATCH_CONFIG_MAIN
+#include <catch.hpp>
 #include <unordered_map>
-#include <cassert>
-#include <algorithm>
-#include <sstream>
 
 struct Result
 {
@@ -53,7 +51,7 @@ Result Calculate(std::istream &is)
                 continue;
         }
         else
-            assert(!"Condition not implemented");
+            REQUIRE(!"Condition not implemented");
 
         if (op == "inc")
         {
@@ -64,7 +62,7 @@ Result Calculate(std::istream &is)
             registers[reg1] -= num;
         }
         else
-            assert(!"Operation not implemented");
+            REQUIRE(!"Operation not implemented");
 
         if (result.max_ever < registers[reg1])
             result.max_ever = registers[reg1];
@@ -81,14 +79,14 @@ Result Calculate(std::istream &&is)
     return Calculate(is);
 }
 
-int main()
+TEST_CASE("main", "")
 {
     auto test = Calculate(std::istringstream(R"(b inc 5 if a > 1
 a inc 1 if b < 5
 c dec -10 if a >= 1
 c inc -20 if c == 10)"));
-    assert(test.max == 1);
-    assert(test.max_ever == 10);
+    REQUIRE(test.max == 1);
+    REQUIRE(test.max_ever == 10);
 
     auto res = Calculate(std::cin);
     std::cout << res.max << std::endl;

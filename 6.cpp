@@ -1,8 +1,5 @@
-#include <iostream>
-#include <cassert>
-#include <array>
-#include <algorithm>
-#include <unordered_map>
+#define CATCH_CONFIG_MAIN
+#include <catch.hpp>
 #include <boost/functional/hash.hpp>
 
 template <typename T>
@@ -51,10 +48,10 @@ Count(T banks)
 	}
 }
 
-int main()
+TEST_CASE("main", "")
 {
-	assert(Count(std::array<unsigned,4>({0, 2, 7, 0})).first == 5);
-	assert(Count(std::array<unsigned,4>({0, 2, 7, 0})).second == 4);
+	REQUIRE(Count(std::array<unsigned,4>({0, 2, 7, 0})).first == 5);
+	REQUIRE(Count(std::array<unsigned,4>({0, 2, 7, 0})).second == 4);
 
 	std::array<unsigned, 16> banks;
 	for (auto &i : banks)

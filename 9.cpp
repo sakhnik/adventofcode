@@ -1,6 +1,5 @@
-#include <iostream>
-#include <cassert>
-#include <string>
+#define CATCH_CONFIG_MAIN
+#include <catch.hpp>
 
 struct Result
 {
@@ -49,16 +48,16 @@ Result Count(const char *s)
 	}
 }
 
-int main()
+TEST_CASE("main", "")
 {
-	assert(Count("{}") == Result(1, 0));
-	assert(Count("{{{}}}") == Result(6, 0));
-	assert(Count("{{},{}}") == Result(5, 0));
-	assert(Count("{{{},{},{{}}}}") == Result(16, 0));
-	assert(Count("{<a>,<a>,<a>,<a>}") == Result(1, 4));
-	assert(Count("{{<ab>},{<ab>},{<ab>},{<ab>}}") == Result(9, 8));
-	assert(Count("{{<!!>},{<!!>},{<!!>},{<!!>}}") == Result(9, 0));
-	assert(Count("{{<a!>},{<a!>},{<a!>},{<ab>}}").score == 3);
+	REQUIRE(Count("{}") == Result(1, 0));
+	REQUIRE(Count("{{{}}}") == Result(6, 0));
+	REQUIRE(Count("{{},{}}") == Result(5, 0));
+	REQUIRE(Count("{{{},{},{{}}}}") == Result(16, 0));
+	REQUIRE(Count("{<a>,<a>,<a>,<a>}") == Result(1, 4));
+	REQUIRE(Count("{{<ab>},{<ab>},{<ab>},{<ab>}}") == Result(9, 8));
+	REQUIRE(Count("{{<!!>},{<!!>},{<!!>},{<!!>}}") == Result(9, 0));
+	REQUIRE(Count("{{<a!>},{<a!>},{<a!>},{<ab>}}").score == 3);
 
 	std::string str((std::istreambuf_iterator<char>(std::cin)),
 					std::istreambuf_iterator<char>());
