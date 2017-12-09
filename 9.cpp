@@ -2,9 +2,26 @@
 #include <cassert>
 #include <string>
 
-unsigned Count(const char *s)
+struct Result
 {
-	unsigned score{0};
+	Result(unsigned score = 0, unsigned garbage = 0)
+		: score(score)
+		, garbage(garbage)
+	{
+	}
+
+	bool operator==(const Result &o) const
+	{
+		return score == o.score && garbage == o.garbage;
+	}
+
+	unsigned score;
+	unsigned garbage;
+};
+
+Result Count(const char *s)
+{
+	Result result;
 	unsigned depth{0};
 
 	while (true)
@@ -12,9 +29,9 @@ unsigned Count(const char *s)
 		switch (char ch = *s++)
 		{
 		case 0:
-			return score;
+			return result;
 		case '{':
-			score += ++depth;
+			result.score += ++depth;
 			break;
 		case '}':
 			--depth;
@@ -24,6 +41,8 @@ unsigned Count(const char *s)
 			{
 				if (g == '!')
 					++s;
+				else
+					++result.garbage;
 			}
 			break;
 		}
@@ -32,16 +51,17 @@ unsigned Count(const char *s)
 
 int main()
 {
-	assert(Count("{}") == 1);
-	assert(Count("{{{}}}") == 6);
-	assert(Count("{{},{}}") == 5);
-	assert(Count("{{{},{},{{}}}}") == 16);
-	assert(Count("{<a>,<a>,<a>,<a>}") == 1);
-	assert(Count("{{<ab>},{<ab>},{<ab>},{<ab>}}") == 9);
-	assert(Count("{{<!!>},{<!!>},{<!!>},{<!!>}}") == 9);
-	assert(Count("{{<a!>},{<a!>},{<a!>},{<ab>}}") == 3);
+	assert(Count("{}") == Result(1, 0));
+	assert(Count("{{{}}}") == Result(6, 0));
+	assert(Count("{{},{}}") == Result(5, 0));
+	assert(Count("{{{},{},{{}}}}") == Result(16, 0));
+	assert(Count("{<a>,<a>,<a>,<a>}") == Result(1, 4));
+	assert(Count("{{<ab>},{<ab>},{<ab>},{<ab>}}") == Result(9, 8));
+	assert(Count("{{<!!>},{<!!>},{<!!>},{<!!>}}") == Result(9, 0));
+	assert(Count("{{<a!>},{<a!>},{<a!>},{<ab>}}").score == 3);
 
 	std::string str((std::istreambuf_iterator<char>(std::cin)),
 					std::istreambuf_iterator<char>());
-	std::cout << Count(str.c_str()) << std::endl;
+	std::cout << Count(str.c_str()).score << std::endl;
+	std::cout << Count(str.c_str()).garbage << std::endl;
 }
