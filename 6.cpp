@@ -1,5 +1,6 @@
-#define CATCH_CONFIG_MAIN
-#include <catch.hpp>
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <doctest.h>
+#include <iostream>
 #include <boost/functional/hash.hpp>
 
 template <typename T>
@@ -48,7 +49,7 @@ Count(T banks)
 	}
 }
 
-TEST_CASE("main", "")
+TEST_CASE("main")
 {
 	REQUIRE(Count(std::array<unsigned,4>({0, 2, 7, 0})).first == 5);
 	REQUIRE(Count(std::array<unsigned,4>({0, 2, 7, 0})).second == 4);

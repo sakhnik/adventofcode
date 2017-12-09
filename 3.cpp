@@ -1,5 +1,7 @@
-#define CATCH_CONFIG_MAIN
-#include <catch.hpp>
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <doctest.h>
+#include <map>
+#include <iostream>
 
 // Walk the storage in increasing order while checking the predicate on each step.
 template <typename PredT>
@@ -90,7 +92,7 @@ private:
 	}
 };
 
-TEST_CASE("main", "")
+TEST_CASE("main")
 {
 	REQUIRE(Find(NumberIs{2}) == 1);
 	REQUIRE(Find(NumberIs{3}) == 2);

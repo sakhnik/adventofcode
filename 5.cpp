@@ -1,5 +1,6 @@
-#define CATCH_CONFIG_MAIN
-#include <catch.hpp>
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <doctest.h>
+#include <iostream>
 
 template <typename ModifierT>
 unsigned CountJumps(std::vector<int> offsets, ModifierT modifier)
@@ -32,7 +33,7 @@ int WeirdModifier(int &offset)
 	return offset >= 3 ? offset-- : offset++;
 }
 
-TEST_CASE("main", "")
+TEST_CASE("main")
 {
 	REQUIRE(CountJumps({0, 3, 0, 1, -3}, IncreaseModifier) == 5);
 

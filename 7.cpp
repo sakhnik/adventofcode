@@ -1,8 +1,9 @@
-#define CATCH_CONFIG_MAIN
-#include <catch.hpp>
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <doctest.h>
 #include <unordered_map>
 #include <algorithm>
 #include <numeric>
+#include <iostream>
 
 struct Data
 {
@@ -86,7 +87,7 @@ unsigned CheckWeight(const TreeT &tree, const std::string &node)
 	return it->second.weight + total;
 }
 
-TEST_CASE("main", "")
+TEST_CASE("main")
 {
 	const char *const test =
 		R"(pbga (66)

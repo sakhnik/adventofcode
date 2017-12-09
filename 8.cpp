@@ -1,6 +1,8 @@
-#define CATCH_CONFIG_MAIN
-#include <catch.hpp>
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <doctest.h>
 #include <unordered_map>
+#include <iostream>
+#include <algorithm>
 
 struct Result
 {
@@ -79,7 +81,7 @@ Result Calculate(std::istream &&is)
     return Calculate(is);
 }
 
-TEST_CASE("main", "")
+TEST_CASE("main")
 {
     auto test = Calculate(std::istringstream(R"(b inc 5 if a > 1
 a inc 1 if b < 5

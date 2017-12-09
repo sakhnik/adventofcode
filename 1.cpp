@@ -1,5 +1,6 @@
-#define CATCH_CONFIG_MAIN
-#include <catch.hpp>
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <doctest.h>
+#include <iostream>
 
 unsigned Sum(std::string_view s, unsigned dist)
 {
@@ -14,7 +15,7 @@ unsigned Sum(std::string_view s, unsigned dist)
 	return sum;
 }
 
-TEST_CASE("main", "")
+TEST_CASE("main")
 {
 	REQUIRE(Sum("1122", 1) == 3);
 	REQUIRE(Sum("1111", 1) == 4);

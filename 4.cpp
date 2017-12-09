@@ -1,6 +1,8 @@
-#define CATCH_CONFIG_MAIN
-#include <catch.hpp>
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <doctest.h>
 #include <unordered_set>
+#include <iostream>
+#include <algorithm>
 
 template <typename FilterT>
 unsigned Count(const std::string &input)
@@ -48,7 +50,7 @@ private:
 	std::unordered_set<std::string> _words;
 };
 
-TEST_CASE("main", "")
+TEST_CASE("main")
 {
 	REQUIRE(Count<ExactFilter>("aa bb cc dd ee") == 1);
 	REQUIRE(Count<ExactFilter>("aa bb cc dd aa") == 0);

@@ -1,5 +1,6 @@
-#define CATCH_CONFIG_MAIN
-#include <catch.hpp>
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <doctest.h>
+#include <iostream>
 
 struct Result
 {
@@ -48,7 +49,7 @@ Result Count(const char *s)
 	}
 }
 
-TEST_CASE("main", "")
+TEST_CASE("main")
 {
 	REQUIRE(Count("{}") == Result(1, 0));
 	REQUIRE(Count("{{{}}}") == Result(6, 0));

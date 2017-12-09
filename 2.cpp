@@ -1,5 +1,6 @@
-#define CATCH_CONFIG_MAIN
-#include <catch.hpp>
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <doctest.h>
+#include <iostream>
 
 unsigned Checksum(const std::string &input)
 {
@@ -62,7 +63,7 @@ unsigned Checksum2(const std::string &input)
 	return cs;
 }
 
-TEST_CASE("main", "")
+TEST_CASE("main")
 {
 	REQUIRE(Checksum("5 1 9 5\n7 5 3\n2 4 6 8") == 18);
 	REQUIRE(Checksum2("5 9 2 8\n9 4 7 3\n3 8 6 5") == 9);
