@@ -4,6 +4,7 @@
 #include <fstream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/connected_components.hpp>
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> GraphT;
 
@@ -12,7 +13,7 @@ GraphT ReadGraph(std::istream &is)
     GraphT graph;
 
     std::string line;
-    while (std::getline(is, line))
+    while (getline(is, line))
     {
         std::istringstream iss(line);
 
@@ -25,7 +26,7 @@ GraphT ReadGraph(std::istream &is)
         unsigned w;
         while (iss >> w)
         {
-            boost::add_edge(v, w, graph);
+            add_edge(v, w, graph);
             char ch{0};
             iss >> ch;  // ,
         }
@@ -58,7 +59,7 @@ unsigned Count(const GraphT &graph)
 {
     unsigned count{0};
     BfsCountingVisitor vis(count);
-    boost::breadth_first_search(graph, 0, boost::visitor(vis));
+    breadth_first_search(graph, 0, visitor(vis));
     return count;
 }
 
@@ -76,4 +77,7 @@ TEST_CASE("main")
     std::ifstream ifs(INPUT);
     auto graph = ReadGraph(ifs);
     std::cout << Count(graph) << std::endl;
+
+    std::vector<int> component(num_vertices(graph));
+    std::cout << connected_components(graph, &component[0]) << std::endl;
 }
