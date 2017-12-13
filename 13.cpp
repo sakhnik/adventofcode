@@ -3,44 +3,77 @@
 #include <iostream>
 #include <fstream>
 
-unsigned CalcSeverity(std::istream &is)
+typedef std::vector<unsigned> ConfigT;
+
+ConfigT ReadConfig(std::istream &is)
 {
-	std::vector<unsigned> depths;
+	ConfigT config;
 
 	unsigned depth{0}, range{0};
 	char skip;
 	while (is >> depth >> skip >> range)
 	{
-		if (depths.size() < depth)
-			depths.resize(depth);
-		depths.push_back(range);
+		if (config.size() < depth)
+			config.resize(depth);
+		config.push_back(range);
 	}
 
+	return config;
+}
+
+ConfigT ReadConfig(std::istream &&is)
+{
+	return ReadConfig(is);
+}
+
+unsigned CalcSeverity(unsigned delay, const ConfigT &config)
+{
 	unsigned severity{0};
 
-	for (size_t i = 0; i < depths.size(); ++i)
+	for (size_t i = 0; i < config.size(); ++i)
 	{
-		if (!depths[i])
+		if (!config[i])
 			continue;
-		unsigned period = 2 * (depths[i] - 1);
-		if (i % period == 0)
+		unsigned period = 2 * (config[i] - 1);
+		if ((i + delay) % period == 0)
 		{
-			severity += depths[i] * i;
+			severity += config[i] * i;
 		}
 	}
 
 	return severity;
 }
 
-unsigned CalcSeverity(std::istream &&is)
+bool IsCaught(unsigned delay, const ConfigT &config)
 {
-	return CalcSeverity(is);
+	for (size_t i = 0; i < config.size(); ++i)
+	{
+		if (!config[i])
+			continue;
+		unsigned period = 2 * (config[i] - 1);
+		if ((i + delay) % period == 0)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 TEST_CASE("main")
 {
-	REQUIRE(CalcSeverity(std::istringstream{"0: 3\n1: 2\n4: 4\n6: 4"}) == 24);
+	auto test_config = ReadConfig(std::istringstream{"0: 3\n1: 2\n4: 4\n6: 4"});
+	REQUIRE(CalcSeverity(0, test_config) == 24);
 
 	std::ifstream ifs(INPUT);
-	std::cout << CalcSeverity(ifs) << std::endl;
+	auto config = ReadConfig(ifs);
+	std::cout << CalcSeverity(0, config) << std::endl;
+
+	for (int delay = 0; ; ++delay)
+	{
+		if (!IsCaught(delay, config))
+		{
+			std::cout << delay << std::endl;
+			break;
+		}
+	}
 }
