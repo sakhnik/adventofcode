@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
+find_package(Threads)
 enable_testing()
 add_definitions(-std=c++17)
 
 foreach(src RANGE 1 18)
     add_executable(${src} ${src}.cpp)
     target_compile_definitions(${src} PRIVATE INPUT="${CMAKE_SOURCE_DIR}/${src}.txt")
+    target_link_libraries(${src} ${CMAKE_THREAD_LIBS_INIT})
     add_test(${src} ${src})
 endforeach(src)

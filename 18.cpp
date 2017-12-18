@@ -3,222 +3,302 @@
 #include <iostream>
 #include <unordered_map>
 #include <fstream>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
+#include <thread>
+#include <atomic>
 
 struct Arg
 {
-	bool is_reg = false;
-	union
-	{
-		int64_t num;
-		char reg;
-	} a;
+    bool is_reg = false;
+    union
+    {
+        int64_t num;
+        char reg;
+    } a;
 };
 
 struct Instr
 {
-	enum class Op
-	{
-		Snd,
-		Set,
-		Add,
-		Mul,
-		Mod,
-		Rcv,
-		Jgz
-	} op;
-	Arg X, Y;
+    enum class Op
+    {
+        Snd,
+        Set,
+        Add,
+        Mul,
+        Mod,
+        Rcv,
+        Jgz
+    } op;
+    Arg X, Y;
 };
 
 typedef std::vector<Instr> ProgramT;
 
 Arg ParseArg(std::istream &is)
 {
-	Arg arg;
+    Arg arg;
 
-	std::string s;
-	is >> s;
-	arg.is_reg = isalpha(s[0]);
-	if (arg.is_reg)
-	{
-		arg.a.reg = s[0];
-	}
-	else
-	{
-		arg.a.num = std::stoi(s);
-	}
+    std::string s;
+    is >> s;
+    arg.is_reg = isalpha(s[0]);
+    if (arg.is_reg)
+    {
+        arg.a.reg = s[0];
+    }
+    else
+    {
+        arg.a.num = std::stoi(s);
+    }
 
-	return arg;
+    return arg;
 }
 
 ProgramT Parse(std::istream &is)
 {
-	ProgramT program;
+    ProgramT program;
 
-	std::string line;
-	while (getline(is, line))
-	{
-		Instr instr;
+    std::string line;
+    while (getline(is, line))
+    {
+        Instr instr;
 
-		std::istringstream iss(line);
-		std::string cmd;
-		iss >> cmd;
-		if (cmd == "snd")
-		{
-			instr.op = Instr::Op::Snd;
-			instr.X = ParseArg(iss);
-		}
-		else if (cmd == "set")
-		{
-			instr.op = Instr::Op::Set;
-			instr.X = ParseArg(iss);
-			instr.Y = ParseArg(iss);
-		}
-		else if (cmd == "add")
-		{
-			instr.op = Instr::Op::Add;
-			instr.X = ParseArg(iss);
-			instr.Y = ParseArg(iss);
-		}
-		else if (cmd == "mul")
-		{
-			instr.op = Instr::Op::Mul;
-			instr.X = ParseArg(iss);
-			instr.Y = ParseArg(iss);
-		}
-		else if (cmd == "mod")
-		{
-			instr.op = Instr::Op::Mod;
-			instr.X = ParseArg(iss);
-			instr.Y = ParseArg(iss);
-		}
-		else if (cmd == "rcv")
-		{
-			instr.op = Instr::Op::Rcv;
-			instr.X = ParseArg(iss);
-		}
-		else if (cmd == "jgz")
-		{
-			instr.op = Instr::Op::Jgz;
-			instr.X = ParseArg(iss);
-			instr.Y = ParseArg(iss);
-		}
+        std::istringstream iss(line);
+        std::string cmd;
+        iss >> cmd;
+        if (cmd == "snd")
+        {
+            instr.op = Instr::Op::Snd;
+            instr.X = ParseArg(iss);
+        }
+        else if (cmd == "set")
+        {
+            instr.op = Instr::Op::Set;
+            instr.X = ParseArg(iss);
+            instr.Y = ParseArg(iss);
+        }
+        else if (cmd == "add")
+        {
+            instr.op = Instr::Op::Add;
+            instr.X = ParseArg(iss);
+            instr.Y = ParseArg(iss);
+        }
+        else if (cmd == "mul")
+        {
+            instr.op = Instr::Op::Mul;
+            instr.X = ParseArg(iss);
+            instr.Y = ParseArg(iss);
+        }
+        else if (cmd == "mod")
+        {
+            instr.op = Instr::Op::Mod;
+            instr.X = ParseArg(iss);
+            instr.Y = ParseArg(iss);
+        }
+        else if (cmd == "rcv")
+        {
+            instr.op = Instr::Op::Rcv;
+            instr.X = ParseArg(iss);
+        }
+        else if (cmd == "jgz")
+        {
+            instr.op = Instr::Op::Jgz;
+            instr.X = ParseArg(iss);
+            instr.Y = ParseArg(iss);
+        }
 
-		program.push_back(instr);
-	}
+        program.push_back(instr);
+    }
 
-	return program;
+    return program;
 }
 
 ProgramT Parse(std::istream &&is)
 {
-	return Parse(is);
+    return Parse(is);
 }
 
-int64_t Execute(const ProgramT &program, bool debug = false)
+class MessageQueue
 {
-	std::unordered_map<char, int64_t> regs;
-	int64_t last{0};
+public:
+    size_t Size() const { return _q.size(); }
 
-	auto get_value = [&](Arg a) {
-		if (a.is_reg)
-			return regs[a.a.reg];
-		return a.a.num;
-	};
+    void Send(int64_t v)
+    {
+        {
+            std::lock_guard<std::mutex> l(_m);
+            _q.push(v);
+        }
+        _cv.notify_one();
+        ++_sends;
+    }
 
-	auto print_arg = [&](std::ostream &os, Arg a) -> std::ostream& {
-		os << ' ';
-		if (a.is_reg)
-			return os << a.a.reg << "(" << regs[a.a.reg] << ")";
-		return os << a.a.num;
-	};
+    int64_t Receive()
+    {
+        std::unique_lock<std::mutex> l(_m);
+        if (!_cv.wait_for(l, std::chrono::seconds(1), [&] { return !_q.empty(); }))
+            throw "Deadlock";
+        auto v = _q.front();
+        _q.pop();
+        return v;
+    }
 
-	for (size_t i = 0; i < program.size(); ++i)
-	{
-		using Op = Instr::Op;
-		auto instr = program[i];
-		auto X = instr.X;
-		auto Y = instr.Y;
+    unsigned GetSends() const { return _sends; }
 
-		switch (instr.op)
-		{
-		case Op::Snd:
-			//snd X plays a sound with a frequency equal to the value of X.
-			last = get_value(X);
-			if (debug)
-			{
-				std::cout << i << ": snd";
-				print_arg(std::cout, X) << std::endl;
-			}
-			break;
-		case Op::Set:
-			//set X Y sets register X to the value of Y.
-			if (debug)
-			{
-				std::cout << i << ": set " << X.a.reg;
-				print_arg(std::cout, Y) << std::endl;
-			}
-			regs[X.a.reg] = get_value(Y);
-			break;
-		case Op::Add:
-			//add X Y increases register X by the value of Y.
-			if (debug)
-			{
-				std::cout << i << ": add " << X.a.reg;
-				print_arg(std::cout, Y) << std::endl;
-			}
-			regs[X.a.reg] += get_value(Y);
-			break;
-		case Op::Mul:
-			//mul X Y sets register X to the result of multiplying the value contained in register X by the value of Y.
-			if (debug)
-			{
-				std::cout << i << ": mul " << X.a.reg;
-				print_arg(std::cout, Y) << std::endl;
-			}
-			regs[X.a.reg] *= get_value(Y);
-			break;
-		case Op::Mod:
-			//mod X Y sets register X to the remainder of dividing the value contained in register X by the value of Y (that is, it sets X to the result of X modulo Y).
-			if (debug)
-			{
-				std::cout << i << ": mod " << X.a.reg;
-				print_arg(std::cout, Y) << std::endl;
-			}
-			regs[X.a.reg] %= get_value(Y);
-			break;
-		case Op::Rcv:
-			//rcv X recovers the frequency of the last sound played, but only when the value of X is not zero. (If it is zero, the command does nothing.)
-			if (debug)
-			{
-				std::cout << i << ": rcv";
-				print_arg(std::cout, X) << std::endl;
-			}
-			if (get_value(X) != 0)
-			{
-				return last;
-			}
+private:
+    std::queue<int64_t> _q;
+    std::mutex _m;
+    std::condition_variable _cv;
+    unsigned _sends = 0;
+};
 
-			break;
-		case Op::Jgz:
-			//jgz X Y jumps with an offset of the value of Y, but only if the value of X is greater than zero. (An offset of 2 skips the next instruction, an offset of -1 jumps to the previous instruction, and so on.)
-			if (debug)
-			{
-				std::cout << i << ": jgz";
-				print_arg(std::cout, X);
-				print_arg(std::cout, Y) << std::endl;
-			}
-			if (get_value(X) > 0)
-				i += get_value(Y) - 1;
-			break;
-		}
-	}
+void Execute(int64_t id,
+             const ProgramT &program,
+             MessageQueue &in,
+             MessageQueue &out,
+             bool task1 = false,
+             bool debug = false)
+{
+    std::unordered_map<char, int64_t> regs;
+    regs['p'] = id;
 
-	return last;
+    auto get_value = [&](Arg a) {
+        if (a.is_reg)
+            return regs[a.a.reg];
+        return a.a.num;
+    };
+
+    auto print_arg = [&](std::ostream &os, Arg a) -> std::ostream& {
+        os << ' ';
+        if (a.is_reg)
+            return os << a.a.reg << "(" << regs[a.a.reg] << ")";
+        return os << a.a.num;
+    };
+
+    for (size_t i = 0; i < program.size(); ++i)
+    {
+        using Op = Instr::Op;
+        auto instr = program[i];
+        auto X = instr.X;
+        auto Y = instr.Y;
+
+        switch (instr.op)
+        {
+        case Op::Snd:
+            //snd X plays a sound with a frequency equal to the value of X.
+            if (debug)
+            {
+                std::cout << i << ": snd";
+                print_arg(std::cout, X) << std::endl;
+            }
+            out.Send(get_value(X));
+            break;
+        case Op::Set:
+            //set X Y sets register X to the value of Y.
+            if (debug)
+            {
+                std::cout << i << ": set " << X.a.reg;
+                print_arg(std::cout, Y) << std::endl;
+            }
+            regs[X.a.reg] = get_value(Y);
+            break;
+        case Op::Add:
+            //add X Y increases register X by the value of Y.
+            if (debug)
+            {
+                std::cout << i << ": add " << X.a.reg;
+                print_arg(std::cout, Y) << std::endl;
+            }
+            regs[X.a.reg] += get_value(Y);
+            break;
+        case Op::Mul:
+            //mul X Y sets register X to the result of multiplying the value contained in register X by the value of Y.
+            if (debug)
+            {
+                std::cout << i << ": mul " << X.a.reg;
+                print_arg(std::cout, Y) << std::endl;
+            }
+            regs[X.a.reg] *= get_value(Y);
+            break;
+        case Op::Mod:
+            //mod X Y sets register X to the remainder of dividing the value contained in register X by the value of Y (that is, it sets X to the result of X modulo Y).
+            if (debug)
+            {
+                std::cout << i << ": mod " << X.a.reg;
+                print_arg(std::cout, Y) << std::endl;
+            }
+            regs[X.a.reg] %= get_value(Y);
+            break;
+        case Op::Rcv:
+            //rcv X recovers the frequency of the last sound played, but only when the value of X is not zero. (If it is zero, the command does nothing.)
+            if (debug)
+            {
+                std::cout << i << ": rcv";
+                print_arg(std::cout, X) << std::endl;
+            }
+            if (task1)
+            {
+                // First half of the task: return after first receive
+                if (get_value(X) != 0)
+                    return;
+            }
+            else
+            {
+                regs[X.a.reg] = in.Receive();
+            }
+            break;
+        case Op::Jgz:
+            //jgz X Y jumps with an offset of the value of Y, but only if the value of X is greater than zero. (An offset of 2 skips the next instruction, an offset of -1 jumps to the previous instruction, and so on.)
+            if (debug)
+            {
+                std::cout << i << ": jgz";
+                print_arg(std::cout, X);
+                print_arg(std::cout, Y) << std::endl;
+            }
+            if (get_value(X) > 0)
+                i += get_value(Y) - 1;
+            break;
+        }
+    }
 }
 
-TEST_CASE("main")
+int64_t Task1(const ProgramT &program)
 {
-	const char *const test_program = R"(set a 1
+    MessageQueue q;
+    Execute(0, program, q, q, true);
+    while (q.Size() > 1)
+        q.Receive();
+    return q.Receive();
+}
+
+int64_t Task2(const ProgramT &program)
+{
+    MessageQueue q1, q2;
+    std::thread t([&] {
+        try
+        {
+            Execute(0, program, q1, q2);
+        }
+        catch (...)
+        {
+        }
+    });
+    try
+    {
+        Execute(1, program, q2, q1);
+    }
+    catch (...)
+    {
+    }
+    t.join();
+    return q1.GetSends();
+}
+
+
+TEST_CASE("1")
+{
+    const char *const program = R"(set a 1
 add a 2
 mul a a
 mod a 5
@@ -228,9 +308,26 @@ rcv a
 jgz a -1
 set a 1
 jgz a -2)";
-	auto test = Parse(std::istringstream(test_program));
-	REQUIRE(Execute(test) == 4);
+    auto test = Parse(std::istringstream(program));
+    REQUIRE(Task1(test) == 4);
+}
 
-	auto program = Parse(std::ifstream(INPUT));
-	std::cout << Execute(program) << std::endl;
+TEST_CASE("2")
+{
+    const char *const program = R"(snd 1
+snd 2
+snd p
+rcv a
+rcv b
+rcv c
+rcv d)";
+    auto test = Parse(std::istringstream(program));
+    REQUIRE(Task2(test) == 3);
+}
+
+TEST_CASE("main")
+{
+    auto program = Parse(std::ifstream(INPUT));
+    std::cout << Task1(program) << std::endl;
+    std::cout << Task2(program) << std::endl;
 }
