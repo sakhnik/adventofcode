@@ -21,12 +21,19 @@ RouteT Parse(std::istream &&is)
     return Parse(is);
 }
 
-std::string Trace(const RouteT &route)
+struct Result
+{
+    std::string trace;
+    unsigned steps;
+};
+
+Result Trace(const RouteT &route)
 {
     std::string trace;
     int row{0};
     int col = route[row].find('|');
     int dx{0}, dy{1};
+    unsigned steps{0};
 
     while (true)
     {
@@ -62,18 +69,16 @@ std::string Trace(const RouteT &route)
         case 'A'...'Z':
             trace += ch;
             break;
+        case ' ':
+            return {trace, steps};
         }
 
         row += dy;
         col += dx;
-
-        if (row < 0 || size_t(row) >= route.size())
-            break;
-        if (col < 0 || size_t(col) >= route[0].size())
-            break;
+        ++steps;
     }
 
-    return trace;
+    return {trace, steps};
 }
 
 TEST_CASE("test")
@@ -87,11 +92,15 @@ TEST_CASE("test")
 "     +B-+  +--+ \n"
     ;
     auto route = Parse(std::istringstream(test));
-    REQUIRE(Trace(route) == "ABCDEF");
+    auto result = Trace(route);
+    REQUIRE(result.trace == "ABCDEF");
+    REQUIRE(result.steps == 38);
 }
 
 TEST_CASE("main")
 {
     auto route = Parse(std::ifstream(INPUT));
-    std::cout << Trace(route) << std::endl;
+    auto result = Trace(route);
+    std::cout << result.trace << std::endl;
+    std::cout << result.steps << std::endl;
 }
