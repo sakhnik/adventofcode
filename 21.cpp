@@ -133,10 +133,10 @@ void Print(const GridT &grid)
     std::cout << std::endl;
 }
 
-unsigned Solve1(const PatternsT &patterns)
+unsigned Solve(unsigned iterations, const PatternsT &patterns)
 {
     GridT grid = { ".#.", "..#", "###" };
-    for (int i = 0; i < 5; ++i)
+    for (unsigned i = 0; i < iterations; ++i)
     {
         grid = Transform(grid, patterns);
     }
@@ -184,5 +184,6 @@ TEST_CASE("main")
 {
     std::ifstream ifs(INPUT);
     auto patterns = Parse(ifs);
-    std::cout << Solve1(patterns) << std::endl;
+    std::cout << Solve(5, patterns) << std::endl;
+    std::cout << Solve(18, patterns) << std::endl;
 }
