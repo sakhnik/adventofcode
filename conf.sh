@@ -10,5 +10,5 @@ bindfs -n /tmp/aoc2017-build BUILD
 
 (
 cd BUILD
-CC=clang CXX=clang++ cmake -DCMAKE_BUILD_TYPE=Debug ..
+CC=clang CXX=clang++ cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug ..
 )
