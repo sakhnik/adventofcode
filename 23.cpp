@@ -7,8 +7,8 @@
 
 unsigned CountMuls(const ProgramT &program)
 {
-	uint64_t count{0};
-	std::vector<int64_t> regs('h' - 'a' + 1, 0);
+    uint64_t count{0};
+    std::vector<int64_t> regs('h' - 'a' + 1, 0);
 
     auto get_value = [&](Arg a) {
         if (a.is_reg)
@@ -42,8 +42,8 @@ unsigned CountMuls(const ProgramT &program)
             if (get_value(X) != 0)
                 i += get_value(Y) - 1;
             break;
-		default:
-			break;
+        default:
+            break;
         }
     }
 
@@ -52,8 +52,9 @@ unsigned CountMuls(const ProgramT &program)
 
 TEST_CASE("main")
 {
-	std::ifstream ifs(INPUT);
-	auto program = Parse(ifs);
+    std::ifstream ifs(INPUT);
+    auto program = Parse(ifs);
 
-	std::cout << CountMuls(program) << std::endl;
+    std::cout << CountMuls(program) << std::endl;
+
 }
