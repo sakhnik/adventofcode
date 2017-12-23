@@ -22,7 +22,7 @@ std::pair<unsigned, unsigned> Count(const char *path)
 		switch (ch)
 		{
 		case 'n':
-			switch (char ch2 = *path++)
+			switch (*path++)
 			{
 			case ',':
 				// n
@@ -42,7 +42,7 @@ std::pair<unsigned, unsigned> Count(const char *path)
 			}
 			break;
 		case 's':
-			switch (char ch2 = *path++)
+			switch (*path++)
 			{
 			case ',':
 				// s

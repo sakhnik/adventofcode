@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 find_package(Threads)
 enable_testing()
-add_definitions(-std=c++17)
+add_definitions(-std=c++17 -Wall)
 
 foreach(src RANGE 1 23)
     add_executable(${src} ${src}.cpp)

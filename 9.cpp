@@ -27,7 +27,7 @@ Result Count(const char *s)
 
 	while (true)
 	{
-		switch (char ch = *s++)
+		switch (*s++)
 		{
 		case 0:
 			return result;
