@@ -57,4 +57,23 @@ TEST_CASE("main")
 
     std::cout << CountMuls(program) << std::endl;
 
+    // Disassembler: looks like counting nonprimes from 106700 +17000 step 17
+    uint32_t h{0};
+
+    for (uint32_t b = 67*100 + 100000, c = b + 17000;
+         b <= c;
+         b += 17)
+    {
+        uint32_t max_divider = static_cast<uint32_t>(std::sqrt(b));
+        for (uint32_t d = 2; d <= max_divider; ++d)
+        {
+            if (b % d == 0)
+            {
+                ++h;
+                break;
+            }
+        }
+    }
+
+    std::cout << h << std::endl;
 }
