@@ -3,7 +3,7 @@ find_package(Threads)
 enable_testing()
 add_definitions(-std=c++17 -Wall)
 
-foreach(src RANGE 1 23)
+foreach(src RANGE 1 24)
     add_executable(${src} ${src}.cpp)
     target_compile_definitions(${src} PRIVATE INPUT="${CMAKE_SOURCE_DIR}/${src}.txt")
     target_link_libraries(${src} ${CMAKE_THREAD_LIBS_INIT})
