@@ -6,7 +6,14 @@
 typedef std::pair<unsigned, unsigned> ComponentT;
 typedef std::vector<ComponentT> InventoryT;
 
-void Recurse(size_t chain_length, unsigned tip, InventoryT &inventory, unsigned accum, unsigned &max)
+struct Objective
+{
+    unsigned max_absolute = 0;
+    unsigned max_longest = 0;
+    size_t longest = 0;
+};
+
+void Recurse(size_t chain_length, unsigned tip, InventoryT &inventory, unsigned accum, Objective &objective)
 {
     for (size_t i = chain_length; i < inventory.size(); ++i)
     {
@@ -14,29 +21,40 @@ void Recurse(size_t chain_length, unsigned tip, InventoryT &inventory, unsigned 
         if (first == tip)
         {
             std::swap(inventory[i], inventory[chain_length]);
-            Recurse(chain_length + 1, second, inventory, accum + first + second, max);
+            Recurse(chain_length + 1, second, inventory, accum + first + second, objective);
             std::swap(inventory[i], inventory[chain_length]);
         }
         if (second == tip)
         {
             std::swap(inventory[i], inventory[chain_length]);
-            Recurse(chain_length + 1, first, inventory, accum + first + second, max);
+            Recurse(chain_length + 1, first, inventory, accum + first + second, objective);
             std::swap(inventory[i], inventory[chain_length]);
         }
     }
 
-    if (accum > max)
+    if (accum > objective.max_absolute)
     {
         //for (size_t i = 0; i < chain_length; ++i)
         //    std::cout << " (" << inventory[i].first << "," << inventory[i].second << ")";
         //std::cout << " -> " << accum << std::endl;
-        max = accum;
+        objective.max_absolute = accum;
+    }
+
+    if (chain_length > objective.longest)
+    {
+        objective.longest = chain_length;
+        objective.max_longest = accum;
+    }
+    else if (chain_length == objective.longest)
+    {
+        if (objective.max_longest < accum)
+            objective.max_longest = accum;
     }
 }
 
-unsigned Solve(InventoryT &inventory)
+Objective Solve(InventoryT &inventory)
 {
-    unsigned result{0};
+    Objective result;
     Recurse(0, 0, inventory, 0, result);
     return result;
 }
@@ -55,12 +73,16 @@ TEST_CASE("1")
 {
     std::istringstream iss("0/2\n2/2\n2/3\n3/4\n3/5\n0/1\n10/1\n9/10");
     auto inventory = Parse(iss);
-    REQUIRE(Solve(inventory) == 31);
+    auto result = Solve(inventory);
+    REQUIRE(result.max_absolute == 31);
+    REQUIRE(result.max_longest == 19);
 }
 
 TEST_CASE("main")
 {
     std::ifstream ifs(INPUT);
     auto inventory = Parse(ifs);
-    std::cout << Solve(inventory) << std::endl;
+    auto result = Solve(inventory);
+    std::cout << result.max_absolute << std::endl;
+    std::cout << result.max_longest << std::endl;
 }
