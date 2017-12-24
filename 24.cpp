@@ -8,11 +8,18 @@ typedef std::vector<ComponentT> InventoryT;
 
 struct Objective
 {
-    unsigned max_absolute = 0;
-    unsigned max_longest = 0;
-    size_t longest = 0;
+    unsigned max_absolute = 0;   // max value among all the sequences
+    unsigned max_longest = 0;    // max value among the longest sequences
+    size_t longest = 0;          // the length of the longest sequence
 };
 
+// We'll be reordering sequences so that the valid sequences will appear
+// at the beginning of the inventory. We'll be restoring the initial order
+// upon return from the recursive probe to ensure all the variants are considered.
+//
+//  [+++........]
+//
+// Thus, at each stage we'll have to search for a next candidate in the right half.
 void Recurse(size_t chain_length, unsigned tip, InventoryT &inventory, unsigned accum, Objective &objective)
 {
     for (size_t i = chain_length; i < inventory.size(); ++i)
