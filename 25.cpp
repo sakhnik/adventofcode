@@ -66,7 +66,6 @@ TEST_CASE("1")
     Machine m;
     m.Run(6, 0, desc);
     REQUIRE(m.GetChecksum() == 3);
-
 }
 
 TEST_CASE("main")
