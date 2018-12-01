@@ -3,3 +3,4 @@ find_package(Threads)
 enable_testing()
 
 add_subdirectory(2017)
+add_subdirectory(2018)

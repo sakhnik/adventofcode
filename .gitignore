@@ -1,4 +1,3 @@
 BUILD/
-.clang_complete
 .ycm_extra_conf.py
-.cproj.out
+compile_commands.json
