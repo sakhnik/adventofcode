@@ -1,7 +1,7 @@
 #include "Asm.h"
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include <doctest.h>
+#include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
 
