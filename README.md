@@ -1,3 +1,3 @@
-Advent of code 2017
+Advent of code, various years.
 
-[Reference](http://adventofcode.com/2017)
+Reference: [http://adventofcode.com](http://adventofcode.com)
