@@ -51,10 +51,44 @@ int Checksum(const BoxesT &boxes)
     return twos * threes;
 }
 
+std::string DiffId(const std::string &a, const std::string &b)
+{
+    std::string d;
+    for (int i = 0; i < std::size(a); ++i)
+    {
+        if (a[i] == b[i])
+        {
+            d.push_back(a[i]);
+        }
+    }
+    return d;
+}
+
+std::string FindCorrect(const BoxesT &boxes)
+{
+    for (int i = 0, in = boxes.size() - 1; i < in; ++i)
+    {
+        for (int j = i + 1; j < boxes.size(); ++j)
+        {
+            auto diff = DiffId(boxes[i], boxes[j]);
+            if (size(diff) == size(boxes[i]) - 1)
+            {
+                return diff;
+            }
+        }
+    }
+    return "";
+}
+
 TEST_CASE("main")
 {
     auto test_cs = Checksum({"abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab"});
     REQUIRE(12 == test_cs);
 
     std::cout << Checksum(GetInput()) << std::endl;
+
+    auto test2 = FindCorrect({"abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz"});
+    REQUIRE("fgij" == test2);
+
+    std::cout << FindCorrect(GetInput()) << std::endl;
 }
