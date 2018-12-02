@@ -47,10 +47,11 @@ int walk(istream &&is)
 			return make_pair(coords.first + steps, coords.second);
 		case South:
 			return make_pair(coords.first, coords.second - steps);
+		default:
+			assert(!"Not implemented");
+			// fallthrough
 		case West:
 			return make_pair(coords.first - steps, coords.second);
-		default:
-			assert(false);
 		}
 	};
 

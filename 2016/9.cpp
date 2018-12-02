@@ -49,10 +49,10 @@ pair<size_t, const char *> CountPattern(const char *s)
 {
 	int span{0}, count{0};
 	int fields = sscanf(s, "(%dx%d)", &span, &count);
-	assert(fields == 2);
+	REQUIRE(fields == 2);
 
 	const char *rbr = strchr(s, ')');
-	assert(rbr);
+	REQUIRE(rbr);
 	++rbr;
 
 	const char *send = rbr + span;
