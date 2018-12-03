@@ -11,7 +11,9 @@ struct Point
 
 struct Box
 {
+    int id;
     int x, y, w, h;
+    int GetArea() const { return w * h; }
 };
 
 using BoxesT = std::vector<Box>;
@@ -23,9 +25,8 @@ BoxesT GetInput(std::istream &&is)
     std::string line;
     while (is && (getline(is, line)))
     {
-        int id{};
         Box box;
-        REQUIRE(5 == sscanf(line.c_str(), "#%d @ %d,%d: %dx%d", &id, &box.x, &box.y, &box.w, &box.h));
+        REQUIRE(5 == sscanf(line.c_str(), "#%d @ %d,%d: %dx%d", &box.id, &box.x, &box.y, &box.w, &box.h));
         boxes.emplace_back(box);
     }
 
@@ -42,26 +43,60 @@ BoxesT GetInput(const char *s)
     return GetInput(std::istringstream{s});
 }
 
-int CalcIntersection(int length, const BoxesT &boxes)
+std::pair<int,int> CalcIntersection(int length, const BoxesT &boxes)
 {
+    // To calculate the overlapping area, we'll apply every claim
+    // to a discrete tissue. Then count the overlapping "pixels".
     std::vector<uint8_t> tissue(length * length, 0);
-    for (const auto &box : boxes)
-    {
+
+    auto applyBox = [&](const auto &box, auto &func) {
         for (int y = box.y, yn = box.y + box.h; y < yn; ++y)
         {
             int i = length * y + box.x;
             for (int j = 0; j < box.w; ++j)
             {
-                ++tissue[i + j];
+                func(i + j);
             }
+        }
+    };
+
+    auto mark = [&](auto idx) {
+        ++tissue[idx];
+    };
+
+    for (const auto &box : boxes)
+    {
+        applyBox(box, mark);
+    }
+
+    int overlap = std::count_if(begin(tissue), end(tissue), [](auto c) { return c > 1; });
+
+    // To identify the unoverlapping claim, we'll need to look at the tissue again.
+    // If the sum of counters equals to the area of the claim, no one else wanted it.
+    for (const auto &box : boxes)
+    {
+        int sum{};
+        auto accum = [&](auto idx) {
+            sum += tissue[idx];
+        };
+        applyBox(box, accum);
+        if (sum == box.GetArea())
+        {
+            return {overlap, box.id};
         }
     }
 
-    return std::count_if(begin(tissue), end(tissue), [](auto c) { return c > 1; });
+
+    return {overlap, -1};
 }
 
 TEST_CASE("main")
 {
-    REQUIRE(4 == CalcIntersection(8, GetInput("#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2")));
-    std::cout << CalcIntersection(1024, GetInput()) << std::endl;
+    auto test = CalcIntersection(8, GetInput("#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2"));
+    REQUIRE(4 == test.first);
+    REQUIRE(3 == test.second);
+
+    auto res = CalcIntersection(1024, GetInput());
+    std::cout << res.first << std::endl;
+    std::cout << res.second << std::endl;
 }
