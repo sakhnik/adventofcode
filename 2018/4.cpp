@@ -76,6 +76,8 @@ StatsT GetInput(std::istream &&is)
 
     pushGuard();
 
+    std::sort(begin(stats), end(stats), [](const auto &a, const auto b) { return a.id < b.id; });
+
     return stats;
 }
 
@@ -110,6 +112,37 @@ int GuessTheHour(const StatsT &stats, int id)
     return it - mins.begin();
 }
 
+int Strategy2(const StatsT &stats)
+{
+    // Accumulate all the shifts of the guards
+    std::unordered_map<int, Guard> freqs;
+    for (const auto &s : stats)
+    {
+        auto &f = freqs[s.id];
+        f.id = s.id;
+        f.hours_asleep += s.hours_asleep;
+        for (size_t i = 0; i < size(f.activity); ++i)
+        {
+            f.activity[i] += s.activity[i];
+        }
+    }
+
+    // Maximum frequencies for every elf: id -> (hour, freq)
+    std::unordered_map<int, std::pair<int, int>> maxFreqs;
+    for (const auto &f : freqs)
+    {
+        const auto &activity = f.second.activity;
+        auto it = std::max_element(begin(activity), end(activity));
+        maxFreqs[f.first] = {it - begin(activity), *it};
+    }
+
+    auto it = std::max_element(begin(maxFreqs), end(maxFreqs),
+                               [](const auto &a, const auto &b) {
+                                    return a.second.second < b.second.second;
+                               });
+    return it->first * it->second.first;
+}
+
 TEST_CASE("main")
 {
     const auto TEST_INPUT = R"([1518-11-01 00:00] Guard #10 begins shift
@@ -136,6 +169,12 @@ TEST_CASE("main")
     REQUIRE(24 == GuessTheHour(test_stats, 10));
 
     auto stats = GetInput(std::ifstream(INPUT));
+    //Print(stats);
+
     auto champ = FindTheChampion(stats);
     std::cout << champ * GuessTheHour(stats, champ) << std::endl;
+
+    REQUIRE(4455 == Strategy2(test_stats));
+    std::cout << Strategy2(stats) << std::endl;
+
 }
