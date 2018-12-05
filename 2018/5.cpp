@@ -43,6 +43,25 @@ std::string Reduce(const std::string &s)
     return std::string(begin(poly), end(poly));
 }
 
+int Search(const std::string &s)
+{
+    int min_size = std::numeric_limits<int>::max();
+    for (char c = 'A'; c <= 'Z'; ++c)
+    {
+        std::string test;
+        std::copy_if(begin(s), end(s), std::back_inserter(test),
+                     [&](char a) { return std::toupper(a) != c; });
+        // Note: there is no need to get the reduced polymer,
+        // we could just calculate its length without copying.
+        auto reduced = Reduce(test);
+        if (size(reduced) < min_size)
+        {
+            min_size = size(reduced);
+        }
+    }
+    return min_size;
+}
+
 TEST_CASE("main")
 {
     REQUIRE("" == Reduce("aA"));
@@ -55,4 +74,7 @@ TEST_CASE("main")
     getline(std::ifstream(INPUT), input);
 
     std::cout << Reduce(input).size() << std::endl;
+
+    REQUIRE(4 == Search("dabAcCaCBAcCcaDA"));
+    std::cout << Search(input) << std::endl;
 }
