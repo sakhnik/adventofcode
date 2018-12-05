@@ -1,9 +1,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
-#include <list>
 #include <fstream>
-
-using PolymerT = std::list<char>;
 
 std::string GetInput(std::istream &&is)
 {
@@ -14,33 +11,29 @@ std::string GetInput(std::istream &&is)
 
 std::string Reduce(const std::string &s)
 {
-    PolymerT poly(begin(s), end(s));
+    std::string reduced;
 
-    auto it = begin(poly);
-    while (it != end(poly))
+    for (auto ch : s)
     {
-        // Consider a pair of units.
-        auto it2 = it++;
-        if (it == end(poly))
+        if (reduced.empty())
         {
-            break;
+            // The first unit is always sticked (maybe, temporarily).
+            reduced.push_back(ch);
+            continue;
         }
 
-        // Check whether they can be reduced.
-        if (std::abs(*it - *it2) == 'a' - 'A')
+        // Check whether a pair of units can be reduced.
+        if (std::abs(ch - reduced.back()) == 'a' - 'A')
         {
-            poly.erase(it);
-            it = poly.erase(it2);
-            // Make sure we check whether the preceding one could be reduced too.
-            if (it != begin(poly))
-            {
-                --it;
-            }
+            reduced.pop_back();
+            continue;
         }
 
+        // If can't be reduced, stick with it.
+        reduced.push_back(ch);
     }
 
-    return std::string(begin(poly), end(poly));
+    return reduced;
 }
 
 int Search(const std::string &s)
@@ -51,8 +44,6 @@ int Search(const std::string &s)
         std::string test;
         std::copy_if(begin(s), end(s), std::back_inserter(test),
                      [&](char a) { return std::toupper(a) != c; });
-        // Note: there is no need to get the reduced polymer,
-        // we could just calculate its length without copying.
         auto reduced = Reduce(test);
         if (size(reduced) < min_size)
         {
