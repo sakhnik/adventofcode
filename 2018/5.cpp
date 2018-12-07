@@ -1,6 +1,7 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <fstream>
+#include <algorithm>
+#include <iostream>
 
 std::string GetInput(std::istream &&is)
 {
@@ -53,7 +54,7 @@ int Search(const std::string &s)
     return min_size;
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
     REQUIRE("" == Reduce("aA"));
     REQUIRE("" == Reduce("abBA"));

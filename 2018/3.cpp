@@ -1,8 +1,12 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <vector>
 #include <fstream>
+#include <sstream>
+#include <algorithm>
+#include <iostream>
 
+
+namespace {
 
 struct Point
 {
@@ -90,7 +94,9 @@ std::pair<int,int> CalcIntersection(int length, const BoxesT &boxes)
     return {overlap, -1};
 }
 
-TEST_CASE("main")
+} //namespace;
+
+TEST_CASE(TEST_NAME)
 {
     auto test = CalcIntersection(8, GetInput("#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2"));
     REQUIRE(4 == test.first);

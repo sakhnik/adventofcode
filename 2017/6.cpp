@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
@@ -50,7 +49,7 @@ Count(T banks)
 	}
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(Count(std::array<unsigned,4>({0, 2, 7, 0})).first == 5);
 	REQUIRE(Count(std::array<unsigned,4>({0, 2, 7, 0})).second == 4);

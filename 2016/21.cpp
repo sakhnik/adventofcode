@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <sstream>
@@ -135,7 +134,7 @@ string Unscramble(istream &&is, string s)
 	return s;
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE("ebcda" == Scramble(istringstream("swap position 4 with position 0"), "abcde"));
 	REQUIRE("edcba" == Scramble(istringstream("swap letter d with letter b"), "ebcda"));

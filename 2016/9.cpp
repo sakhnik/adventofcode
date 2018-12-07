@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
@@ -88,7 +87,7 @@ size_t Version2(const string &s)
 	return Count(s.data(), s.data() + s.size());
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(Decompress("ADVENT") == "ADVENT");
 	REQUIRE(Decompress("A(1x5)BC") == "ABBBBBC");

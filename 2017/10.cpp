@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 
@@ -32,7 +31,7 @@ std::string Hash(const std::string &input)
 	return hash;
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(Count(5, {3, 4, 1, 5}) == 12);
 	REQUIRE(Hash("") == "a2582a3a0e66e6e86e3812dcb672a272");

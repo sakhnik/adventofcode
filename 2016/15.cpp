@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <cassert>
@@ -31,7 +30,7 @@ int Solve(const vector<Disk> &disks)
 	}
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(5 == Solve({{5, 4}, {2, 1}}));
 	vector<Disk> disks = {

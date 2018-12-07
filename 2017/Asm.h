@@ -6,6 +6,8 @@
 #include <iostream>
 #include <sstream>
 
+namespace Asm {
+
 struct Arg
 {
     bool is_reg = false;
@@ -35,7 +37,7 @@ struct Instr
 
 typedef std::vector<Instr> ProgramT;
 
-Arg ParseArg(std::istream &is)
+inline Arg ParseArg(std::istream &is)
 {
     Arg arg;
 
@@ -54,7 +56,7 @@ Arg ParseArg(std::istream &is)
     return arg;
 }
 
-ProgramT Parse(std::istream &is)
+inline ProgramT Parse(std::istream &is)
 {
     ProgramT program;
 
@@ -125,7 +127,9 @@ ProgramT Parse(std::istream &is)
     return program;
 }
 
-ProgramT Parse(std::istream &&is)
+inline ProgramT Parse(std::istream &&is)
 {
     return Parse(is);
 }
+
+} //namespace Asm;

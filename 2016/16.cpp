@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <cassert>
@@ -35,7 +34,7 @@ string Solve(unsigned size, const string &init)
 	return Checksum(data);
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE("100" == Checksum("110010110100"));
 	REQUIRE("100" == Generate("1", 3));

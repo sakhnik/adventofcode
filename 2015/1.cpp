@@ -1,7 +1,10 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <string>
 #include <fstream>
+#include <algorithm>
+#include <iostream>
+
+namespace {
 
 int Count(const std::string_view &s)
 {
@@ -31,7 +34,9 @@ int Position(const std::string_view &s)
     return -1;
 }
 
-TEST_CASE("main")
+} //namespace;
+
+TEST_CASE(TEST_NAME)
 {
     REQUIRE(0 == Count("(())"));
     REQUIRE(3 == Count("((("));

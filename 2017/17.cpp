@@ -1,6 +1,6 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
+#include <vector>
 
 unsigned SpinLock(unsigned step)
 {
@@ -42,7 +42,7 @@ unsigned SpinLock2(unsigned step, unsigned iterations)
 	return next_to_zero;
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(SpinLock(3) == 638);
 	REQUIRE(SpinLock2(3, 0) == 0);

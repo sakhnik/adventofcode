@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <sstream>
@@ -8,6 +7,8 @@
 #include <array>
 
 using namespace std;
+
+namespace {
 
 int Solve(istream &&is, initializer_list<int> init)
 {
@@ -104,7 +105,9 @@ int Solve(istream &&is, initializer_list<int> init)
 	return regs[0];
 }
 
-TEST_CASE("main")
+} //namespace;
+
+TEST_CASE(TEST_NAME)
 {
 	const char *const test1 =
 		"cpy 41 a\n"

@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <bitset>
@@ -79,7 +78,7 @@ int Solve(int start_x, int start_y, int target_x, int target_y, int number)
 	return -1;
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(11 == Solve(1, 1, 7, 4, 10));
 

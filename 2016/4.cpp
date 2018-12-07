@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
@@ -7,6 +6,8 @@
 #include <cassert>
 
 using namespace std;
+
+namespace {
 
 // Return 0 if not real
 int CheckIsReal(const std::string &room)
@@ -108,7 +109,9 @@ int Solve2(istream &&is)
 	return 0;
 }
 
-TEST_CASE("main")
+} //namespace;
+
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(123 == CheckIsReal("aaaaa-bbb-z-y-x-123[abxyz]"));
 	REQUIRE(987 == CheckIsReal("a-b-c-d-e-f-g-h-987[abcde]"));

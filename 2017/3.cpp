@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <map>
 #include <iostream>
@@ -92,7 +91,7 @@ private:
 	}
 };
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(Find(NumberIs{2}) == 1);
 	REQUIRE(Find(NumberIs{3}) == 2);

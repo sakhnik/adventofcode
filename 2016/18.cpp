@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
@@ -51,7 +50,7 @@ int Solve(unsigned rows, string row)
 	return safe_cells;
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(38 == Solve(10, ".^^.^.^^^^"));
 

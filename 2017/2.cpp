@@ -1,7 +1,10 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <vector>
+
+namespace {
 
 unsigned Checksum(const std::string &input)
 {
@@ -64,7 +67,9 @@ unsigned Checksum2(const std::string &input)
 	return cs;
 }
 
-TEST_CASE("main")
+} //namespace;
+
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(Checksum("5 1 9 5\n7 5 3\n2 4 6 8") == 18);
 	REQUIRE(Checksum2("5 9 2 8\n9 4 7 3\n3 8 6 5") == 9);

@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
@@ -10,6 +9,8 @@
 
 using namespace std;
 using boost::lexical_cast;
+
+namespace {
 
 struct Dest
 {
@@ -197,7 +198,9 @@ int Solve2(FactoryT &factory)
 	return outs[0] * outs[1] * outs[2];
 }
 
-TEST_CASE("main")
+} //namespace;
+
+TEST_CASE(TEST_NAME)
 {
 	const char *const test =
 R"(value 5 goes to bot 2

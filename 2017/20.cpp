@@ -1,8 +1,10 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <vector>
+
+namespace {
 
 struct Vec
 {
@@ -102,11 +104,6 @@ bool StrictOrderByPosition(const Part &p1, const Part &p2)
     return StrictOrder(p1.p, p2.p);
 }
 
-bool SamePosition(const Part &p1, const Part &p2)
-{
-    return p1.p == p2.p;
-}
-
 unsigned SimulateCollisions(SwarmT swarm)
 {
     SwarmT aux;
@@ -135,11 +132,9 @@ unsigned SimulateCollisions(SwarmT swarm)
     return swarm.size();
 }
 
-TEST_CASE("1")
-{
-}
+} //namespace;
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
     std::ifstream ifs(INPUT);
     auto swarm = Parse(ifs);

@@ -1,7 +1,10 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <fstream>
 #include <numeric>
+#include <array>
+#include <vector>
+#include <algorithm>
+#include <iostream>
 
 using BoxT = std::array<int, 3>;
 using BoxesT = std::vector<BoxT>;
@@ -41,7 +44,7 @@ int Accumulate(const BoxesT &boxes, Func func)
                            [func](int a, const auto &b) { return a + func(b); });
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
     REQUIRE(58 == CalcArea({2,3,4}));
     REQUIRE(43 == CalcArea({1,1,10}));

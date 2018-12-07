@@ -1,9 +1,9 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <unordered_map>
 #include <iostream>
 #include <algorithm>
 #include <fstream>
+#include <sstream>
 
 struct Result
 {
@@ -82,7 +82,7 @@ Result Calculate(std::istream &&is)
     return Calculate(is);
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
     auto test = Calculate(std::istringstream(R"(b inc 5 if a > 1
 a inc 1 if b < 5

@@ -1,8 +1,12 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <sstream>
 #include <unordered_map>
 #include <fstream>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+namespace {
 
 struct Dep
 {
@@ -179,7 +183,9 @@ int Simulate(int concurrency, int time_add, const DepsT &deps)
     return time;
 }
 
-TEST_CASE("main")
+} //namespace;
+
+TEST_CASE(TEST_NAME)
 {
     const auto TEST = R"(Step C must be finished before step A can begin.
 Step C must be finished before step F can begin.

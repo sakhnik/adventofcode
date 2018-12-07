@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <vector>
@@ -59,7 +58,7 @@ int Solve2(int count)
 	return circle.front();
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(3 == Solve(5));
 	cout << Solve(3004953) << endl;

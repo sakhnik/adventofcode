@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <openssl/md5.h>
@@ -156,7 +155,7 @@ int Solve2(string prefix)
 	return SearchMax(1, 1, 0, prefix);
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE((UP | DOWN | LEFT) == GetDoors("hijkl"));
 	REQUIRE((UP | LEFT | RIGHT) == GetDoors("hijklD"));

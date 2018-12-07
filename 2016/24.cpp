@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <vector>
@@ -11,6 +10,8 @@
 #include <cassert>
 
 using namespace std;
+
+namespace {
 
 struct Poi
 {
@@ -165,7 +166,9 @@ int Solve2(istream &&is)
 	return min_distance;
 }
 
-TEST_CASE("main")
+} //namespace;
+
+TEST_CASE(TEST_NAME)
 {
 	const char *test_maze =
 R"(###########

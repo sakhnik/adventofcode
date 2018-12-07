@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <unordered_set>
@@ -68,7 +67,7 @@ TEST_CASE("1")
     REQUIRE(m.GetChecksum() == 3);
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
     State desc[] = {
 

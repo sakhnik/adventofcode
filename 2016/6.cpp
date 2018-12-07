@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <sstream>
@@ -37,7 +36,7 @@ string Solve(istream &&is, bool use_max)
 	return ret;
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	const char *const test_input =
 		R"(eedadn

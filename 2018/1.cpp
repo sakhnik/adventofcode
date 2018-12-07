@@ -1,10 +1,13 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
 #include <unordered_set>
 #include <iterator>
 #include <numeric>
+#include <vector>
+#include <sstream>
+
+namespace {
 
 using TuneT = std::vector<int>;
 
@@ -45,7 +48,9 @@ int Twice(const TuneT &tune)
     }
 }
 
-TEST_CASE("main")
+} //namespace;
+
+TEST_CASE(TEST_NAME)
 {
     REQUIRE(Sum(GetSample("+1 -2 +3 +1")) == 3);
     REQUIRE(Sum(GetSample("+1 +1 +1")) == 3);

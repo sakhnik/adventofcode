@@ -1,7 +1,8 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <sstream>
 
 typedef std::pair<unsigned, unsigned> ComponentT;
 typedef std::vector<ComponentT> InventoryT;
@@ -85,7 +86,7 @@ TEST_CASE("1")
     REQUIRE(result.max_longest == 19);
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
     std::ifstream ifs(INPUT);
     auto inventory = Parse(ifs);

@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
@@ -86,7 +85,7 @@ private:
 	}
 };
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	Screen test{7, 3};
 	REQUIRE(test.Dump() == ".......\n.......\n.......\n");

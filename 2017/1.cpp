@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
@@ -16,7 +15,7 @@ unsigned Sum(std::string_view s, unsigned dist)
 	return sum;
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(Sum("1122", 1) == 3);
 	REQUIRE(Sum("1111", 1) == 4);

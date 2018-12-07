@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <openssl/md5.h>
@@ -113,7 +112,7 @@ int Solve(const char *salt, int hash_count)
 	}
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(22728 == Solve("abc", 1));
 	cout << Solve("cuanljph", 1) << endl;

@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 
@@ -42,7 +41,7 @@ unsigned Count2(uint64_t a, uint64_t b)
 	return judge;
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(Count(65, 8921) == 588);
 	REQUIRE(Count2(65, 8921) == 309);

@@ -1,8 +1,10 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <regex>
 #include <unordered_map>
 #include <fstream>
+#include <iostream>
+
+namespace {
 
 struct Guard
 {
@@ -12,18 +14,18 @@ struct Guard
 };
 using StatsT = std::vector<Guard>;
 
-void Print(const StatsT &stats)
-{
-    for (const auto &s : stats)
-    {
-        printf("%4d  %2d  ", s.id, s.hours_asleep);
-        for (auto c : s.activity)
-        {
-            printf("%c", c ? '#' : '.');
-        }
-        printf("\n");
-    }
-}
+//void Print(const StatsT &stats)
+//{
+//    for (const auto &s : stats)
+//    {
+//        printf("%4d  %2d  ", s.id, s.hours_asleep);
+//        for (auto c : s.activity)
+//        {
+//            printf("%c", c ? '#' : '.');
+//        }
+//        printf("\n");
+//    }
+//}
 
 StatsT GetInput(std::istream &&is)
 {
@@ -143,7 +145,9 @@ int Strategy2(const StatsT &stats)
     return it->first * it->second.first;
 }
 
-TEST_CASE("main")
+} //namespace
+
+TEST_CASE(TEST_NAME)
 {
     const auto TEST_INPUT = R"([1518-11-01 00:00] Guard #10 begins shift
 [1518-11-01 00:05] falls asleep

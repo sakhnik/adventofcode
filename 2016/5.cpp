@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <limits>
@@ -65,7 +64,7 @@ string Solve2(const char *prefix)
 	return "?";
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE("18f47a30" == Solve("abc"));
 	cout << Solve("reyedfim") << endl;

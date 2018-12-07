@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
@@ -8,6 +7,8 @@
 #include <boost/icl/interval_set.hpp>
 
 using namespace std;
+
+namespace {
 
 template <typename T>
 void ReadBlacklist(istream &is, T &blacklist)
@@ -54,7 +55,9 @@ int Solve2(istream &&is, uint32_t max)
 	return sum;
 }
 
-TEST_CASE("main")
+} //namespace;
+
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(3 == Solve(istringstream("5-8\n0-2\n4-7")));
 	cout << Solve(ifstream(INPUT)) << endl;

@@ -29,7 +29,7 @@ public:
 	}
 };
 
-std::vector<uint8_t> KnotHash(const std::string &input)
+inline std::vector<uint8_t> KnotHash(const std::string &input)
 {
 	std::vector<unsigned> lengths;
 	for (char ch : input)

@@ -1,7 +1,8 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <sstream>
 
 typedef std::vector<std::string> RouteT;
 
@@ -97,7 +98,7 @@ TEST_CASE("test")
     REQUIRE(result.steps == 38);
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
     auto route = Parse(std::ifstream(INPUT));
     auto result = Trace(route);

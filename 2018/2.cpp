@@ -1,9 +1,10 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <vector>
 #include <string>
 #include <fstream>
 #include <unordered_map>
+#include <algorithm>
+#include <iostream>
 
 using BoxesT = std::vector<std::string>;
 
@@ -80,7 +81,7 @@ std::string FindCorrect(const BoxesT &boxes)
     return "";
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
     auto test_cs = Checksum({"abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab"});
     REQUIRE(12 == test_cs);

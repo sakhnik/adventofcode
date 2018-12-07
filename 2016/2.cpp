@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <sstream>
@@ -92,7 +91,7 @@ string Solve2(istream &&is)
 	return code;
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE("1985" == Solve(istringstream("UUL\nRRDDD\nLURDL\nUUUUD")));
 	cout << Solve(ifstream(INPUT)) << endl;

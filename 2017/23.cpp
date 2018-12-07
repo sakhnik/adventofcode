@@ -1,9 +1,13 @@
 #include "Asm.h"
 
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
+#include <cmath>
+
+namespace {
+
+using namespace Asm;
 
 unsigned CountMuls(const ProgramT &program)
 {
@@ -50,7 +54,9 @@ unsigned CountMuls(const ProgramT &program)
     return count;
 }
 
-TEST_CASE("main")
+} //namespace;
+
+TEST_CASE(TEST_NAME)
 {
     std::ifstream ifs(INPUT);
     auto program = Parse(ifs);

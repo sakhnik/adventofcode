@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <sstream>
@@ -9,6 +8,8 @@
 #include <functional>
 
 using namespace std;
+
+namespace {
 
 struct Op
 {
@@ -166,7 +167,9 @@ int Solve(istream &&is)
 	return -1;
 }
 
-TEST_CASE("main")
+} //namespace;
+
+TEST_CASE(TEST_NAME)
 {
 	cout << Solve(ifstream(INPUT)) << endl;
 }

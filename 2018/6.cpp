@@ -1,8 +1,12 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <sstream>
 #include <fstream>
 #include <numeric>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+namespace {
 
 struct Point
 {
@@ -173,7 +177,9 @@ int FindAreaWithin(const PointsT &points, int distance)
     return count;
 }
 
-TEST_CASE("main")
+} //namespace;
+
+TEST_CASE(TEST_NAME)
 {
     auto test = GetInput(std::istringstream("1, 1\n1, 6\n8, 3\n3, 4\n5, 5\n8, 9"));
     REQUIRE(6 == test.size());

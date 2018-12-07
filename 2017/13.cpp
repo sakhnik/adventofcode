@@ -1,7 +1,8 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <sstream>
 
 typedef std::vector<unsigned> ConfigT;
 
@@ -59,7 +60,7 @@ bool IsCaught(unsigned delay, const ConfigT &config)
 	return false;
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	auto test_config = ReadConfig(std::istringstream{"0: 3\n1: 2\n4: 4\n6: 4"});
 	REQUIRE(CalcSeverity(0, test_config) == 24);

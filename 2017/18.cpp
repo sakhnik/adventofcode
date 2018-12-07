@@ -1,6 +1,5 @@
 #include "Asm.h"
 
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <unordered_map>
@@ -11,6 +10,9 @@
 #include <thread>
 #include <atomic>
 
+namespace {
+
+using namespace Asm;
 
 class MessageQueue
 {
@@ -190,6 +192,7 @@ int64_t Task2(const ProgramT &program)
     return q1.GetSends();
 }
 
+} //namespace;
 
 TEST_CASE("1")
 {
@@ -220,9 +223,9 @@ rcv d)";
     REQUIRE(Task2(test) == 3);
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
     auto program = Parse(std::ifstream(INPUT));
     std::cout << Task1(program) << std::endl;
-    std::cout << Task2(program) << std::endl;
+    //std::cout << Task2(program) << std::endl;
 }

@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
@@ -50,7 +49,7 @@ Result Count(const char *s)
 	}
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(Count("{}") == Result(1, 0));
 	REQUIRE(Count("{{{}}}") == Result(6, 0));

@@ -1,9 +1,13 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
 #include <algorithm>
+#include <set>
+#include <sstream>
+#include <vector>
+
+namespace {
 
 typedef std::unordered_map<std::string, std::string> PatternsT;
 
@@ -147,6 +151,8 @@ unsigned Solve(unsigned iterations, const PatternsT &patterns)
     return count;
 }
 
+} //namespace;
+
 TEST_CASE("GetVariations2")
 {
     auto v = GetVariations("####");
@@ -180,7 +186,7 @@ TEST_CASE("1")
     Print(grid);
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
     std::ifstream ifs(INPUT);
     auto patterns = Parse(ifs);

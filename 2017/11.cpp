@@ -1,7 +1,8 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
+
+namespace {
 
 std::pair<unsigned, unsigned> Count(const char *path)
 {
@@ -67,7 +68,9 @@ std::pair<unsigned, unsigned> Count(const char *path)
 	return { calc_dist(), max_dist };
 }
 
-TEST_CASE("main")
+} //namespace;
+
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(Count("ne,ne,ne,").first == 3);
 	REQUIRE(Count("ne,ne,sw,sw,").first == 0);

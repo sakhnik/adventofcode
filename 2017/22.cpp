@@ -1,9 +1,10 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <unordered_map>
 #include <fstream>
 #include <boost/functional/hash.hpp>
+
+namespace {
 
 typedef std::pair<int, int> CoordT;
 
@@ -165,6 +166,8 @@ unsigned Count2(unsigned iterations, GridT grid)
     return count;
 }
 
+} //namespace;
+
 TEST_CASE("1")
 {
     std::istringstream iss("..#\n#..\n...");
@@ -187,7 +190,7 @@ TEST_CASE("2")
     CHECK(Count2(10000000, grid) == 2511944);
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
     std::ifstream ifs(INPUT);
     auto grid = Parse(ifs);

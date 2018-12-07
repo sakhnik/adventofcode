@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <bitset>
@@ -82,7 +81,7 @@ unsigned CountRegions(const std::string &key)
     return count;
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
     REQUIRE(HexToBin(0xa0) == "10100000");
 

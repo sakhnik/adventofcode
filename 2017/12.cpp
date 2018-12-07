@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
@@ -63,7 +62,7 @@ unsigned Count(const GraphT &graph)
     return count;
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
     auto test_graph = ReadGraph(std::istringstream(R"(0 <-> 2
 1 <-> 1

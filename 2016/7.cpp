@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
@@ -115,7 +114,7 @@ int Solve(istream &&is, FuncT func)
 	return count;
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	REQUIRE(IsTls("abba[mnop]qrst"));
 	REQUIRE(!IsTls("abcd[bddb]xyyx"));

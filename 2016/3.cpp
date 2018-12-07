@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
@@ -64,7 +63,7 @@ int Solve2(istream &&is)
 	return count;
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	cout << Solve(ifstream(INPUT)) << endl;
 	cout << Solve2(ifstream(INPUT)) << endl;

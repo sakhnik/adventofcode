@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
@@ -8,6 +7,8 @@
 #include <queue>
 
 using namespace std;
+
+namespace {
 
 void Solve(istream &&is)
 {
@@ -123,7 +124,9 @@ void Solve(istream &&is)
 	cout << distance << endl;
 }
 
-TEST_CASE("main")
+} //namespace;
+
+TEST_CASE(TEST_NAME)
 {
 	Solve(ifstream(INPUT));
 }

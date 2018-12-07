@@ -1,10 +1,13 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <cassert>
 #include <fstream>
 #include <algorithm>
 #include <numeric>
+#include <vector>
+#include <sstream>
+
+namespace {
 
 struct Instr
 {
@@ -90,7 +93,9 @@ std::string& Dance(std::string &row, const ProgramT &program)
     return row;
 }
 
-TEST_CASE("main")
+} //namespace;
+
+TEST_CASE(TEST_NAME)
 {
     auto test_program = Parse(std::istringstream("s1,x3/4,pe/b"));
     std::string test_row = "abcde";

@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <sstream>
@@ -99,7 +98,7 @@ int Solve(istream &&is, initializer_list<int> init)
 	return regs[0];
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	const char *const test =
 		"cpy 41 a\n"

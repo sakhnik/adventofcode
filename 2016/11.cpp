@@ -1,4 +1,3 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <iostream>
 #include <sstream>
@@ -221,7 +220,7 @@ int Solve(const vector<int> &configuration,
 	return -1;
 }
 
-TEST_CASE("main")
+TEST_CASE(TEST_NAME)
 {
 	// The first floor contains a hydrogen-compatible microchip and a lithium-compatible microchip.
 	// The second floor contains a hydrogen generator.
