@@ -116,17 +116,11 @@ private:
 
     void _Sort()
     {
-        // Resort the steps not yet reported using their actual dependencies.
-        std::sort(begin(_todo) + _reported, end(_todo),
-                  [&](char a, char b) {
-                    const auto &sa = _steps_map[a];
-                    const auto &sb = _steps_map[b];
-                    if (sa.deps_count < sb.deps_count)
-                        return true;
-                    if (sa.deps_count > sb.deps_count)
-                        return false;
-                    return a < b;
-                  });
+        // Partition the steps not yet reported using their actual dependencies.
+        auto it = std::partition(begin(_todo) + _reported, end(_todo),
+                                 [&](char a) { return _steps_map[a].deps_count == 0; });
+        // Sort then the ready steps by their name.
+        std::sort(begin(_todo) + _reported, it);
     }
 };
 
