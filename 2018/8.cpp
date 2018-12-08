@@ -41,6 +41,47 @@ int SumMeta(const LicenseT &lic)
     return sum;
 }
 
+template <typename IterT>
+IterT SumValues(IterT first, IterT last, int &sum)
+{
+    auto children = *first++;
+    auto meta = *first++;
+
+    std::vector<int> values(children);
+    for (int c = 0; c < children; ++c)
+    {
+        first = SumValues(first, last, values[c]);
+    }
+
+    if (!children)
+    {
+        for (int m = 0; m < meta; ++m)
+        {
+            sum += *first++;
+        }
+    }
+    else
+    {
+        for (int m = 0; m < meta; ++m)
+        {
+            auto idx = *first++ - 1;
+            if (idx >= 0 && idx < children)
+            {
+                sum += values[idx];
+            }
+        }
+    }
+
+    return first;
+}
+
+int SumValues(const LicenseT &lic)
+{
+    int ret{};
+    SumValues(begin(lic), end(lic), ret);
+    return ret;
+}
+
 } //namespace;
 
 TEST_CASE(TEST_NAME)
@@ -48,4 +89,7 @@ TEST_CASE(TEST_NAME)
     REQUIRE(138 == SumMeta({2, 3, 0, 3, 10, 11, 12, 1, 1, 0, 1, 99, 2, 1, 1, 2}));
     auto license = ReadLicense(std::ifstream{INPUT});
     MESSAGE(SumMeta(license));
+
+    REQUIRE(66 == SumValues({2, 3, 0, 3, 10, 11, 12, 1, 1, 0, 1, 99, 2, 1, 1, 2}));
+    MESSAGE(SumValues(license));
 }
