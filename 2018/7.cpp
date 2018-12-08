@@ -31,33 +31,18 @@ DepsT GetInput(std::istream &&is)
     return deps;
 }
 
-struct Step
-{
-    int deps_count = 0;
-    std::vector<char> dependents;
-};
-
-using StepsMapT = std::unordered_map<char, Step>;
-
-StepsMapT GetStepsMap(const DepsT &deps)
-{
-    StepsMapT steps_map;
-    for (auto d : deps)
-    {
-        auto &s = steps_map[d.step];
-        s.dependents.push_back(d.before);
-        ++steps_map[d.before].deps_count;
-    }
-    return steps_map;
-}
-
 class StepGenerator
 {
 public:
     StepGenerator(const DepsT &deps)
-        : _steps_map{GetStepsMap(deps)}
+        : _deps(deps)
     {
-        for (const auto &kv : _steps_map)
+        for (auto d : deps)
+        {
+            _order[d.step];  // Make sure it's created
+            ++_order[d.before];
+        }
+        for (const auto &kv : _order)
         {
             _todo.push_back(kv.first);
         }
@@ -74,8 +59,7 @@ public:
         }
 
         auto s = _todo[_reported];
-        auto &step = _steps_map[s];
-        if (!step.deps_count)
+        if (!_order[s])
         {
             // The step can be executed now, because all its dependencies are now
             // satisfied.
@@ -97,9 +81,12 @@ public:
         REQUIRE(_done <= _reported);
 
         // Update the dependent steps and resort.
-        for (auto d : _steps_map[s].dependents)
+        for (auto d : _deps)
         {
-            --_steps_map[d].deps_count;
+            if (d.step == s)
+            {
+                --_order[d.before];
+            }
         }
         _Sort();
     }
@@ -110,7 +97,8 @@ public:
     }
 
 private:
-    StepsMapT _steps_map;  // Mutable information about the steps to do
+    const DepsT &_deps;
+    std::unordered_map<char, int> _order;  // Dependency count
     std::string _todo;     // Ordered steps
     size_t _done;          // The steps to the left are all done
     size_t _reported;      // The steps to the left are all reported
@@ -119,7 +107,7 @@ private:
     {
         // Partition the steps not yet reported using their actual dependencies.
         auto it = std::partition(begin(_todo) + _reported, end(_todo),
-                                 [&](char a) { return _steps_map[a].deps_count == 0; });
+                                 [&](char a) { return _order[a] == 0; });
         // Sort then the ready steps by their name.
         std::sort(begin(_todo) + _reported, it);
     }
