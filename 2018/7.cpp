@@ -33,7 +33,6 @@ DepsT GetInput(std::istream &&is)
 
 struct Step
 {
-    char name;
     int deps_count = 0;
     std::vector<char> dependents;
 };
@@ -46,9 +45,7 @@ StepsMapT GetStepsMap(const DepsT &deps)
     for (auto d : deps)
     {
         auto &s = steps_map[d.step];
-        s.name = d.step;
         s.dependents.push_back(d.before);
-        steps_map[d.before].name = d.before;
         ++steps_map[d.before].deps_count;
     }
     return steps_map;
