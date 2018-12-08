@@ -101,6 +101,6 @@ TEST_CASE(TEST_NAME)
 	REQUIRE(Find(NumberIs{23}) == 2);
 	REQUIRE(Find(NumberIs{1024}) == 31);
 
-	std::cout << Find(NumberIs{289326}) << std::endl;
-	std::cout << Find(CheckSumGreatherThan{289326}) << std::endl;
+	MESSAGE(Find(NumberIs{289326}));
+	MESSAGE(Find(CheckSumGreatherThan{289326}));
 }

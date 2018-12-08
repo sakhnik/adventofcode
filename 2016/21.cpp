@@ -6,24 +6,24 @@
 #include <algorithm>
 #include <vector>
 
-using namespace std;
+namespace {
 
-void Swap(string &s, int X, int Y)
+void Swap(std::string &s, int X, int Y)
 {
-	swap(s[X], s[Y]);
+	std::swap(s[X], s[Y]);
 }
 
-void Swap(string &s, char A, char B)
+void Swap(std::string &s, char A, char B)
 {
-	swap(s[s.find(A)], s[s.find(B)]);
+	std::swap(s[s.find(A)], s[s.find(B)]);
 }
 
-void RoL(string &s, int X)
+void RoL(std::string &s, int X)
 {
-	rotate(begin(s), begin(s) + X % s.size(), end(s));
+	std::rotate(begin(s), begin(s) + X % s.size(), end(s));
 }
 
-void RoR(string &s, int X)
+void RoR(std::string &s, int X)
 {
 	int idx = ((int)s.size() - X) % (int)s.size();
 	if (idx < 0)
@@ -31,7 +31,7 @@ void RoR(string &s, int X)
 	rotate(begin(s), begin(s) + idx, end(s));
 }
 
-void RoB(string &s, char A)
+void RoB(std::string &s, char A)
 {
 	int idx = s.find(A);
 	if (idx >= 4)
@@ -45,12 +45,12 @@ void RoB(string &s, char A)
 	rotate(begin(s), begin(s) + idx, end(s));
 }
 
-void Reverse(string &s, int X, int Y)
+void Reverse(std::string &s, int X, int Y)
 {
 	reverse(begin(s) + X, begin(s) + Y + 1);
 }
 
-void Move(string &s, int X, int Y)
+void Move(std::string &s, int X, int Y)
 {
 	char c = s[X];
 	s.erase(s.begin() + X);
@@ -60,9 +60,9 @@ void Move(string &s, int X, int Y)
 		s.insert(begin(s) + Y, c);
 }
 
-string Scramble(istream &&is, string s)
+std::string Scramble(std::istream &&is, std::string s)
 {
-	string line;
+	std::string line;
 	while (getline(is, line))
 	{
 		int X{}, Y{};
@@ -86,11 +86,11 @@ string Scramble(istream &&is, string s)
 	return s;
 }
 
-string Unscramble(istream &&is, string s)
+std::string Unscramble(std::istream &&is, std::string s)
 {
-	vector<string> lines;
+	std::vector<std::string> lines;
 
-	string line;
+	std::string line;
 	while (getline(is, line))
 	{
 		lines.push_back(line);
@@ -115,7 +115,7 @@ string Unscramble(istream &&is, string s)
 			// Brute force initial position
 			for (int i = 0, n = s.size(); i != n; ++i)
 			{
-				string s1(s);
+				std::string s1(s);
 				RoL(s1, i);
 				RoB(s1, A);
 				if (s1 == s)
@@ -134,29 +134,31 @@ string Unscramble(istream &&is, string s)
 	return s;
 }
 
+} //namespace;
+
 TEST_CASE(TEST_NAME)
 {
-	REQUIRE("ebcda" == Scramble(istringstream("swap position 4 with position 0"), "abcde"));
-	REQUIRE("edcba" == Scramble(istringstream("swap letter d with letter b"), "ebcda"));
-	REQUIRE("dabc" == Scramble(istringstream("rotate right 1 steps"), "abcd"));
-	REQUIRE("bcdea" == Scramble(istringstream("rotate left 1 steps"), "abcde"));
-	REQUIRE("ecabd" == Scramble(istringstream("rotate based on position of letter b"), "abdec"));
-	REQUIRE("decab" == Scramble(istringstream("rotate based on position of letter d"), "ecabd"));
-	REQUIRE("abcde" == Scramble(istringstream("reverse positions 0 through 4"), "edcba"));
-	REQUIRE("bdeac" == Scramble(istringstream("move position 1 to position 4"), "bcdea"));
-	REQUIRE("abdec" == Scramble(istringstream("move position 3 to position 0"), "bdeac"));
+	REQUIRE("ebcda" == Scramble(std::istringstream{"swap position 4 with position 0"}, "abcde"));
+	REQUIRE("edcba" == Scramble(std::istringstream{"swap letter d with letter b"}, "ebcda"));
+	REQUIRE("dabc" == Scramble(std::istringstream{"rotate right 1 steps"}, "abcd"));
+	REQUIRE("bcdea" == Scramble(std::istringstream{"rotate left 1 steps"}, "abcde"));
+	REQUIRE("ecabd" == Scramble(std::istringstream{"rotate based on position of letter b"}, "abdec"));
+	REQUIRE("decab" == Scramble(std::istringstream{"rotate based on position of letter d"}, "ecabd"));
+	REQUIRE("abcde" == Scramble(std::istringstream{"reverse positions 0 through 4"}, "edcba"));
+	REQUIRE("bdeac" == Scramble(std::istringstream{"move position 1 to position 4"}, "bcdea"));
+	REQUIRE("abdec" == Scramble(std::istringstream{"move position 3 to position 0"}, "bdeac"));
 
-	cout << Scramble(ifstream(INPUT), "abcdefgh") << endl;
+	MESSAGE(Scramble(std::ifstream{INPUT}, "abcdefgh"));
 
-	REQUIRE("abcde" == Unscramble(istringstream("swap position 4 with position 0"), "ebcda"));
-	REQUIRE("ebcda" == Unscramble(istringstream("swap letter d with letter b"), "edcba"));
-	REQUIRE("abcd" == Unscramble(istringstream("rotate right 1 steps"), "dabc"));
-	REQUIRE("abcde" == Unscramble(istringstream("rotate left 1 steps"), "bcdea"));
-	REQUIRE("abdec" == Unscramble(istringstream("rotate based on position of letter b"), "ecabd"));
-	REQUIRE("ecabd" == Unscramble(istringstream("rotate based on position of letter d"), "decab"));
-	REQUIRE("edcba" == Unscramble(istringstream("reverse positions 0 through 4"), "abcde"));
-	REQUIRE("bcdea" == Unscramble(istringstream("move position 1 to position 4"), "bdeac"));
-	REQUIRE("bdeac" == Unscramble(istringstream("move position 3 to position 0"), "abdec"));
+	REQUIRE("abcde" == Unscramble(std::istringstream{"swap position 4 with position 0"}, "ebcda"));
+	REQUIRE("ebcda" == Unscramble(std::istringstream{"swap letter d with letter b"}, "edcba"));
+	REQUIRE("abcd" == Unscramble(std::istringstream{"rotate right 1 steps"}, "dabc"));
+	REQUIRE("abcde" == Unscramble(std::istringstream{"rotate left 1 steps"}, "bcdea"));
+	REQUIRE("abdec" == Unscramble(std::istringstream{"rotate based on position of letter b"}, "ecabd"));
+	REQUIRE("ecabd" == Unscramble(std::istringstream{"rotate based on position of letter d"}, "decab"));
+	REQUIRE("edcba" == Unscramble(std::istringstream{"reverse positions 0 through 4"}, "abcde"));
+	REQUIRE("bcdea" == Unscramble(std::istringstream{"move position 1 to position 4"}, "bdeac"));
+	REQUIRE("bdeac" == Unscramble(std::istringstream{"move position 3 to position 0"}, "abdec"));
 
-	cout << Unscramble(ifstream(INPUT), "fbgdceah") << endl;
+	MESSAGE(Unscramble(std::ifstream{INPUT}, "fbgdceah"));
 }

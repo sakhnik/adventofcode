@@ -67,13 +67,13 @@ TEST_CASE(TEST_NAME)
 
 	std::ifstream ifs(INPUT);
 	auto config = ReadConfig(ifs);
-	std::cout << CalcSeverity(0, config) << std::endl;
+	MESSAGE(CalcSeverity(0, config));
 
 	for (int delay = 0; ; ++delay)
 	{
 		if (!IsCaught(delay, config))
 		{
-			std::cout << delay << std::endl;
+			MESSAGE(delay);
 			break;
 		}
 	}

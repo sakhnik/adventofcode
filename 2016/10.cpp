@@ -7,7 +7,6 @@
 #include <cassert>
 #include <boost/lexical_cast.hpp>
 
-using namespace std;
 using boost::lexical_cast;
 
 namespace {
@@ -20,9 +19,9 @@ struct Dest
 	} where;
 	int number;
 
-	string Dump() const
+	std::string Dump() const
 	{
-		return (where == BOT ? "b" : "o") + to_string(number);
+		return (where == BOT ? "b" : "o") + std::to_string(number);
 	}
 };
 
@@ -31,7 +30,7 @@ struct Instr
 	Dest low;
 	Dest high;
 
-	string Dump() const
+	std::string Dump() const
 	{
 		return low.Dump() + " " + high.Dump();
 	}
@@ -39,16 +38,16 @@ struct Instr
 
 struct BotInstr
 {
-	vector<int> chips;
+	std::vector<int> chips;
 	Instr instr;
 
-	string Dump() const
+	std::string Dump() const
 	{
-		string ret;
+		std::string ret;
 		const char *comma = "";
 		for (auto v : chips)
 		{
-			ret += comma + to_string(v);
+			ret += comma + std::to_string(v);
 			comma = ",";
 		}
 		ret += "\t" + instr.Dump();
@@ -56,17 +55,17 @@ struct BotInstr
 	}
 };
 
-typedef vector<BotInstr> FactoryT;
+typedef std::vector<BotInstr> FactoryT;
 
-string Dump(const FactoryT &f)
+std::string Dump(const FactoryT &f)
 {
-	string ret;
+	std::string ret;
 	for (const auto &bot : f)
 		ret += bot.Dump() + '\n';
 	return ret;
 }
 
-FactoryT Parse(istream &&is)
+FactoryT Parse(std::istream &&is)
 {
 	FactoryT factory;
 
@@ -79,13 +78,13 @@ FactoryT Parse(istream &&is)
 		return factory[bot];
 	};
 
-	const static regex initr(R"(value (\d+) goes to bot (\d+))");
-	const static regex instrr(R"(bot (\d+) gives low to (bot|output) (\d+) and high to (bot|output) (\d+))");
+	const static std::regex initr(R"(value (\d+) goes to bot (\d+))");
+	const static std::regex instrr(R"(bot (\d+) gives low to (bot|output) (\d+) and high to (bot|output) (\d+))");
 
-	string line;
+	std::string line;
 	while (getline(is, line))
 	{
-		smatch match;
+		std::smatch match;
 
 		if (regex_match(line, match, initr))
 		{
@@ -179,7 +178,7 @@ int Solve2(FactoryT &factory)
 {
 	auto nobot = [](int, const BotInstr &) { return false; };
 
-	array<int, 3> outs{ {-1, -1, -1} };
+	std::array<int, 3> outs{ {-1, -1, -1} };
 	int count = 3;
 
 	auto outfilt = [&](int out, int val)
@@ -210,7 +209,7 @@ bot 1 gives low to output 1 and high to bot 0
 bot 0 gives low to output 2 and high to output 0
 value 2 goes to bot 2)";
 
-	auto f = Parse(istringstream(test));
+	auto f = Parse(std::istringstream{test});
 
 	FactoryT fref = {
 		{ {}, {{Dest::OUTPUT, 2}, {Dest::OUTPUT, 0}} },
@@ -220,8 +219,8 @@ value 2 goes to bot 2)";
 	REQUIRE(Dump(f) == Dump(fref));
 	REQUIRE(Solve1(f, 2, 5) == 2);
 
-	auto factory = Parse(ifstream(INPUT));
-	cout << Solve1(factory, 17, 61) << endl;
+	auto factory = Parse(std::ifstream{INPUT});
+	MESSAGE(Solve1(factory, 17, 61));
 
-	cout << Solve2(factory) << endl;
+	MESSAGE(Solve2(factory));
 }

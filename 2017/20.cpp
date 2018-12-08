@@ -138,6 +138,6 @@ TEST_CASE(TEST_NAME)
 {
     std::ifstream ifs(INPUT);
     auto swarm = Parse(ifs);
-    std::cout << FindClosest(FilterLowestAcceleration(swarm)) << std::endl;
-    std::cout << SimulateCollisions(swarm) << std::endl;
+    MESSAGE(FindClosest(FilterLowestAcceleration(swarm)));
+    MESSAGE(SimulateCollisions(swarm));
 }

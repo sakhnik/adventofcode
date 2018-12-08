@@ -194,6 +194,6 @@ TEST_CASE(TEST_NAME)
 {
     std::ifstream ifs(INPUT);
     auto grid = Parse(ifs);
-    std::cout << Count(10000, grid) << std::endl;
-    std::cout << Count2(10000000, grid) << std::endl;
+    MESSAGE(Count(10000, grid));
+    MESSAGE(Count2(10000000, grid));
 }

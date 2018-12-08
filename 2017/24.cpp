@@ -44,7 +44,7 @@ void Recurse(size_t chain_length, unsigned tip, InventoryT &inventory, unsigned 
     {
         //for (size_t i = 0; i < chain_length; ++i)
         //    std::cout << " (" << inventory[i].first << "," << inventory[i].second << ")";
-        //std::cout << " -> " << accum << std::endl;
+        //MESSAGE(" -> " << accum);
         objective.max_absolute = accum;
     }
 
@@ -91,6 +91,6 @@ TEST_CASE(TEST_NAME)
     std::ifstream ifs(INPUT);
     auto inventory = Parse(ifs);
     auto result = Solve(inventory);
-    std::cout << result.max_absolute << std::endl;
-    std::cout << result.max_longest << std::endl;
+    MESSAGE(result.max_absolute);
+    MESSAGE(result.max_longest);
 }

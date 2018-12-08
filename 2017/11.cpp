@@ -83,6 +83,6 @@ TEST_CASE(TEST_NAME)
 	input.push_back(',');
 
 	auto res = Count(input.c_str());
-	std::cout << res.first << std::endl;
-	std::cout << res.second << std::endl;
+	MESSAGE(res.first);
+	MESSAGE(res.second);
 }

@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <cassert>
 
-using namespace std;
 
 namespace {
 
@@ -13,9 +12,9 @@ namespace {
 int CheckIsReal(const std::string &room)
 {
 	bool checksum_started{false};
-	string checksum;
+	std::string checksum;
 	int sector{0};
-	vector<pair<char, int>> letters;
+	std::vector<std::pair<char, int>> letters;
 
 	for (char ch : room)
 	{
@@ -26,9 +25,9 @@ int CheckIsReal(const std::string &room)
 				checksum.push_back(ch);
 			else
 			{
-				auto it = find_if(begin(letters), end(letters),
+				auto it = std::find_if(begin(letters), end(letters),
 								  [ch](auto l) { return l.first == ch; });
-				if (it == end(letters))
+				if (it == letters.end())
 					letters.emplace_back(ch, 1);
 				else
 					++it->second;
@@ -46,11 +45,11 @@ int CheckIsReal(const std::string &room)
 
 	assert(checksum.size() == 5);
 
-	sort(begin(letters), end(letters),
+	std::sort(begin(letters), end(letters),
 		 [](auto a, auto b)
 		 { return a.second > b.second || (a.second == b.second && a.first < b.first); });
 
-	if (equal(begin(checksum), end(checksum), begin(letters),
+	if (std::equal(begin(checksum), end(checksum), begin(letters),
 			  [](auto a, auto b) { return a == b.first; } ))
 	{
 		return sector;
@@ -59,11 +58,11 @@ int CheckIsReal(const std::string &room)
 	return 0;
 }
 
-int Solve(istream &&is)
+int Solve(std::istream &&is)
 {
 	int sum{0};
 
-	string room;
+	std::string room;
 	while (getline(is, room))
 	{
 		sum += CheckIsReal(room);
@@ -72,14 +71,14 @@ int Solve(istream &&is)
 	return sum;
 }
 
-string Decrypt(const string &room)
+std::string Decrypt(const std::string &room)
 {
 	auto s = room.find_first_of("0123456789");
 	auto name = room.substr(0, s - 1);
 	int sector{0};
 	sscanf(&room[s], "%d", &sector);
 
-	for_each(begin(name), end(name),
+	std::for_each(begin(name), end(name),
 			[sector](char &ch)
 			{
 				if (ch == '-')
@@ -90,11 +89,11 @@ string Decrypt(const string &room)
 	return name;
 }
 
-int Solve2(istream &&is)
+int Solve2(std::istream &&is)
 {
 	int res{0};
 
-	string room;
+	std::string room;
 	while (getline(is, room))
 	{
 		res = CheckIsReal(room);
@@ -118,9 +117,9 @@ TEST_CASE(TEST_NAME)
 	REQUIRE(404 == CheckIsReal("not-a-real-room-404[oarel]"));
 	REQUIRE(0 == CheckIsReal("totally-real-room-200[decoy]"));
 
-	cout << Solve(ifstream(INPUT)) << endl;
+	MESSAGE(Solve(std::ifstream{INPUT}));
 
 	REQUIRE("very encrypted name" == Decrypt("qzmt-zixmtkozy-ivhz-343"));
 
-	cout << Solve2(ifstream(INPUT)) << endl;
+	MESSAGE(Solve2(std::ifstream{INPUT}));
 }

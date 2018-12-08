@@ -75,8 +75,8 @@ TEST_CASE(TEST_NAME)
 
     std::ifstream ifs(INPUT);
     auto graph = ReadGraph(ifs);
-    std::cout << Count(graph) << std::endl;
+    MESSAGE(Count(graph));
 
     std::vector<int> component(num_vertices(graph));
-    std::cout << connected_components(graph, &component[0]) << std::endl;
+    MESSAGE(connected_components(graph, &component[0]));
 }

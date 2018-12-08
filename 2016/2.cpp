@@ -5,14 +5,14 @@
 #include <string>
 #include <cassert>
 
-using namespace std;
+namespace {
 
-string Solve(istream &&is)
+std::string Solve(std::istream &&is)
 {
-	string code;
+	std::string code;
 	int cur{5};
 
-	string line;
+	std::string line;
 	while (getline(is, line))
 	{
 		for (char c : line)
@@ -41,9 +41,9 @@ string Solve(istream &&is)
 	return code;
 }
 
-string Solve2(istream &&is)
+std::string Solve2(std::istream &&is)
 {
-	string code;
+	std::string code;
 
 	char layout[5][5] = {
 		{0,    0,  '1',  0,   0},
@@ -55,7 +55,7 @@ string Solve2(istream &&is)
 
 	int cur_x{0}, cur_y{2};
 
-	string line;
+	std::string line;
 	while (is >> line)
 	{
 		for (char ch : line)
@@ -91,11 +91,13 @@ string Solve2(istream &&is)
 	return code;
 }
 
+} //namespace;
+
 TEST_CASE(TEST_NAME)
 {
-	REQUIRE("1985" == Solve(istringstream("UUL\nRRDDD\nLURDL\nUUUUD")));
-	cout << Solve(ifstream(INPUT)) << endl;
+	REQUIRE("1985" == Solve(std::istringstream{"UUL\nRRDDD\nLURDL\nUUUUD"}));
+	MESSAGE(Solve(std::ifstream{INPUT}));
 
-	REQUIRE("5DB3" == Solve2(istringstream("UUL\nRRDDD\nLURDL\nUUUUD")));
-	cout << Solve2(ifstream(INPUT)) << endl;
+	REQUIRE("5DB3" == Solve2(std::istringstream{"UUL\nRRDDD\nLURDL\nUUUUD"}));
+	MESSAGE(Solve2(std::ifstream{INPUT}));
 }

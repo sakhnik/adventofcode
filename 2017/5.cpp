@@ -44,6 +44,6 @@ TEST_CASE(TEST_NAME)
 	while (ifs >> o)
 		offsets.emplace_back(o);
 
-	std::cout << CountJumps(offsets, IncreaseModifier) << std::endl;
-	std::cout << CountJumps(offsets, WeirdModifier) << std::endl;
+	MESSAGE(CountJumps(offsets, IncreaseModifier));
+	MESSAGE(CountJumps(offsets, WeirdModifier));
 }

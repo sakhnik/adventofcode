@@ -61,7 +61,7 @@ TEST_CASE(TEST_NAME)
     std::ifstream ifs(INPUT);
     auto program = Parse(ifs);
 
-    std::cout << CountMuls(program) << std::endl;
+    MESSAGE(CountMuls(program));
 
     // Disassembler: looks like counting nonprimes from 106700 +17000 step 17
     uint32_t h{0};
@@ -81,5 +81,5 @@ TEST_CASE(TEST_NAME)
         }
     }
 
-    std::cout << h << std::endl;
+    MESSAGE(h);
 }

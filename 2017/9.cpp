@@ -63,6 +63,6 @@ TEST_CASE(TEST_NAME)
 	std::ifstream ifs(INPUT);
 	std::string str((std::istreambuf_iterator<char>(ifs)),
 					std::istreambuf_iterator<char>());
-	std::cout << Count(str.c_str()).score << std::endl;
-	std::cout << Count(str.c_str()).garbage << std::endl;
+	MESSAGE(Count(str.c_str()).score);
+	MESSAGE(Count(str.c_str()).garbage);
 }

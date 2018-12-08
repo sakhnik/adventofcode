@@ -7,13 +7,13 @@
 #include <algorithm>
 #include <cassert>
 
-using namespace std;
+namespace {
 
-string Solve(istream &&is, bool use_max)
+std::string Solve(std::istream &&is, bool use_max)
 {
-	vector<unordered_map<char, int>> counters;
+	std::vector<std::unordered_map<char, int>> counters;
 
-	string line;
+	std::string line;
 	while (getline(is, line))
 	{
 		if (counters.empty())
@@ -22,7 +22,7 @@ string Solve(istream &&is, bool use_max)
 			++counters[i][line[i]];
 	}
 
-	string ret;
+	std::string ret;
 	for (const auto c : counters)
 	{
 		auto it = use_max
@@ -35,6 +35,8 @@ string Solve(istream &&is, bool use_max)
 	}
 	return ret;
 }
+
+} //namespace;
 
 TEST_CASE(TEST_NAME)
 {
@@ -55,9 +57,9 @@ vntsnd
 vrdear
 dvrsen
 enarar)";
-	REQUIRE("easter" == Solve(istringstream{test_input}, true));
-	cout << Solve(ifstream{INPUT}, true) << endl;
+	REQUIRE("easter" == Solve(std::istringstream{test_input}, true));
+	MESSAGE(Solve(std::ifstream{INPUT}, true));
 
-	REQUIRE("advent" == Solve(istringstream{test_input}, false));
-	cout << Solve(ifstream{INPUT}, false) << endl;
+	REQUIRE("advent" == Solve(std::istringstream{test_input}, false));
+	MESSAGE(Solve(std::ifstream{INPUT}, false));
 }

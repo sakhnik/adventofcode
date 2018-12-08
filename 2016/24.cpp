@@ -9,7 +9,6 @@
 #include <numeric>
 #include <cassert>
 
-using namespace std;
 
 namespace {
 
@@ -20,18 +19,18 @@ struct Poi
 	int y;
 };
 
-typedef vector<Poi> PoiT;
-typedef vector<string> MazeT;
+typedef std::vector<Poi> PoiT;
+typedef std::vector<std::string> MazeT;
 
 // Search for shortest distances from the given poi to other
-vector<int> Bfs(int num, const MazeT &maze, const PoiT &poi)
+std::vector<int> Bfs(int num, const MazeT &maze, const PoiT &poi)
 {
 	// Map of visited flags
-	vector<bool> visited(maze.size() * maze.front().size(), false);
+	std::vector<bool> visited(maze.size() * maze.front().size(), false);
 	auto idx = [&](int x, int y) { return x * maze.size() + y; };
 
 	// Vector of distances between POI
-	vector<int> dist(poi.size(), std::numeric_limits<int>::max());
+	std::vector<int> dist(poi.size(), std::numeric_limits<int>::max());
 
 	// Search queue for BFS
 	struct Cur
@@ -39,7 +38,7 @@ vector<int> Bfs(int num, const MazeT &maze, const PoiT &poi)
 		int x,y,dist;
 	};
 
-	queue<Cur> to_search;
+	std::queue<Cur> to_search;
 	to_search.push({poi[num].x, poi[num].y, 0});
 	dist[num] = 0;
 	visited[idx(poi[num].x, poi[num].y)] = true;
@@ -89,12 +88,12 @@ vector<int> Bfs(int num, const MazeT &maze, const PoiT &poi)
 	return dist;
 }
 
-vector<vector<int>> GetDistances(istream &is)
+std::vector<std::vector<int>> GetDistances(std::istream &is)
 {
 	PoiT poi;
 	MazeT maze;
 
-	string line;
+	std::string line;
 	while (getline(is, line))
 	{
 		for (size_t x = 0; x != line.size(); ++x)
@@ -112,22 +111,22 @@ vector<vector<int>> GetDistances(istream &is)
 	sort(begin(poi), end(poi), [](auto a, auto b) { return a.num < b.num; });
 
 	// Find distances between all the POI
-	vector<vector<int>> distances;
+	std::vector<std::vector<int>> distances;
 	for (int i{}, n = poi.size(); i != n; ++i)
 		distances.emplace_back(Bfs(i, maze, poi));
 
 	return distances;
 }
 
-int Solve(istream &&is)
+int Solve(std::istream &&is)
 {
 	auto distances = GetDistances(is);
 
 	// Try all the permutations between POI 1..n
-	vector<int> idx(distances.size());
+	std::vector<int> idx(distances.size());
 	iota(begin(idx), end(idx), 0);
 
-	int min_distance = numeric_limits<int>::max();
+	int min_distance = std::numeric_limits<int>::max();
 	do
 	{
 		int distance{};
@@ -141,16 +140,16 @@ int Solve(istream &&is)
 	return min_distance;
 }
 
-int Solve2(istream &&is)
+int Solve2(std::istream &&is)
 {
 	auto distances = GetDistances(is);
 
 	// Try all the permutations between POI 1..n
-	vector<int> idx(distances.size());
+	std::vector<int> idx(distances.size());
 	iota(begin(idx), end(idx), 0);
 	idx.push_back(0);
 
-	int min_distance = numeric_limits<int>::max();
+	int min_distance = std::numeric_limits<int>::max();
 	do
 	{
 		assert(idx.front() == 0 && idx.back() == 0);
@@ -176,8 +175,8 @@ R"(###########
 #.#######.#
 #4.......3#
 ###########")";
-	REQUIRE(14 == Solve(istringstream(test_maze)));
+	REQUIRE(14 == Solve(std::istringstream{test_maze}));
 
-	cout << Solve(ifstream(INPUT)) << endl;
-	cout << Solve2(ifstream(INPUT)) << endl;
+	MESSAGE(Solve(std::ifstream{INPUT}));
+	MESSAGE(Solve2(std::ifstream{INPUT}));
 }

@@ -6,7 +6,7 @@
 #include <cassert>
 #include <numeric>
 
-using namespace std;
+namespace {
 
 class Screen
 {
@@ -23,7 +23,7 @@ public:
 		return std::accumulate(begin(_pixels), end(_pixels), 0);
 	}
 
-	Screen& Execute(const string &command)
+	Screen& Execute(const std::string &command)
 	{
 		int A{0}, B{0};
 
@@ -57,9 +57,9 @@ public:
 		return *this;
 	}
 
-	string Dump() const
+	std::string Dump() const
 	{
-		ostringstream oss;
+		std::ostringstream oss;
 		for (int y{0}; y != height; ++y)
 		{
 			for (int x{0}; x != width; ++x)
@@ -72,7 +72,7 @@ public:
 private:
 	int width;
 	int height;
-	vector<int> _pixels;
+	std::vector<int> _pixels;
 
 	int& Pixel(int x, int y)
 	{
@@ -84,6 +84,8 @@ private:
 		return _pixels[y*width + x];
 	}
 };
+
+} //namespace;
 
 TEST_CASE(TEST_NAME)
 {
@@ -98,12 +100,12 @@ TEST_CASE(TEST_NAME)
 	test.Execute("rotate column x=1 by 1");
 	REQUIRE(test.Dump() == ".#..#.#\n#.#....\n.#.....\n");
 
-	ifstream ifs(INPUT);
+	std::ifstream ifs(INPUT);
 	Screen screen{50, 6};
-	string line;
+	std::string line;
 	while (getline(ifs, line))
 		screen.Execute(line);
 
-	cout << screen.Count() << endl;
-	cout << screen.Dump() << endl;
+	MESSAGE(screen.Count());
+	MESSAGE(screen.Dump());
 }

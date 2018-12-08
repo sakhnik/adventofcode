@@ -3,23 +3,23 @@
 #include <cassert>
 #include <boost/range/adaptor/reversed.hpp>
 
-using namespace std;
+namespace {
 
-string Checksum(const string &s)
+std::string Checksum(const std::string &s)
 {
 	if (s.size() & 1)
 		return s;
-	string cs;
+	std::string cs;
 	for (unsigned i = 0; i != s.size(); i += 2)
 		cs.push_back(s[i] == s[i+1] ? '1' : '0');
 	return Checksum(cs);
 }
 
-string Generate(const string &s, unsigned size)
+std::string Generate(const std::string &s, unsigned size)
 {
 	if (s.size() >= size)
 		return s.substr(0, size);
-	string es;
+	std::string es;
 	for (char c : s)
 		es.push_back(c);
 	es.push_back('0');
@@ -28,11 +28,13 @@ string Generate(const string &s, unsigned size)
 	return Generate(es, size);
 }
 
-string Solve(unsigned size, const string &init)
+std::string Solve(unsigned size, const std::string &init)
 {
 	auto data = Generate(init, size);
 	return Checksum(data);
 }
+
+} //namespace;
 
 TEST_CASE(TEST_NAME)
 {
@@ -43,6 +45,6 @@ TEST_CASE(TEST_NAME)
 	REQUIRE("1111000010100101011110000" == Generate("111100001010", 25));
 	REQUIRE("01100" == Solve(20, "10000"));
 
-	cout << Solve(272, "10011111011011001") << endl;
-	cout << Solve(35651584, "10011111011011001") << endl;
+	MESSAGE(Solve(272, "10011111011011001"));
+	MESSAGE(Solve(35651584, "10011111011011001"));
 }

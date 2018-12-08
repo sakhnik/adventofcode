@@ -190,6 +190,6 @@ TEST_CASE(TEST_NAME)
 {
     std::ifstream ifs(INPUT);
     auto patterns = Parse(ifs);
-    std::cout << Solve(5, patterns) << std::endl;
-    std::cout << Solve(18, patterns) << std::endl;
+    MESSAGE(Solve(5, patterns));
+    MESSAGE(Solve(18, patterns));
 }

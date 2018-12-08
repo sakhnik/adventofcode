@@ -5,11 +5,11 @@
 #include <cassert>
 #include <openssl/md5.h>
 
-using namespace std;
+namespace {
 
-string Solve(const char *prefix)
+std::string Solve(const char *prefix)
 {
-	string ret;
+	std::string ret;
 
 	char buffer[64];
 	int end_of_prefix = sprintf(buffer, "%s", prefix);
@@ -33,9 +33,9 @@ string Solve(const char *prefix)
 	return "?";
 }
 
-string Solve2(const char *prefix)
+std::string Solve2(const char *prefix)
 {
-	string ret(8, ' ');
+	std::string ret(8, ' ');
 
 	char buffer[64];
 	int end_of_prefix = sprintf(buffer, "%s", prefix);
@@ -64,13 +64,13 @@ string Solve2(const char *prefix)
 	return "?";
 }
 
+} //namespace;
+
 TEST_CASE(TEST_NAME)
 {
 	REQUIRE("18f47a30" == Solve("abc"));
-	cout << Solve("reyedfim") << endl;
+	MESSAGE(Solve("reyedfim"));
 
 	REQUIRE("05ace8e3" == Solve2("abc"));
-	cout << Solve2("reyedfim") << endl;
+	MESSAGE(Solve2("reyedfim"));
 }
-
-// vim: set makeprg=clang++\ -std=c++14\ %\ -lssl\ -lcrypto:

@@ -5,12 +5,12 @@
 #include <queue>
 #include <cassert>
 
-using namespace std;
+namespace {
 
 bool IsOpen(int x, int y, int number)
 {
 	unsigned long long v = x*x + 3*x + 2*x*y + y + y*y + number;
-	bitset<64> b(v);
+	std::bitset<64> b(v);
 	return (b.count() & 1) == 0;
 }
 
@@ -18,8 +18,8 @@ int Solve(int start_x, int start_y, int target_x, int target_y, int number)
 {
 	assert(IsOpen(start_x, start_y, number));
 
-	unordered_map<size_t, int> distance;
-	queue<pair<int,int>> to_search;
+	std::unordered_map<size_t, int> distance;
+	std::queue<std::pair<int,int>> to_search;
 
 	auto idx = [](int x, int y) -> size_t
 	{
@@ -54,7 +54,7 @@ int Solve(int start_x, int start_y, int target_x, int target_y, int number)
 			if (dist == 51 && !report2)
 			{
 				// report second result
-				cout << distance.size() << endl;
+				MESSAGE(distance.size());
 				report2 = true;
 			}
 
@@ -78,9 +78,11 @@ int Solve(int start_x, int start_y, int target_x, int target_y, int number)
 	return -1;
 }
 
+} //namespace;
+
 TEST_CASE(TEST_NAME)
 {
 	REQUIRE(11 == Solve(1, 1, 7, 4, 10));
 
-	cout << Solve(1, 1, 31, 39, 1350) << endl;
+	MESSAGE(Solve(1, 1, 31, 39, 1350));
 }

@@ -54,6 +54,6 @@ TEST_CASE(TEST_NAME)
 	REQUIRE(SpinLock2(3, 8) == 5);
 	REQUIRE(SpinLock2(3, 9) == 9);
 
-	std::cout << SpinLock(371) << std::endl;
-	std::cout << SpinLock2(371, 50000000) << std::endl;
+	MESSAGE(SpinLock(371));
+	MESSAGE(SpinLock2(371, 50000000));
 }

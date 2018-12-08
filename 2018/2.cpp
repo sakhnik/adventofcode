@@ -86,10 +86,10 @@ TEST_CASE(TEST_NAME)
     auto test_cs = Checksum({"abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab"});
     REQUIRE(12 == test_cs);
 
-    std::cout << Checksum(GetInput()) << std::endl;
+    MESSAGE(Checksum(GetInput()));
 
     auto test2 = FindCorrect({"abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz"});
     REQUIRE("fgij" == test2);
 
-    std::cout << FindCorrect(GetInput()) << std::endl;
+    MESSAGE(FindCorrect(GetInput()));
 }

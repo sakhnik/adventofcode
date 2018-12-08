@@ -5,11 +5,11 @@
 #include <algorithm>
 #include <cstring>
 
-using namespace std;
+namespace {
 
-string Decompress(const std::string &s)
+std::string Decompress(const std::string &s)
 {
-	string ret;
+	std::string ret;
 
 	for (size_t i = 0; i != s.size(); )
 	{
@@ -44,7 +44,7 @@ string Decompress(const std::string &s)
 
 size_t Count(const char *s, const char *send);
 
-pair<size_t, const char *> CountPattern(const char *s)
+std::pair<size_t, const char *> CountPattern(const char *s)
 {
 	int span{0}, count{0};
 	int fields = sscanf(s, "(%dx%d)", &span, &count);
@@ -82,10 +82,12 @@ size_t Count(const char *s, const char *send)
 	return count;
 }
 
-size_t Version2(const string &s)
+size_t Version2(const std::string &s)
 {
 	return Count(s.data(), s.data() + s.size());
 }
+
+} //namespace;
 
 TEST_CASE(TEST_NAME)
 {
@@ -96,12 +98,12 @@ TEST_CASE(TEST_NAME)
 	REQUIRE(Decompress("(6x1)(1x3)A") == "(1x3)A");
 	REQUIRE(Decompress("X(8x2)(3x3)ABCY") == "X(3x3)ABC(3x3)ABCY");
 
-	ifstream ifs(INPUT);
-	string s;
+	std::ifstream ifs(INPUT);
+	std::string s;
 	getline(ifs, s, char{-1});
 
 	auto d = Decompress(s);
-	cout << count_if(begin(d), end(d), [](char c) { return !isspace(c); }) << endl;
+	MESSAGE(std::count_if(begin(d), end(d), [](char c) { return !isspace(c); }));
 
 
 	REQUIRE(Version2("(3x3)XYZ") == 9);
@@ -109,5 +111,5 @@ TEST_CASE(TEST_NAME)
 	REQUIRE(Version2("(27x12)(20x12)(13x14)(7x10)(1x12)A") == 241920);
 	REQUIRE(Version2("(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN") == 445);
 
-	cout << Version2(s) << endl;
+	MESSAGE(Version2(s));
 }

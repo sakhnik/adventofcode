@@ -6,9 +6,9 @@
 #include <cassert>
 #include <set>
 
-using namespace std;
+namespace {
 
-int walk(istream &&is)
+int walk(std::istream &&is)
 {
 	enum Direction
 	{
@@ -20,8 +20,8 @@ int walk(istream &&is)
 		DirectionCount
 	};
 
-	pair<int, int> coords{0, 0};
-	set<decltype(coords)> visited;
+	std::pair<int, int> coords{0, 0};
+	std::set<decltype(coords)> visited;
 	visited.insert(coords);
 
 	auto direction = North;
@@ -41,21 +41,21 @@ int walk(istream &&is)
 		switch (d)
 		{
 		case North:
-			return make_pair(coords.first, coords.second + steps);
+			return std::make_pair(coords.first, coords.second + steps);
 		case East:
-			return make_pair(coords.first + steps, coords.second);
+			return std::make_pair(coords.first + steps, coords.second);
 		case South:
-			return make_pair(coords.first, coords.second - steps);
+			return std::make_pair(coords.first, coords.second - steps);
 		default:
 			assert(!"Not implemented");
 			// fallthrough
 		case West:
-			return make_pair(coords.first - steps, coords.second);
+			return std::make_pair(coords.first - steps, coords.second);
 		}
 	};
 
 
-	string s;
+	std::string s;
 	while (is >> s)
 	{
 		char turn = s[0];
@@ -86,9 +86,11 @@ int walk(istream &&is)
 	return -1;
 }
 
+} //namespace;
+
 TEST_CASE(TEST_NAME)
 {
-	REQUIRE(4 == walk(istringstream("R8, R4, R4, R8")));
+	REQUIRE(4 == walk(std::istringstream{"R8, R4, R4, R8"}));
 
-	cout << walk(ifstream(INPUT)) << std::endl;
+	MESSAGE(walk(std::ifstream{INPUT}));
 }

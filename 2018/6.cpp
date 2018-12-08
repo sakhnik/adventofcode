@@ -187,8 +187,8 @@ TEST_CASE(TEST_NAME)
     REQUIRE(17 == FindSpot(test));
 
     auto input = GetInput(std::ifstream(INPUT));
-    std::cout << FindSpot(input) << std::endl;
+    MESSAGE(FindSpot(input));
 
     REQUIRE(FindAreaWithin(test, 32) == 16);
-    std::cout << FindAreaWithin(input, 10000) << std::endl;
+    MESSAGE(FindAreaWithin(input, 10000));
 }

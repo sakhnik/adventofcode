@@ -43,7 +43,7 @@ TEST_CASE(TEST_NAME)
 		225,171,131,2,35,5,0,13,1,246,54,97,255,98,254,110
 	};
 
-	std::cout << Count(256, {lengths, lengths + std::size(lengths)}) << std::endl;
+	MESSAGE(Count(256, {lengths, lengths + std::size(lengths)}));
 
-	std::cout << Hash("225,171,131,2,35,5,0,13,1,246,54,97,255,98,254,110") << std::endl;
+	MESSAGE(Hash("225,171,131,2,35,5,0,13,1,246,54,97,255,98,254,110"));
 }

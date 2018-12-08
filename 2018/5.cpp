@@ -65,8 +65,8 @@ TEST_CASE(TEST_NAME)
     std::string input;
     getline(std::ifstream(INPUT), input);
 
-    std::cout << Reduce(input).size() << std::endl;
+    MESSAGE(Reduce(input).size());
 
     REQUIRE(4 == Search("dabAcCaCBAcCcaDA"));
-    std::cout << Search(input) << std::endl;
+    MESSAGE(Search(input));
 }

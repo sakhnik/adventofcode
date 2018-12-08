@@ -7,7 +7,6 @@
 #include <array>
 #include <functional>
 
-using namespace std;
 
 namespace {
 
@@ -27,13 +26,13 @@ struct Op
 	int b;
 };
 
-typedef vector<Op> ProgramT;
+typedef std::vector<Op> ProgramT;
 
-ProgramT ParseText(istream &is)
+ProgramT ParseText(std::istream &is)
 {
 	ProgramT program;
 
-	string line;
+	std::string line;
 	while (getline(is, line))
 	{
 		char r1 = 0, r2 = 0;
@@ -60,18 +59,17 @@ ProgramT ParseText(istream &is)
 			program.push_back({Op::OUT, true, r1 - 'a', false, 0});
 		else
 		{
-			cout << line.c_str() << endl;
-			assert(false);
+			FAIL(line);
 		}
 	}
 
 	return program;
 }
 
-int Exec(ProgramT program, initializer_list<int> init, size_t iters, function<bool(const string &)> on_out)
+int Exec(ProgramT program, std::initializer_list<int> init, size_t iters, std::function<bool(const std::string &)> on_out)
 {
-	array<int, 4> regs;
-	copy(begin(init), end(init), begin(regs));
+	std::array<int, 4> regs;
+	std::copy(begin(init), end(init), begin(regs));
 
 	for (ssize_t pc{0}; pc >= 0 && pc < (ssize_t) program.size() && iters; ++pc, --iters)
 	{
@@ -123,7 +121,7 @@ int Exec(ProgramT program, initializer_list<int> init, size_t iters, function<bo
 	return regs[0];
 }
 
-int Solve(istream &&is)
+int Solve(std::istream &&is)
 {
 	auto program = ParseText(is);
 
@@ -171,5 +169,5 @@ int Solve(istream &&is)
 
 TEST_CASE(TEST_NAME)
 {
-	cout << Solve(ifstream(INPUT)) << endl;
+	MESSAGE(Solve(std::ifstream{INPUT}));
 }

@@ -49,10 +49,10 @@ TEST_CASE(TEST_NAME)
     REQUIRE(58 == CalcArea({2,3,4}));
     REQUIRE(43 == CalcArea({1,1,10}));
 
-    std::cout << Accumulate(GetInput(), CalcArea) << std::endl;
+    MESSAGE(Accumulate(GetInput(), CalcArea));
 
     REQUIRE(34 == CalcRibbon({2,3,4}));
     REQUIRE(14 == CalcRibbon({1,1,10}));
 
-    std::cout << Accumulate(GetInput(), CalcRibbon) << std::endl;
+    MESSAGE(Accumulate(GetInput(), CalcRibbon));
 }

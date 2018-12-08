@@ -46,6 +46,6 @@ TEST_CASE(TEST_NAME)
 	REQUIRE(Count(65, 8921) == 588);
 	REQUIRE(Count2(65, 8921) == 309);
 
-	std::cout << Count(289, 629) << std::endl;
-	std::cout << Count2(289, 629) << std::endl;
+	MESSAGE(Count(289, 629));
+	MESSAGE(Count2(289, 629));
 }

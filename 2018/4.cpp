@@ -176,9 +176,9 @@ TEST_CASE(TEST_NAME)
     //Print(stats);
 
     auto champ = FindTheChampion(stats);
-    std::cout << champ * GuessTheHour(stats, champ) << std::endl;
+    MESSAGE(champ * GuessTheHour(stats, champ));
 
     REQUIRE(4455 == Strategy2(test_stats));
-    std::cout << Strategy2(stats) << std::endl;
+    MESSAGE(Strategy2(stats));
 
 }

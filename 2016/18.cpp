@@ -4,9 +4,9 @@
 #include <algorithm>
 #include <cassert>
 
-using namespace std;
+namespace {
 
-int Solve(unsigned rows, string row)
+int Solve(unsigned rows, std::string row)
 {
 	int safe_cells = count(begin(row), end(row), '.');
 
@@ -23,7 +23,7 @@ int Solve(unsigned rows, string row)
 
 	for (unsigned i = 1; i != rows; ++i)
 	{
-		string new_row;
+		std::string new_row;
 		for (unsigned j = 0; j != row.size(); ++j)
 		{
 			int code = is_trap(j-1) ? LEFT : 0;
@@ -50,11 +50,13 @@ int Solve(unsigned rows, string row)
 	return safe_cells;
 }
 
+} //namespace;
+
 TEST_CASE(TEST_NAME)
 {
 	REQUIRE(38 == Solve(10, ".^^.^.^^^^"));
 
 	const char *PUZZLE = ".^^^.^.^^^^^..^^^..^..^..^^..^.^.^.^^.^^....^.^...^.^^.^^.^^..^^..^.^..^^^.^^...^...^^....^^.^^^^^^^";
-	cout << Solve(40, PUZZLE) << endl;
-	cout << Solve(400000, PUZZLE) << endl;
+	MESSAGE(Solve(40, PUZZLE));
+	MESSAGE(Solve(400000, PUZZLE));
 }

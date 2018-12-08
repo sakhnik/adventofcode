@@ -5,14 +5,14 @@
 #include <string>
 #include <limits>
 
-using namespace std;
+namespace {
 
 const int UP = 1;
 const int DOWN = 2;
 const int LEFT = 4;
 const int RIGHT = 8;
 
-int GetDoors(const string &path)
+int GetDoors(const std::string &path)
 {
 	int doors{0};
 
@@ -31,7 +31,7 @@ int GetDoors(const string &path)
 	return doors;
 }
 
-int Search(int x, int y, int length, string &path, string &min_path)
+int Search(int x, int y, int length, std::string &path, std::string &min_path)
 {
 	if (x == 4 && y == 4)
 	{
@@ -89,7 +89,7 @@ int Search(int x, int y, int length, string &path, string &min_path)
 	return min_length;
 }
 
-int SearchMax(int x, int y, int length, string &path)
+int SearchMax(int x, int y, int length, std::string &path)
 {
 	if (x == 4 && y == 4)
 		return length;
@@ -143,17 +143,19 @@ int SearchMax(int x, int y, int length, string &path)
 	return max_length;
 }
 
-string Solve(string prefix)
+std::string Solve(std::string prefix)
 {
-	string min_path;
+	std::string min_path;
 	Search(1, 1, 0, prefix, min_path);
 	return min_path.substr(prefix.size());
 }
 
-int Solve2(string prefix)
+int Solve2(std::string prefix)
 {
 	return SearchMax(1, 1, 0, prefix);
 }
+
+} //namespace;
 
 TEST_CASE(TEST_NAME)
 {
@@ -165,13 +167,11 @@ TEST_CASE(TEST_NAME)
 	REQUIRE("DDUDRLRRUDRD" == Solve("kglvqrro"));
 	REQUIRE("DRURDRUDDLLDLUURRDULRLDUUDDDRR" == Solve("ulqzkmiv"));
 
-	cout << Solve("gdjjyniy") << endl;
+	MESSAGE(Solve("gdjjyniy"));
 
 	REQUIRE(370 == Solve2("ihgpwlah"));
 	REQUIRE(492 == Solve2("kglvqrro"));
 	REQUIRE(830 == Solve2("ulqzkmiv"));
 
-	cout << Solve2("gdjjyniy") << endl;
+	MESSAGE(Solve2("gdjjyniy"));
 }
-
-// vim: set makeprg=clang++\ -std=c++14\ -O2\ %\ -lssl\ -lcrypto:

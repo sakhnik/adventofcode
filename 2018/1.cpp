@@ -58,12 +58,12 @@ TEST_CASE(TEST_NAME)
     REQUIRE(Sum(GetSample("-1 -2 -3")) == -6);
 
     auto input = GetInput();
-    std::cout << Sum(input) << std::endl;
+    MESSAGE(Sum(input));
 
     REQUIRE(Twice(GetSample("+1 -1")) == 0);
     REQUIRE(Twice(GetSample("+3 +3 +4 -2 -4")) == 10);
     REQUIRE(Twice(GetSample("-6 +3 +8 +5 -6")) == 5);
     REQUIRE(Twice(GetSample("+7 +7 -2 -7 -4")) == 14);
 
-    std::cout << Twice(input) << std::endl;
+    MESSAGE(Twice(input));
 }

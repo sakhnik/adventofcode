@@ -88,6 +88,6 @@ TEST_CASE(TEST_NAME)
     REQUIRE(CountBits("flqrgnkx") == 8108);
     REQUIRE(CountRegions("flqrgnkx") == 1242);
 
-    std::cout << CountBits("ffayrhll") << std::endl;
-    std::cout << CountRegions("ffayrhll") << std::endl;
+    MESSAGE(CountBits("ffayrhll"));
+    MESSAGE(CountRegions("ffayrhll"));
 }

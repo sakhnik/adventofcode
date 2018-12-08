@@ -4,14 +4,14 @@
 #include <vector>
 #include <cassert>
 
-using namespace std;
+namespace {
 
 bool IsTriangle(int a, int b, int c)
 {
 	return a + b > c && a + c > b && b + c > a;
 }
 
-int Solve(istream &&is)
+int Solve(std::istream &&is)
 {
 	int count{0};
 	int a{0}, b{0}, c{0};
@@ -25,11 +25,11 @@ int Solve(istream &&is)
 	return count;
 }
 
-int Solve2(istream &&is)
+int Solve2(std::istream &&is)
 {
 	int count{0};
 	int a{0}, b{0}, c{0};
-	vector<int> t1, t2, t3;
+	std::vector<int> t1, t2, t3;
 
 	while (is >> a >> b >> c)
 	{
@@ -63,8 +63,10 @@ int Solve2(istream &&is)
 	return count;
 }
 
+} //namespace;
+
 TEST_CASE(TEST_NAME)
 {
-	cout << Solve(ifstream(INPUT)) << endl;
-	cout << Solve2(ifstream(INPUT)) << endl;
+	MESSAGE(Solve(std::ifstream{INPUT}));
+	MESSAGE(Solve2(std::ifstream{INPUT}));
 }

@@ -93,6 +93,6 @@ c inc -20 if c == 10)"));
 
     std::ifstream ifs(INPUT);
     auto res = Calculate(ifs);
-    std::cout << res.max << std::endl;
-    std::cout << res.max_ever << std::endl;
+    MESSAGE(res.max);
+    MESSAGE(res.max_ever);
 }

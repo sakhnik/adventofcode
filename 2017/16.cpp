@@ -124,7 +124,7 @@ TEST_CASE(TEST_NAME)
         variations.push_back(row);
     }
 
-    std::cout << variations[1] << std::endl;
+    MESSAGE(variations[1]);
     auto period = variations.size() - loop;
-    std::cout << variations[loop + ((1000000000 - loop) % period)] << std::endl;
+    MESSAGE(variations[loop + ((1000000000 - loop) % period)]);
 }

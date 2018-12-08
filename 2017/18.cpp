@@ -226,6 +226,6 @@ rcv d)";
 TEST_CASE(TEST_NAME)
 {
     auto program = Parse(std::ifstream(INPUT));
-    std::cout << Task1(program) << std::endl;
-    //std::cout << Task2(program) << std::endl;
+    MESSAGE(Task1(program));
+    //MESSAGE(Task2(program));
 }

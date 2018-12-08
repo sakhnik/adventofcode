@@ -4,11 +4,11 @@
 #include <cassert>
 #include <list>
 
-using namespace std;
+namespace {
 
 int Solve(int count)
 {
-	vector<int> circle(count);
+	std::vector<int> circle(count);
 	for (int i = 0; i != count; ++i)
 		circle[i] = i + 1;
 	circle.back() = 0;
@@ -30,7 +30,7 @@ int Solve2(int count)
 	// one pointing to the currently acting gnome,
 	// the other pointing to the gnome to steal from (opposite site of the circle)
 
-	list<int> circle;
+	std::list<int> circle;
 	for (int i = 0; i != count; ++i)
 		circle.emplace_back(i + 1);
 
@@ -58,11 +58,13 @@ int Solve2(int count)
 	return circle.front();
 }
 
+} //namespace;
+
 TEST_CASE(TEST_NAME)
 {
 	REQUIRE(3 == Solve(5));
-	cout << Solve(3004953) << endl;
+	MESSAGE(Solve(3004953));
 
 	REQUIRE(2 == Solve2(5));
-	cout << Solve2(3004953) << endl;
+	MESSAGE(Solve2(3004953));
 }

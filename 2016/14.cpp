@@ -6,9 +6,10 @@
 #include <algorithm>
 #include <boost/circular_buffer.hpp>
 
-using namespace std;
 
-void Md5ToString(const uint8_t *hash, string &ret)
+namespace {
+
+void Md5ToString(const uint8_t *hash, std::string &ret)
 {
 	if (ret.size() != MD5_DIGEST_LENGTH * 2)
 		ret.resize(MD5_DIGEST_LENGTH * 2);
@@ -24,12 +25,12 @@ void Md5ToString(const uint8_t *hash, string &ret)
 
 struct Feature
 {
-	string hash;
+	std::string hash;
 	char triplet = 0;
-	vector<char> fives;
+	std::vector<char> fives;
 };
 
-Feature CalcFeatures(const string &md5)
+Feature CalcFeatures(const std::string &md5)
 {
 	Feature f;
 	f.hash = md5;
@@ -72,7 +73,7 @@ int Solve(const char *salt, int hash_count)
 	auto calc_next_hash = [&]()
 	{
 		uint8_t md5[MD5_DIGEST_LENGTH];
-		string s = salt + to_string(counter++);
+		std::string s = salt + std::to_string(counter++);
 		for (int i = 0; i != hash_count; ++i)
 		{
 			MD5(reinterpret_cast<const uint8_t *>(s.data()), s.size(), md5);
@@ -112,13 +113,13 @@ int Solve(const char *salt, int hash_count)
 	}
 }
 
+} //namespace;
+
 TEST_CASE(TEST_NAME)
 {
 	REQUIRE(22728 == Solve("abc", 1));
-	cout << Solve("cuanljph", 1) << endl;
+	MESSAGE(Solve("cuanljph", 1));
 
 	REQUIRE(22551 == Solve("abc", 2017));
-	cout << Solve("cuanljph", 2017) << endl;
+	MESSAGE(Solve("cuanljph", 2017));
 }
-
-// vim: set makeprg=clang++\ -std=c++14\ %\ -lssl\ -lcrypto:

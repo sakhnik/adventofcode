@@ -121,13 +121,13 @@ cntj (57))";
 	std::ifstream ifs(INPUT);
 	auto tree = ParseInput(ifs);
 	auto root = FindRoot(tree);
-	std::cout << root << std::endl;
+	MESSAGE(root);
 	try
 	{
 		CheckWeight(tree, root);
 	}
 	catch (unsigned res)
 	{
-		std::cout << res << std::endl;
+		MESSAGE(res);
 	}
 }

@@ -50,10 +50,10 @@ TEST_CASE(TEST_NAME)
     std::ifstream ifs{INPUT};
     std::string input((std::istreambuf_iterator<char>(ifs)),
                       std::istreambuf_iterator<char>());
-    std::cout << Count(input) << std::endl;
+    MESSAGE(Count(input));
 
     REQUIRE(1 == Position(")"));
     REQUIRE(5 == Position("()())"));
 
-    std::cout << Position(input) << std::endl;
+    MESSAGE(Position(input));
 }

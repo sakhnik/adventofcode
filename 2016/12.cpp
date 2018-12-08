@@ -6,12 +6,12 @@
 #include <cassert>
 #include <array>
 
-using namespace std;
+namespace {
 
-int Solve(istream &&is, initializer_list<int> init)
+int Solve(std::istream &&is, std::initializer_list<int> init)
 {
-	array<int, 4> regs;
-	copy(begin(init), end(init), begin(regs));
+	std::array<int, 4> regs;
+	std::copy(begin(init), end(init), begin(regs));
 
 	struct Op
 	{
@@ -27,9 +27,9 @@ int Solve(istream &&is, initializer_list<int> init)
 		int b;
 	};
 
-	vector<Op> program;
+	std::vector<Op> program;
 
-	string line;
+	std::string line;
 	while (getline(is, line))
 	{
 		char r1 = 0, r2 = 0;
@@ -98,6 +98,8 @@ int Solve(istream &&is, initializer_list<int> init)
 	return regs[0];
 }
 
+} //namespace;
+
 TEST_CASE(TEST_NAME)
 {
 	const char *const test =
@@ -107,8 +109,8 @@ TEST_CASE(TEST_NAME)
 		"dec a\n"
 		"jnz a 2\n"
 		"dec a\n";
-	REQUIRE(42 == Solve(istringstream(test), {0,0,0,0}));
+	REQUIRE(42 == Solve(std::istringstream{test}, {0,0,0,0}));
 
-	cout << Solve(ifstream(INPUT), {0,0,0,0}) << endl;
-	cout << Solve(ifstream(INPUT), {0,0,1,0}) << endl;
+	MESSAGE(Solve(std::ifstream{INPUT}, {0,0,0,0}));
+	MESSAGE(Solve(std::ifstream{INPUT}, {0,0,1,0}));
 }

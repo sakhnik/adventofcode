@@ -77,6 +77,6 @@ TEST_CASE(TEST_NAME)
 	std::ifstream ifs(INPUT);
 	std::string str((std::istreambuf_iterator<char>(ifs)),
 					std::istreambuf_iterator<char>());
-	std::cout << Checksum(str) << std::endl;
-	std::cout << Checksum2(str) << std::endl;
+	MESSAGE(Checksum(str));
+	MESSAGE(Checksum2(str));
 }

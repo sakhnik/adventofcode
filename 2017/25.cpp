@@ -140,5 +140,5 @@ TEST_CASE(TEST_NAME)
 
     Machine m;
     m.Run(12656374, 'A'-'A', desc);
-    std::cout << m.GetChecksum() << std::endl;
+    MESSAGE(m.GetChecksum());
 }

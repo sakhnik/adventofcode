@@ -6,14 +6,13 @@
 #include <cassert>
 #include <array>
 
-using namespace std;
 
 namespace {
 
-int Solve(istream &&is, initializer_list<int> init)
+int Solve(std::istream &&is, std::initializer_list<int> init)
 {
-	array<int, 4> regs;
-	copy(begin(init), end(init), begin(regs));
+	std::array<int, 4> regs;
+	std::copy(begin(init), end(init), begin(regs));
 
 	struct Op
 	{
@@ -30,9 +29,9 @@ int Solve(istream &&is, initializer_list<int> init)
 		int b;
 	};
 
-	vector<Op> program;
+	std::vector<Op> program;
 
-	string line;
+	std::string line;
 	while (getline(is, line))
 	{
 		char r1 = 0, r2 = 0;
@@ -55,8 +54,7 @@ int Solve(istream &&is, initializer_list<int> init)
 			program.push_back({Op::TGL, true, r1 - 'a', false, 0});
 		else
 		{
-			cout << line.c_str() << endl;
-			assert(false);
+			FAIL(line);
 		}
 	}
 
@@ -116,7 +114,7 @@ TEST_CASE(TEST_NAME)
 		"dec a\n"
 		"jnz a 2\n"
 		"dec a\n";
-	REQUIRE(42 == Solve(istringstream(test1), {0,0,0,0}));
+	REQUIRE(42 == Solve(std::istringstream{test1}, {0,0,0,0}));
 
 	const char *const test2 =
 		"cpy 2 a\n"
@@ -126,8 +124,8 @@ TEST_CASE(TEST_NAME)
 		"cpy 1 a\n"
 		"dec a\n"
 		"dec a\n";
-	REQUIRE(3 == Solve(istringstream(test2), {0,0,0,0}));
+	REQUIRE(3 == Solve(std::istringstream{test2}, {0,0,0,0}));
 
-	cout << Solve(ifstream(INPUT), {7,0,0,0}) << endl;
-	cout << Solve(ifstream(INPUT), {12,0,0,0}) << endl;
+	MESSAGE(Solve(std::ifstream{INPUT}, {7,0,0,0}));
+	MESSAGE(Solve(std::ifstream{INPUT}, {12,0,0,0}));
 }

@@ -183,8 +183,8 @@ Step F must be finished before step E can begin.)";
     REQUIRE("CABDFE" == SortSteps(test));
 
     auto input = GetInput(std::ifstream(INPUT));
-    std::cout << SortSteps(input) << std::endl;
+    MESSAGE(SortSteps(input));
 
     REQUIRE(15 == Simulate(2, 0, test));
-    std::cout << Simulate(5, 60, input) << std::endl;
+    MESSAGE(Simulate(5, 60, input));
 }

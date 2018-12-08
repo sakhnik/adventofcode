@@ -102,6 +102,6 @@ TEST_CASE(TEST_NAME)
 {
     auto route = Parse(std::ifstream(INPUT));
     auto result = Trace(route);
-    std::cout << result.trace << std::endl;
-    std::cout << result.steps << std::endl;
+    MESSAGE(result.trace);
+    MESSAGE(result.steps);
 }

@@ -6,11 +6,10 @@
 #include <cassert>
 #include <queue>
 
-using namespace std;
 
 namespace {
 
-void Solve(istream &&is)
+void Solve(std::istream &&is)
 {
 	struct Data
 	{
@@ -21,12 +20,12 @@ void Solve(istream &&is)
 	};
 
 
-	vector<Data> lines;
-	string line;
+	std::vector<Data> lines;
+	std::string line;
 	while (getline(is, line))
 	{
-		static regex r(R"(/dev/grid/node-x(\d+)-y(\d+)\s+\d+T\s+(\d+)T\s+(\d+)T)");
-		smatch m;
+		static std::regex r(R"(/dev/grid/node-x(\d+)-y(\d+)\s+\d+T\s+(\d+)T\s+(\d+)T)");
+		std::smatch m;
 		if (!regex_search(line, m, r))
 			continue;
 		assert(m.size() == 5);
@@ -47,7 +46,7 @@ void Solve(istream &&is)
 			if (i != j && lines[i].used && lines[i].used <= lines[j].avail)
 				++count;
 
-	cout << count << endl;
+	MESSAGE(count);
 
 	///////////////////////////////// Part 2 //////////////////////
 
@@ -79,7 +78,7 @@ void Solve(istream &&is)
 		return x * height + y;
 	};
 
-	queue<pair<int,int>> to_search;
+	std::queue<std::pair<int,int>> to_search;
 	to_search.emplace(_x, _y);
 	lines[idx(_x, _y)].distance = 0;
 
@@ -121,12 +120,12 @@ void Solve(istream &&is)
 	auto distance = lines[idx(Gx, Gy)].distance;
 	assert(distance != -1);
 	distance += 5 * (width - 2);
-	cout << distance << endl;
+	MESSAGE(distance);
 }
 
 } //namespace;
 
 TEST_CASE(TEST_NAME)
 {
-	Solve(ifstream(INPUT));
+	Solve(std::ifstream{INPUT});
 }

@@ -9,7 +9,8 @@
 #include <queue>
 #include <algorithm>
 
-using namespace std;
+
+namespace {
 
 template <int COUNT>
 struct State
@@ -53,16 +54,16 @@ struct State
 		}
 	}
 
-	string Dump(const vector<const char *> &names) const
+	std::string Dump(const std::vector<const char *> &names) const
 	{
-		ostringstream oss;
+		std::ostringstream oss;
 
 		for (int floor = 3; floor >= 0; --floor)
 		{
-			oss << setw(3) << ("F" + to_string(floor+1));
-			oss << setw(3) << (elevator == floor ? " E " : " . ");
+			oss << std::setw(3) << ("F" + std::to_string(floor+1));
+			oss << std::setw(3) << (elevator == floor ? " E " : " . ");
 			for (int i = 0; i < COUNT; ++i)
-				oss << setw(3) << (items[i] == floor ? names[i] : " . ");
+				oss << std::setw(3) << (items[i] == floor ? names[i] : " . ");
 			oss << "\n";
 		}
 		return oss.str();
@@ -113,12 +114,12 @@ struct State
 };
 
 template <int COUNT>
-int Solve(const vector<int> &configuration,
-		  const vector<const char *> &names)
+int Solve(const std::vector<int> &configuration,
+		  const std::vector<const char *> &names)
 {
 	// map current_state -> previous_state
-	unordered_map<unsigned long, unsigned long> space;
-	queue<pair<int, unsigned long>> to_search;
+	std::unordered_map<unsigned long, unsigned long> space;
+	std::queue<std::pair<int, unsigned long>> to_search;
 
 	State<COUNT> initial_state;
 	for (int i = 0; i < COUNT; ++i)
@@ -220,6 +221,8 @@ int Solve(const vector<int> &configuration,
 	return -1;
 }
 
+} //namespace;
+
 TEST_CASE(TEST_NAME)
 {
 	// The first floor contains a hydrogen-compatible microchip and a lithium-compatible microchip.
@@ -241,10 +244,10 @@ TEST_CASE(TEST_NAME)
 	// 2: strotium
 	// 3: promethium
 	// 4: ruthenium
-	cout << Solve<10>({0, 0, 0, 1, 0, 1, 2, 2, 2, 2}, {}) << endl;
+	MESSAGE(Solve<10>({0, 0, 0, 1, 0, 1, 2, 2, 2, 2}, {}));
 
 	// <...>
 	// 5: elerium
 	// 6: dilithium
-	cout << Solve<14>({0, 0, 0, 1, 0, 1, 2, 2, 2, 2, 0, 0, 0, 0}, {}) << endl;
+	MESSAGE(Solve<14>({0, 0, 0, 1, 0, 1, 2, 2, 2, 2, 0, 0, 0, 0}, {}));
 }

@@ -4,14 +4,14 @@
 #include <sstream>
 #include <cassert>
 
-using namespace std;
+namespace {
 
 bool IsAbba(const char *s)
 {
 	return s[0] == s[3] && s[1] == s[2] && s[0] != s[1];
 }
 
-bool IsTls(const string &addr)
+bool IsTls(const std::string &addr)
 {
 	bool is_hyper{false};
 	bool is_tls{false};
@@ -41,7 +41,7 @@ bool IsTls(const string &addr)
 	return is_tls;
 }
 
-bool FindHyper(const string &addr, char a, char b)
+bool FindHyper(const std::string &addr, char a, char b)
 {
 	bool is_hyper{false};
 
@@ -68,7 +68,7 @@ bool FindHyper(const string &addr, char a, char b)
 	return false;
 }
 
-bool IsSsl(const string &addr)
+bool IsSsl(const std::string &addr)
 {
 	bool is_hyper{false};
 
@@ -100,11 +100,11 @@ bool IsSsl(const string &addr)
 }
 
 template <typename FuncT>
-int Solve(istream &&is, FuncT func)
+int Solve(std::istream &&is, FuncT func)
 {
 	int count{0};
 
-	string line;
+	std::string line;
 	while (getline(is, line))
 	{
 		if (func(line))
@@ -114,6 +114,8 @@ int Solve(istream &&is, FuncT func)
 	return count;
 }
 
+} //namespace;
+
 TEST_CASE(TEST_NAME)
 {
 	REQUIRE(IsTls("abba[mnop]qrst"));
@@ -121,12 +123,12 @@ TEST_CASE(TEST_NAME)
 	REQUIRE(!IsTls("aaaa[qwer]tyui"));
 	REQUIRE(IsTls("ioxxoj[asdfgh]zxcvbn"));
 
-	cout << Solve(ifstream(INPUT), IsTls) << endl;
+	MESSAGE(Solve(std::ifstream{INPUT}, IsTls));
 
 	REQUIRE(IsSsl("aba[bab]xyz"));
 	REQUIRE(!IsSsl("xyx[xyx]xyx"));
 	REQUIRE(IsSsl("aaa[kek]eke"));
 	REQUIRE(IsSsl("zazbz[bzb]cdb"));
 
-	cout << Solve(ifstream(INPUT), IsSsl) << endl;
+	MESSAGE(Solve(std::ifstream{INPUT}, IsSsl));
 }

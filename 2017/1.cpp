@@ -29,6 +29,6 @@ TEST_CASE(TEST_NAME)
 
 	std::string input;
 	getline(std::ifstream(INPUT), input);
-	std::cout << Sum(input, 1) << std::endl;
-	std::cout << Sum(input, input.size() / 2) << std::endl;
+	MESSAGE(Sum(input, 1));
+	MESSAGE(Sum(input, input.size() / 2));
 }

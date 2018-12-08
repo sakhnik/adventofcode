@@ -103,6 +103,6 @@ TEST_CASE(TEST_NAME)
     REQUIRE(3 == test.second);
 
     auto res = CalcIntersection(1024, GetInput());
-    std::cout << res.first << std::endl;
-    std::cout << res.second << std::endl;
+    MESSAGE(res.first);
+    MESSAGE(res.second);
 }

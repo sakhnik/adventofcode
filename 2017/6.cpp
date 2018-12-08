@@ -60,6 +60,6 @@ TEST_CASE(TEST_NAME)
 		ifs >> i;
 
 	auto res = Count(banks);
-	std::cout << res.first << std::endl;
-	std::cout << res.second << std::endl;
+	MESSAGE(res.first);
+	MESSAGE(res.second);
 }
