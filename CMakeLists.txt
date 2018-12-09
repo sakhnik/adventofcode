@@ -13,7 +13,7 @@ foreach(year RANGE 2016 2017)
     endforeach()
 endforeach()
 
-foreach(src RANGE 1 8)
+foreach(src RANGE 1 9)
     list(APPEND sources 2018/${src}.cpp)
 endforeach()
 
