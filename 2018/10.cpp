@@ -4,6 +4,12 @@
 #include <iostream>
 #include <fstream>
 
+// The idea is to search for the configuration with the smallest
+// bounding box. This may fail if there is a rogue light, not participating
+// in the signage. But let's try.
+
+namespace {
+
 struct Vec
 {
     int x, y;
@@ -36,94 +42,99 @@ struct Box
     }
 };
 
-using SkyT = std::vector<Light>;
-
-SkyT ParseInput(std::istream &&is)
+class Sky
 {
-    SkyT sky;
-    std::string line;
-    while (is && getline(is, line))
+public:
+    Sky(std::istream &&is)
     {
-        Light l;
-        sscanf(line.c_str(), "position=<%d,%d> velocity=<%d,%d>",
-               &l.position.x, &l.position.y, &l.velocity.x, &l.velocity.y);
-        sky.push_back(l);
-    }
-    return sky;
-}
-
-Box GetBoundingBox(const SkyT &sky)
-{
-    auto MAX = std::numeric_limits<int>::max();
-    auto MIN = std::numeric_limits<int>::min();
-    Box box = {
-        .topleft = { MAX, MAX },
-        .bottomright = { MIN, MIN },
-    };
-    for (auto l : sky)
-    {
-        if (l.position.x < box.topleft.x) box.topleft.x = l.position.x;
-        if (l.position.y < box.topleft.y) box.topleft.y = l.position.y;
-        if (l.position.x > box.bottomright.x) box.bottomright.x = l.position.x;
-        if (l.position.y > box.bottomright.y) box.bottomright.y = l.position.y;
-    }
-    return box;
-}
-
-void Evolve(SkyT &sky, int dt)
-{
-    for (auto &l : sky)
-    {
-        l.position.x += l.velocity.x * dt;
-        l.position.y += l.velocity.y * dt;
-    }
-}
-
-void Print(const SkyT &sky, std::ostream &os)
-{
-    auto box = GetBoundingBox(sky);
-    auto width = box.GetWidth();
-    auto height = box.GetHeight();
-    std::vector<char> display(width * height, '.');
-
-    auto idx = [width](auto x, auto y) {
-        return y * width + x;
-    };
-    auto set = [&](int x, int y) {
-        display.at(idx(x - box.topleft.x, y - box.topleft.y)) = '#';
-    };
-
-    for (auto l : sky)
-    {
-        set(l.position.x, l.position.y);
-    }
-
-    for (int h = 0; h < height; ++h)
-    {
-        for (int w = 0; w < width; ++w)
+        std::string line;
+        while (is && getline(is, line))
         {
-            os << display[idx(w, h)];
+            Light l;
+            sscanf(line.c_str(), "position=<%d,%d> velocity=<%d,%d>",
+                   &l.position.x, &l.position.y, &l.velocity.x, &l.velocity.y);
+            _lights.push_back(l);
         }
-        os << "\n";
     }
-}
 
-int SearchMin(SkyT &sky)
-{
-    auto prev_area = GetBoundingBox(sky).Area();
-
-    for (int i = 0; ; ++i)
+    Box GetBoundingBox() const
     {
-        Evolve(sky, 1);
-        auto area = GetBoundingBox(sky).Area();
-        if (area < 80*25 && area > prev_area)
+        auto MAX = std::numeric_limits<int>::max();
+        auto MIN = std::numeric_limits<int>::min();
+        Box box = {
+            .topleft = { MAX, MAX },
+            .bottomright = { MIN, MIN },
+        };
+        for (auto l : _lights)
         {
-            Evolve(sky, -1);
-            return i;
+            if (l.position.x < box.topleft.x) box.topleft.x = l.position.x;
+            if (l.position.y < box.topleft.y) box.topleft.y = l.position.y;
+            if (l.position.x > box.bottomright.x) box.bottomright.x = l.position.x;
+            if (l.position.y > box.bottomright.y) box.bottomright.y = l.position.y;
         }
-        prev_area = area;
+        return box;
     }
-}
+
+    void Evolve(int dt)
+    {
+        for (auto &l : _lights)
+        {
+            l.position.x += l.velocity.x * dt;
+            l.position.y += l.velocity.y * dt;
+        }
+    }
+
+    void Print(std::ostream &os) const
+    {
+        auto box = GetBoundingBox();
+        auto width = box.GetWidth();
+        auto height = box.GetHeight();
+        std::vector<char> display(width * height, '.');
+
+        auto idx = [width](auto x, auto y) {
+            return y * width + x;
+        };
+        auto set = [&](int x, int y) {
+            display.at(idx(x - box.topleft.x, y - box.topleft.y)) = '#';
+        };
+
+        for (auto l : _lights)
+        {
+            set(l.position.x, l.position.y);
+        }
+
+        for (int h = 0; h < height; ++h)
+        {
+            for (int w = 0; w < width; ++w)
+            {
+                os << display[idx(w, h)];
+            }
+            os << "\n";
+        }
+    }
+
+    int SearchMin()
+    {
+        auto prev_area = GetBoundingBox().Area();
+
+        for (int i = 0; ; ++i)
+        {
+            Evolve(1);
+            auto area = GetBoundingBox().Area();
+            if (area < 80*25 && area > prev_area)
+            {
+                Evolve(-1);
+                return i;
+            }
+            prev_area = area;
+        }
+    }
+
+private:
+    std::vector<Light> _lights;
+};
+
+} //namespace;
 
 TEST_CASE(TEST_NAME)
 {
@@ -158,11 +169,11 @@ position=<-6,  0> velocity=< 2,  0>
 position=< 5,  9> velocity=< 1, -2>
 position=<14,  7> velocity=<-2,  0>
 position=<-3,  6> velocity=< 2, -1>)";
-    auto test = ParseInput(std::istringstream{TEST});
+    Sky test(std::istringstream{TEST});
 
     std::ostringstream oss;
-    REQUIRE(3 == SearchMin(test));
-    Print(test, oss);
+    REQUIRE(3 == test.SearchMin());
+    test.Print(oss);
     REQUIRE(oss.str() == R"(#...#..###
 #...#...#.
 #...#...#.
@@ -173,7 +184,7 @@ position=<-3,  6> velocity=< 2, -1>)";
 #...#..###
 )");
 
-    auto input = ParseInput(std::ifstream{INPUT});
-    MESSAGE(SearchMin(input));
-    Print(input, std::cout);
+    Sky input(std::ifstream{INPUT});
+    MESSAGE(input.SearchMin());
+    input.Print(std::cout);
 }
