@@ -108,21 +108,21 @@ void Print(const SkyT &sky, std::ostream &os)
     }
 }
 
-void SearchMin(SkyT &sky)
+int SearchMin(SkyT &sky)
 {
     auto prev_area = GetBoundingBox(sky).Area();
 
-    while (true)
+    for (int i = 0; ; ++i)
     {
         Evolve(sky, 1);
         auto area = GetBoundingBox(sky).Area();
         if (area < 80*25 && area > prev_area)
         {
-            break;
+            Evolve(sky, -1);
+            return i;
         }
         prev_area = area;
     }
-    Evolve(sky, -1);
 }
 
 TEST_CASE(TEST_NAME)
@@ -161,7 +161,7 @@ position=<-3,  6> velocity=< 2, -1>)";
     auto test = ParseInput(std::istringstream{TEST});
 
     std::ostringstream oss;
-    SearchMin(test);
+    REQUIRE(3 == SearchMin(test));
     Print(test, oss);
     REQUIRE(oss.str() == R"(#...#..###
 #...#...#.
@@ -174,6 +174,6 @@ position=<-3,  6> velocity=< 2, -1>)";
 )");
 
     auto input = ParseInput(std::ifstream{INPUT});
-    SearchMin(input);
+    MESSAGE(SearchMin(input));
     Print(input, std::cout);
 }
