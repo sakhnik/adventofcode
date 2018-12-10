@@ -37,9 +37,9 @@ std::string Reduce(const std::string &s)
     return reduced;
 }
 
-int Search(const std::string &s)
+size_t Search(const std::string &s)
 {
-    int min_size = std::numeric_limits<int>::max();
+    size_t min_size = std::numeric_limits<int>::max();
     for (char c = 'A'; c <= 'Z'; ++c)
     {
         std::string test;

@@ -134,7 +134,7 @@ int FindSpot(const PointsT &points)
     std::sort(begin(f), it_end);
 
     int max_area{0};
-    int point = -1;
+    //int point = -1;
     for (auto it = begin(f); it != it_end; )
     {
         auto it2 = std::find_if_not(it, it_end,
@@ -143,7 +143,7 @@ int FindSpot(const PointsT &points)
         if (area > max_area)
         {
             max_area = area;
-            point = *it;
+            //point = *it;
         }
         it = it2;
     }

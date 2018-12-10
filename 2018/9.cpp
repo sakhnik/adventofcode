@@ -40,7 +40,8 @@ public:
             _cur = _AdvanceNext();
             _cur = _marbles.insert(++_cur, _marble);
         }
-        _player = ++_player % _players.size();
+        ++_player;
+        _player %= _players.size();
     }
 
     std::string DumpMarbles() const

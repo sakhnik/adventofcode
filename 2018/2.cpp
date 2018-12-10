@@ -55,7 +55,7 @@ int Checksum(const BoxesT &boxes)
 std::string DiffId(const std::string &a, const std::string &b)
 {
     std::string d;
-    for (int i = 0; i < std::size(a); ++i)
+    for (size_t i = 0; i < std::size(a); ++i)
     {
         if (a[i] == b[i])
         {
@@ -67,9 +67,9 @@ std::string DiffId(const std::string &a, const std::string &b)
 
 std::string FindCorrect(const BoxesT &boxes)
 {
-    for (int i = 0, in = boxes.size() - 1; i < in; ++i)
+    for (size_t i = 0, in = boxes.size() - 1; i < in; ++i)
     {
-        for (int j = i + 1; j < boxes.size(); ++j)
+        for (size_t j = i + 1; j < boxes.size(); ++j)
         {
             auto diff = DiffId(boxes[i], boxes[j]);
             if (size(diff) == size(boxes[i]) - 1)
