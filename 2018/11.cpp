@@ -9,20 +9,28 @@ namespace {
 class Grid
 {
 public:
-    static const int X0 = 1;
-    static const int Y0 = 1;
-    static const int W = 300;
+    static const int W = 301;
 
     Grid(int serial)
         : _serial(serial)
-        , _levels(W*W)
+        , _summed_areas(W*W)
     {
-        // Precalculate levels for every cell
+        // Precalculate the summed area table
         for (int i = 0; i < W; ++i)
         {
-            for (int j = 0; j < W; ++j)
+            _summed_areas[_GetIdx(i, 0)] = 0;
+            _summed_areas[_GetIdx(0, i)] = 0;
+        }
+
+        for (int j = 1; j < W; ++j)
+        {
+            for (int i = 1; i < W; ++i)
             {
-                _levels[_GetIdx(i,j)] = CalcLevel(i + X0, j + Y0, _serial);
+                auto s = CalcLevel(i, j, _serial);
+                s += _summed_areas[_GetIdx(i-1, j)];
+                s += _summed_areas[_GetIdx(i, j-1)];
+                s -= _summed_areas[_GetIdx(i-1, j-1)];
+                _summed_areas[_GetIdx(i, j)] = s;
             }
         }
     }
@@ -40,7 +48,7 @@ public:
         MaxPower ret{};
         int size{};
 
-        for (int s = 1; s <= W; ++s)
+        for (int s = 1; s < W; ++s)
         {
             auto p = _FindMaxPower(s);
             if (p.power > ret.power)
@@ -69,6 +77,7 @@ public:
 private:
     int _serial;
     std::vector<int8_t> _levels;
+    std::vector<int> _summed_areas;
 
     static size_t _GetIdx(int x, int y)
     {
@@ -88,67 +97,30 @@ private:
         auto checkPower = [&](int i, int j, int power) {
             if (power > ret.power)
             {
-                ret.x = X0 + i;
-                ret.y = Y0 + j;
+                ret.x = i - size + 1;
+                ret.y = j - size + 1;
                 ret.power = power;
             }
         };
 
-        // The initial topleft square.
-        auto power0 = _CalcSquare(X0, Y0, size);
-        checkPower(0, 0, power0);
-
-        for (int j = 0, J = W - size + 1; j < J; ++j)
+        for (int j = size; j < W; ++j)
         {
-            // Move the initial square down by one position for every row.
-            if (j)
-                power0 = _MoveSquareDown(X0, Y0 + j - 1, size, power0);
-            auto power = power0;
-            checkPower(0, j, power);
-            for (int i = 1, I = W - size + 1; i < I; ++i)
+            for (int i = size; i < W; ++i)
             {
-                // Move the square to the right by one position.
-                power = _MoveSquareRight(X0 + i - 1, Y0 + j, size, power);
+                auto power = _CalcSquare(i, j, size);
                 checkPower(i, j, power);
             }
         }
+
         return ret;
     }
 
-    int _CalcSquare(int x, int y, int s) const
+    int _CalcSquare(int i, int j, int s) const
     {
-        int power{0};
-
-        for (int i = 0; i < s; ++i)
-        {
-            for (int j = 0; j < s; ++j)
-            {
-                power += _levels[_GetIdx(x - X0 + i, y - Y0 + j)];
-            }
-        }
-
-        return power;
-    }
-
-    int _MoveSquareRight(int x, int y, int s, int power) const
-    {
-        for (int j = 0; j < s; ++j)
-        {
-            auto idx = _GetIdx(x - X0, y - Y0 + j);
-            power -= _levels[idx];
-            power += _levels[idx + s];
-        }
-        return power;
-    }
-
-    int _MoveSquareDown(int x, int y, int s, int power) const
-    {
-        for (int i = 0; i < s; ++i)
-        {
-            auto idx = _GetIdx(i + x - X0, y - Y0);
-            power -= _levels[idx];
-            power += _levels[idx + s*W];
-        }
+        int power = _summed_areas[_GetIdx(i, j)];
+        power -= _summed_areas[_GetIdx(i - s, j)];
+        power -= _summed_areas[_GetIdx(i, j - s)];
+        power += _summed_areas[_GetIdx(i - s, j - s)];
         return power;
     }
 };
