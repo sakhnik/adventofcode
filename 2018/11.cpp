@@ -95,15 +95,15 @@ private:
         };
 
         // The initial topleft square.
-        auto powerY = _CalcSquare(X0, Y0, size);
-        checkPower(0, 0, powerY);
+        auto power0 = _CalcSquare(X0, Y0, size);
+        checkPower(0, 0, power0);
 
         for (int j = 0, J = W - size + 1; j < J; ++j)
         {
             // Move the initial square down by one position for every row.
             if (j)
-                powerY = _MoveSquareDown(X0, Y0 + j - 1, size, powerY);
-            auto power = powerY;
+                power0 = _MoveSquareDown(X0, Y0 + j - 1, size, power0);
+            auto power = power0;
             checkPower(0, j, power);
             for (int i = 1, I = W - size + 1; i < I; ++i)
             {
