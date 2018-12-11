@@ -1,42 +1,57 @@
 #include <doctest/doctest.h>
 #include <limits>
+#include <sstream>
+#include <iostream>
+#include <vector>
 
 namespace {
 
 class Grid
 {
 public:
-    struct Vec
-    {
-        int x, y;
-        bool operator==(const Vec &o) const { return x == o.x && y == o.y; }
-    };
+    static const int X0 = 1;
+    static const int Y0 = 1;
+    static const int W = 300;
 
-    Grid(Vec tl, Vec br, int serial)
-        : _tl(tl)
-        , _wh{br.x - tl.x + 1, br.y - tl.y + 1}
-        , _serial(serial)
+    Grid(int serial)
+        : _serial(serial)
+        , _levels(W*W)
     {
-    }
-
-    Vec FindMaxPower() const
-    {
-        Vec ret{};
-        int max_power = std::numeric_limits<int>::min();
-        for (int i = 0, I = _wh.x - 2; i < I; ++i)
+        for (int i = 0; i < W; ++i)
         {
-            for (int j = 0, J = _wh.y - 2; j < J; ++j)
+            for (int j = 0; j < W; ++j)
             {
-                auto power = _Calc3x3(_tl.x + i, _tl.y + j);
-                if (power > max_power)
-                {
-                    max_power = power;
-                    ret = Vec{_tl.x + i, _tl.y + j};
-                }
-
+                _levels[_GetIdx(i,j)] = CalcLevel(i + X0, j + Y0, _serial);
             }
         }
-        return ret;
+    }
+
+    std::string FindMaxPower3() const
+    {
+        auto ret = _FindMaxPower(3);
+        std::ostringstream oss;
+        oss << ret.x << "," << ret.y;
+        return oss.str();
+    }
+
+    std::string FindMaxPower() const
+    {
+        MaxPower ret{};
+        int size{};
+
+        for (int s = 1; s <= W; ++s)
+        {
+            auto p = _FindMaxPower(s);
+            if (p.power > ret.power)
+            {
+                ret = p;
+                size = s;
+            }
+        }
+
+        std::ostringstream oss;
+        oss << ret.x << ',' << ret.y << ',' << size;
+        return oss.str();
     }
 
     static int CalcLevel(int x, int y, int serial)
@@ -51,33 +66,53 @@ public:
     }
 
 private:
-    Vec _tl;
-    Vec _wh;
     int _serial;
+    std::vector<int8_t> _levels;
 
-    int _Calc3x3(int x, int y) const
+    static size_t _GetIdx(int x, int y)
+    {
+        return x + y*W;
+    }
+
+    struct MaxPower
+    {
+        int x, y;
+        int power = std::numeric_limits<int>::min();
+    };
+
+    MaxPower _FindMaxPower(int size) const
+    {
+        MaxPower ret{};
+        for (int i = 0, I = W - size + 1; i < I; ++i)
+        {
+            for (int j = 0, J = W - size + 1; j < J; ++j)
+            {
+                auto power = _CalcSquare(X0 + i, Y0 + j, size);
+                if (power > ret.power)
+                {
+                    ret.x = X0 + i;
+                    ret.y = Y0 + j;
+                    ret.power = power;
+                }
+
+            }
+        }
+        return ret;
+    }
+
+    int _CalcSquare(int x, int y, int s) const
     {
         int power{0};
 
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < s; ++i)
         {
-            for (int j = 0; j < 3; ++j)
+            for (int j = 0; j < s; ++j)
             {
-                power += CalcLevel(x + i, y + j, _serial);
+                power += _levels[_GetIdx(x - X0 + i, y - Y0 + j)];
             }
         }
 
         return power;
-    }
-};
-
-class StGrid
-    : public Grid
-{
-public:
-    StGrid(int serial)
-        : Grid{{1,1}, {300,300}, serial}
-    {
     }
 };
 
@@ -92,12 +127,20 @@ TEST_CASE(TEST_NAME)
     }
 
     SUBCASE("search") {
-        REQUIRE(Grid::Vec{33,45} == StGrid{18}.FindMaxPower());
-        REQUIRE(Grid::Vec{21,61} == StGrid{42}.FindMaxPower());
+        REQUIRE("33,45" == Grid{18}.FindMaxPower3());
+        REQUIRE("21,61" == Grid{42}.FindMaxPower3());
     }
 
     SUBCASE("task1") {
-        auto v = StGrid{1723}.FindMaxPower();
-        MESSAGE(v.x << "," << v.y);
+        MESSAGE(Grid{1723}.FindMaxPower3());
+    }
+
+    SUBCASE("size") {
+        REQUIRE("90,269,16" == Grid{18}.FindMaxPower());
+        REQUIRE("232,251,12" == Grid{42}.FindMaxPower());
+    }
+
+    SUBCASE("task2") {
+        MESSAGE(Grid{1723}.FindMaxPower());
     }
 }
