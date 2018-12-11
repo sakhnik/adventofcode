@@ -17,6 +17,7 @@ public:
         : _serial(serial)
         , _levels(W*W)
     {
+        // Precalculate levels for every cell
         for (int i = 0; i < W; ++i)
         {
             for (int j = 0; j < W; ++j)
@@ -82,19 +83,33 @@ private:
 
     MaxPower _FindMaxPower(int size) const
     {
+        // To avoid repetitive calculations, let's implement a sliding window.
         MaxPower ret{};
-        for (int i = 0, I = W - size + 1; i < I; ++i)
-        {
-            for (int j = 0, J = W - size + 1; j < J; ++j)
+        auto checkPower = [&](int i, int j, int power) {
+            if (power > ret.power)
             {
-                auto power = _CalcSquare(X0 + i, Y0 + j, size);
-                if (power > ret.power)
-                {
-                    ret.x = X0 + i;
-                    ret.y = Y0 + j;
-                    ret.power = power;
-                }
+                ret.x = X0 + i;
+                ret.y = Y0 + j;
+                ret.power = power;
+            }
+        };
 
+        // The initial topleft square.
+        auto powerY = _CalcSquare(X0, Y0, size);
+        checkPower(0, 0, powerY);
+
+        for (int j = 0, J = W - size + 1; j < J; ++j)
+        {
+            // Move the initial square down by one position for every row.
+            if (j)
+                powerY = _MoveSquareDown(X0, Y0 + j - 1, size, powerY);
+            auto power = powerY;
+            checkPower(0, j, power);
+            for (int i = 1, I = W - size + 1; i < I; ++i)
+            {
+                // Move the square to the right by one position.
+                power = _MoveSquareRight(X0 + i - 1, Y0 + j, size, power);
+                checkPower(i, j, power);
             }
         }
         return ret;
@@ -112,6 +127,28 @@ private:
             }
         }
 
+        return power;
+    }
+
+    int _MoveSquareRight(int x, int y, int s, int power) const
+    {
+        for (int j = 0; j < s; ++j)
+        {
+            auto idx = _GetIdx(x - X0, y - Y0 + j);
+            power -= _levels[idx];
+            power += _levels[idx + s];
+        }
+        return power;
+    }
+
+    int _MoveSquareDown(int x, int y, int s, int power) const
+    {
+        for (int i = 0; i < s; ++i)
+        {
+            auto idx = _GetIdx(i + x - X0, y - Y0);
+            power -= _levels[idx];
+            power += _levels[idx + s*W];
+        }
         return power;
     }
 };
