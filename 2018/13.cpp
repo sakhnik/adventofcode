@@ -3,6 +3,9 @@
 #include <vector>
 #include <algorithm>
 #include <fstream>
+#include <functional>
+#include <list>
+#include <cassert>
 
 namespace {
 
@@ -21,7 +24,7 @@ public:
             }
             else
             {
-                REQUIRE(_width == line.length());
+                assert(_width == line.length());
             }
 
             for (int col = 0, colN = line.size(); col < colN; ++col)
@@ -56,7 +59,7 @@ public:
                     break;
                 default:
                     INFO(ch);
-                    REQUIRE(!"Incorrect char");
+                    assert(!"Incorrect char");
                 }
             }
             ++row;
@@ -68,7 +71,7 @@ public:
         return _carts.size();
     }
 
-    struct Collision
+    struct Position
     {
         int row, col;
 
@@ -80,33 +83,26 @@ public:
         }
     };
 
-    Collision Simulate()
+    Position RunUntilFirstCollision()
     {
-        std::vector<bool> cart_flags(_map.size(), false);
-        for (auto &cart : _carts)
-        {
-            cart_flags[_Idx(cart.row, cart.col)] = true;
-        }
+        Position ret;
+        auto capture = [&ret](int row, int col) {
+            ret = Position{row, col};
+            return true;
+        };
+        _Simulate(capture);
+        return ret;
+    }
 
-        while (true)
-        {
-            std::sort(begin(_carts), end(_carts));
-            for (auto &cart : _carts)
-            {
-                cart_flags[_Idx(cart.row, cart.col)] = false;
-                cart.Advance();
-                auto idx = _Idx(cart.row, cart.col);
-                if (cart_flags[idx])
-                {
-                    return {cart.row, cart.col};
-                }
-                else
-                {
-                    cart_flags[idx] = true;
-                }
-                cart.CheckForTurn(_map[idx]);
-            }
-        }
+    Position RunUntilLastCollision()
+    {
+        auto ignore = [](int, int) {
+            return false;
+        };
+        _Simulate(ignore);
+        REQUIRE(size(_carts) > 0);
+        const auto cart = _carts.front();
+        return {cart.row, cart.col};
     }
 
 private:
@@ -129,28 +125,50 @@ private:
             return col < o.col;
         }
 
-        void Advance()
+        void Advance(char place)
         {
             switch (dir)
             {
-            case '^': --row; break;
-            case '>': ++col; break;
-            case 'v': ++row; break;
-            case '<': --col; break;
+            case '^':
+                assert(place != '-');
+                assert(place != ' ');
+                --row;
+                break;
+            case '>':
+                assert(place != '|');
+                assert(place != ' ');
+                ++col;
+                break;
+            case 'v':
+                assert(place != '-');
+                assert(place != ' ');
+                ++row;
+                break;
+            case '<':
+                assert(place != '|');
+                assert(place != ' ');
+                --col;
+                break;
+            default:
+                assert(!"Incorrect direction");
             }
         }
 
         void CheckForTurn(char place)
         {
+            auto turn = [](char d, std::string_view cur, std::string_view next) {
+                return next[cur.find(d)];
+            };
+
             switch (place)
             {
             case '/':
                 // follow the curve
-                dir = ">v<^"[std::string{"^<v>"}.find(dir)];
+                dir = turn(dir, "^<v>", ">v<^");
                 break;
             case '\\':
                 // follow the curve
-                dir = ">v<^"[std::string{"v>^<"}.find(dir)];
+                dir = turn(dir, "v>^<", ">v<^");
                 break;
             case '+':
                 phase = (phase + 1) % 3;
@@ -158,37 +176,64 @@ private:
                 {
                 case 0:
                     // turn left
-                    dir = ">v<^"[std::string{"v<^>"}.find(dir)];
+                    dir = turn(dir, "v<^>", ">v<^");
                     break;
                 case 1:
                     // straight
                     break;
                 case 2:
-                    dir = ">v<^"[std::string{"^>v<"}.find(dir)];
                     // turn right
+                    dir = turn(dir, "^>v<", ">v<^");
                     break;
                 }
             }
         }
     };
-    std::vector<_Cart> _carts;
+
+    std::list<_Cart> _carts;
 
     size_t _Idx(int row, int col) const
     {
+        assert(col < static_cast<int>(_width));
         return row * _width + col;
     }
 
-    void _AdvanceCart(_Cart &cart)
+    void _Simulate(std::function<bool(int, int)> on_collision)
     {
-        auto idx = _Idx(cart.row, cart.col);
-        switch (_map[idx])
+        std::vector<decltype(_carts.begin())> cart_flags(_map.size(), _carts.end());
+        for (auto it = begin(_carts); it != end(_carts); ++it)
         {
-        case '.': _Straight(cart); break;
+            cart_flags[_Idx(it->row, it->col)] = it;
         }
-    }
 
-    void _Straight(_Cart &cart)
-    {
+        while (_carts.size() > 1)
+        {
+            _carts.sort();
+            for (auto it = begin(_carts); it != end(_carts); ++it)
+            {
+                auto idx = _Idx(it->row, it->col);
+                cart_flags[idx] = end(_carts);
+                it->Advance(_map[idx]);
+                idx = _Idx(it->row, it->col);
+                it->CheckForTurn(_map[idx]);
+                auto it2 = cart_flags[idx];
+                if (it2 != end(_carts))
+                {
+                    if (on_collision(it->row, it->col))
+                    {
+                        return;
+                    }
+                    cart_flags[_Idx(it2->row, it2->col)] = end(_carts);
+                    _carts.erase(it2);
+                    it = _carts.erase(it);
+                    --it;
+                }
+                else
+                {
+                    cart_flags[idx] = it;
+                }
+            }
+        }
     }
 };
 
@@ -197,19 +242,52 @@ private:
 TEST_CASE(TEST_NAME)
 {
     SUBCASE("test1") {
-        Map m(std::istringstream{"|\nv\n|\n|\n|\n^\n|"});
+        Map m(std::istringstream{
+              "|\n"
+              "v\n"
+              "|\n"
+              "|\n"
+              "|\n"
+              "^\n"
+              "|\n"
+              });
         REQUIRE(2 == m.GetCartCount());
-        REQUIRE("0,3" == m.Simulate().Dump());
+        REQUIRE("0,3" == m.RunUntilFirstCollision().Dump());
     }
 
     SUBCASE("test2") {
-        Map m(std::istringstream{"/->-\\        \n|   |  /----\\\n| /-+--+-\\  |\n| | |  | v  |\n\\-+-/  \\-+--/\n  \\------/   \n"});
+        Map m(std::istringstream{
+              R"(/->-\        )" "\n"
+              R"(|   |  /----\)" "\n"
+              R"(| /-+--+-\  |)" "\n"
+              R"(| | |  | v  |)" "\n"
+              R"(\-+-/  \-+--/)" "\n"
+              R"(  \------/   )" "\n"
+              });
         REQUIRE(2 == m.GetCartCount());
-        REQUIRE("7,3" == m.Simulate().Dump());
+        REQUIRE("7,3" == m.RunUntilFirstCollision().Dump());
     }
 
-    SUBCASE("task") {
+    SUBCASE("task1") {
         Map m(std::ifstream(INPUT));
-        MESSAGE(m.Simulate().Dump());
+        MESSAGE(m.RunUntilFirstCollision().Dump());
+    }
+
+    SUBCASE("test3") {
+        Map m(std::istringstream{
+              R"(/>-<\  )" "\n"
+              R"(|   |  )" "\n"
+              R"(| /<+-\)" "\n"
+              R"(| | | v)" "\n"
+              R"(\>+</ |)" "\n"
+              R"(  |   ^)" "\n"
+              R"(  \<->/)" "\n"
+              });
+        REQUIRE("6,4" == m.RunUntilLastCollision().Dump());
+    }
+
+    SUBCASE("task2") {
+        Map m(std::ifstream(INPUT));
+        MESSAGE(m.RunUntilLastCollision().Dump());
     }
 }
