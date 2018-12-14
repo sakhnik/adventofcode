@@ -16,8 +16,10 @@ public:
     {
         auto r1 = _seq[_pos1] - '0';
         auto r2 = _seq[_pos2] - '0';
-        auto sum = std::to_string(r1 + r2);
-        _seq += sum;
+        auto d = std::div(r1 + r2, 10);
+        if (d.quot)
+            _seq.push_back('1');
+        _seq.push_back('0' + d.rem);
         _pos1 = (_pos1 + r1 + 1) % _seq.size();
         _pos2 = (_pos2 + r2 + 1) % _seq.size();
         return _seq;
