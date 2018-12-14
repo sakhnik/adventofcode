@@ -33,6 +33,30 @@ public:
         return std::string_view(_seq.data() + count, 10);
     }
 
+    size_t RunUntil(std::string_view comb)
+    {
+        while (true)
+        {
+            Step();
+            if (_seq.size() < comb.size())
+                continue;
+            auto start = _seq.size() - comb.size();
+            auto len = comb.size();
+            if (start > 0)
+            {
+                // Every step may increment the sequence up to two digits.
+                --start;
+                ++len;
+            }
+
+            auto idx = std::string_view{_seq.data() + start, len}.find(comb);
+            if (idx != std::string_view::npos)
+            {
+                return start + idx;
+            }
+        }
+    }
+
 private:
     std::string _seq{"37"};
     size_t _pos1{0};
@@ -60,5 +84,16 @@ TEST_CASE(TEST_NAME)
 
     SUBCASE("task1") {
         MESSAGE(Recipes{}.Get10After(323081));
+    }
+
+    SUBCASE("test3") {
+        REQUIRE(9 == Recipes{}.RunUntil("51589"));
+        REQUIRE(5 == Recipes{}.RunUntil("01245"));
+        REQUIRE(18 == Recipes{}.RunUntil("92510"));
+        REQUIRE(2018 == Recipes{}.RunUntil("59414"));
+    }
+
+    SUBCASE("task2") {
+        MESSAGE(Recipes{}.RunUntil("323081"));
     }
 }
