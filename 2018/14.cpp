@@ -16,12 +16,19 @@ public:
     {
         auto r1 = _seq[_pos1] - '0';
         auto r2 = _seq[_pos2] - '0';
-        auto d = std::div(r1 + r2, 10);
-        if (d.quot)
+        auto sum = r1 + r2;
+        if (sum > 9)
+        {
             _seq.push_back('1');
-        _seq.push_back('0' + d.rem);
-        _pos1 = (_pos1 + r1 + 1) % _seq.size();
-        _pos2 = (_pos2 + r2 + 1) % _seq.size();
+            sum -= 10;
+        }
+        _seq.push_back('0' + sum);
+        _pos1 += r1 + 1;
+        while (_pos1 >= _seq.size())
+            _pos1 -= _seq.size();
+        _pos2 += r2 + 1;
+        while (_pos2 >= _seq.size())
+            _pos2 -= _seq.size();
         return _seq;
     }
 
