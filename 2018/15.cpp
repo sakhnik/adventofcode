@@ -17,13 +17,52 @@ namespace {
 
 class Battle
 {
-    bool _debug = false;
     int _round = 0;
 
 public:
-    void Debug()
+    Battle(std::istream &&is, int elf_attack = 3)
+        : Battle(is, elf_attack)
     {
-        _debug = !_debug;
+    }
+
+    Battle(std::istream &is, int elf_attack = 3)
+        : _elf_attack(elf_attack)
+    {
+        std::string line;
+        while (is && getline(is, line))
+        {
+            for (size_t i = 0; i < line.size(); ++i)
+            {
+                char ch = line[i];
+                if (ch == 'E' || ch == 'G')
+                {
+                    int attack = ch == 'E' ? elf_attack : 3;
+                    _units.emplace_back(_map.size(), i, ch, attack);
+                    ++_counts[ch];
+                }
+            }
+            _map.emplace_back(std::move(line));
+        }
+    }
+
+    Battle(const Battle &o) = default;
+
+    int GetElfAttack() const
+    {
+        return _elf_attack;
+    }
+
+    static Battle Task2(std::istream &ifs)
+    {
+        for (int attack = 3; ; ++attack)
+        {
+            ifs.clear();
+            ifs.seekg(0, std::ios::beg);
+            Battle b(ifs, attack);
+            int elf_count = b.GetElfCount();
+            if ('E' == b.RunUntilFinish(false) && elf_count == b.GetElfCount())
+                return b;
+        }
     }
 
     int GetRound() const
@@ -42,12 +81,29 @@ public:
                                [](int acc, const auto &u) { return acc + u.hp; });
     }
 
+    int GetElfCount() const
+    {
+        auto it = _counts.find('E');
+        return it->second;
+    }
+
     int64_t GetOutcome() const
     {
         return _round * GetScore();
     }
 
-    int64_t RunUntilFinish(bool visual)
+    char GetWinner()
+    {
+        auto it1 = _counts.find('G');
+        auto it2 = _counts.find('E');
+        if (it1->second && it2->second)
+            return 0;
+        if (it1->second)
+            return it1->first;
+        return it2->first;
+    }
+
+    char RunUntilFinish(bool visual)
     {
         while (true)
         {
@@ -56,32 +112,14 @@ public:
                 ::system("clear");
                 std::cout << "Round " << _round << "\n";
                 std::cout << Dump() << std::endl;
-                std::this_thread::sleep_for(std::chrono::milliseconds(200));
-                //std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                //std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             }
 
             Round();
-            auto outcome = GetOutcome();
-            if (outcome)
-                return outcome;
-        }
-    }
-
-    Battle(std::istream &&is)
-    {
-        std::string line;
-        while (is && getline(is, line))
-        {
-            for (size_t i = 0; i < line.size(); ++i)
-            {
-                char ch = line[i];
-                if (ch == 'E' || ch == 'G')
-                {
-                    _units.emplace_back(_map.size(), i, ch);
-                    ++_counts[ch];
-                }
-            }
-            _map.emplace_back(std::move(line));
+            auto winner = GetWinner();
+            if (winner)
+                return winner;
         }
     }
 
@@ -121,17 +159,18 @@ public:
     }
 
 private:
+    int _elf_attack;
     std::vector<std::string> _map;
     std::unordered_map<char, int> _counts;
     struct Unit
     {
-        Unit(int row, int col, char kind)
-            : row(row), col(col), kind(kind)
+        Unit(int row, int col, char kind, int attack)
+            : row(row), col(col), kind(kind), attack(attack)
         {}
         int row, col;
         char kind;
+        int attack;
         int hp = 200;
-        static const int attack = 3;
     };
     std::list<Unit> _units;
 
@@ -171,10 +210,7 @@ private:
         Way marks[width * height];
         for (auto &w : marks)
             w = Way{};
-        if (_debug)
-        {
-            std::cout << "*** Unit " << unit.kind << " (" << unit.row << "," << unit.col << ")" << std::endl;
-        }
+
         for (const auto &u : _units)
         {
             auto checkTarget = [&](int row, int col) {
@@ -193,21 +229,6 @@ private:
                 checkTarget(u.row, u.col - 1);
                 checkTarget(u.row, u.col + 1);
                 checkTarget(u.row + 1, u.col);
-            }
-        }
-
-        if (_debug)
-        {
-            for (int row = 0; row < height; ++row)
-            {
-                for (int col = 0; col < width; ++col)
-                {
-                    if (marks[idx(row,col)].is_target)
-                        std::cout << "+";
-                    else
-                        std::cout << _map[row][col];
-                }
-                std::cout << std::endl;
             }
         }
 
@@ -301,7 +322,7 @@ private:
         if (target == end(_units))
             return false;
 
-        target->hp -= Unit::attack;
+        target->hp -= unit.attack;
         if (target->hp <= 0)
         {
             char kind = target->kind;
@@ -442,9 +463,10 @@ TEST_CASE(TEST_NAME)
             "#######\n"
             });
 
-        CHECK(36334 == b.RunUntilFinish(false));
+        REQUIRE('E' == b.RunUntilFinish(false));
         CHECK(37 == b.GetRound());
         CHECK(982 == b.GetScore());
+        CHECK(36334 == b.GetOutcome());
 
         std::string exp =
             "#######   \n"
@@ -468,9 +490,10 @@ TEST_CASE(TEST_NAME)
             "#######\n"
             });
 
-        CHECK(39514 == b.RunUntilFinish(false));
+        REQUIRE('E' == b.RunUntilFinish(false));
         CHECK(46 == b.GetRound());
         CHECK(859 == b.GetScore());
+        CHECK(39514 == b.GetOutcome());
     }
 
     SUBCASE("test4") {
@@ -484,9 +507,10 @@ TEST_CASE(TEST_NAME)
             "#######\n"
             });
 
-        CHECK(27755 == b.RunUntilFinish(false));
+        REQUIRE('G' == b.RunUntilFinish(false));
         CHECK(35 == b.GetRound());
         CHECK(793 == b.GetScore());
+        CHECK(27755 == b.GetOutcome());
 
         std::string exp =
             "#######   \n"
@@ -511,9 +535,10 @@ TEST_CASE(TEST_NAME)
             "#######\n"
             });
 
-        CHECK(28944 == b.RunUntilFinish(false));
+        CHECK('G' == b.RunUntilFinish(false));
         CHECK(54 == b.GetRound());
         CHECK(536 == b.GetScore());
+        CHECK(28944 == b.GetOutcome());
 
         std::string exp =
             "#######   \n"
@@ -526,7 +551,7 @@ TEST_CASE(TEST_NAME)
         REQUIRE(exp == b.Dump());
     }
 
-    SUBCASE("task6") {
+    SUBCASE("test6") {
         Battle b(std::istringstream{
             "#########\n"
             "#G......#\n"
@@ -539,9 +564,10 @@ TEST_CASE(TEST_NAME)
             "#########\n"
             });
 
-        CHECK(18740 == b.RunUntilFinish(false));
+        REQUIRE('G' == b.RunUntilFinish(false));
         CHECK(20 == b.GetRound());
         CHECK(937 == b.GetScore());
+        CHECK(18740 == b.GetOutcome());
 
         std::string exp =
             "#########   \n"
@@ -558,6 +584,29 @@ TEST_CASE(TEST_NAME)
 
     SUBCASE("task1") {
         Battle b(std::ifstream(INPUT));
-        MESSAGE(b.RunUntilFinish(false));
+        MESSAGE(b.RunUntilFinish(false) << " " << b.GetOutcome());
+    }
+
+    SUBCASE("test7") {
+        std::istringstream iss{
+            "#######\n"
+            "#.G...#\n"
+            "#...EG#\n"
+            "#.#.#G#\n"
+            "#..G#E#\n"
+            "#.....#\n"
+            "#######\n"
+        };
+
+        auto b = Battle::Task2(iss);
+        REQUIRE(15 == b.GetElfAttack());
+        CHECK(29 == b.GetRound());
+        CHECK(172 == b.GetScore());
+    }
+
+    SUBCASE("task2") {
+        std::ifstream ifs{INPUT};
+        auto battle = Battle::Task2(ifs);
+        MESSAGE(battle.GetOutcome());
     }
 }
