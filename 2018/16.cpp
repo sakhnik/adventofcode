@@ -2,6 +2,9 @@
 #include <array>
 #include <sstream>
 #include <fstream>
+#include <bitset>
+#include <iostream>
+#include <algorithm>
 
 namespace {
 
@@ -36,8 +39,21 @@ RegsT Eval2(int op, int a, int b, int c, RegsT regs)
     return regs;
 }
 
-int Count(std::istream &&is)
+struct Result
 {
+    int task1;
+    int task2;
+};
+
+Result Count(std::istream &&is)
+{
+    using OpSetT = std::bitset<16>;
+    std::array<OpSetT, 16> op_mask;
+    for (size_t i = 0; i < size(op_mask); ++i)
+    {
+        op_mask[i].set();
+    }
+
     int count{};
 
     std::string l1, l2, l3;
@@ -56,12 +72,18 @@ int Count(std::istream &&is)
         if (4 != sscanf(l3.data(), "After: [%d, %d, %d, %d]", &r2[0], &r2[1], &r2[2], &r2[3]))
             break;
 
+        OpSetT op_set;
         int matches{0};
         for (int o = 0; o < 16; ++o)
         {
             if (r2 == Eval2(o, a, b, c, r1))
+            {
                 ++matches;
+                op_set.set(o);
+            }
         }
+
+        op_mask[op] &= op_set;
 
         if (matches >= 3)
             ++count;
@@ -69,14 +91,40 @@ int Count(std::istream &&is)
         std::getline(is, l1);
     }
 
-    return count;
+    std::array<int, 16> op_map{0};
+    while (true)
+    {
+        auto it = std::find_if(begin(op_mask), end(op_mask), [](auto m) { return m.count() == 1; });
+        if (it == end(op_mask))
+            break;
+        int opcode = it - begin(op_mask);
+        auto mask = it->to_ulong();
+        int code = 0;
+        while (mask != 1)
+        {
+            mask >>= 1;
+            ++code;
+        }
+        op_map[opcode] = code;
+        for (size_t i = 0; i < size(op_mask); ++i)
+            op_mask[i].reset(code);
+    }
+
+    RegsT regs{};
+    int op{}, a{}, b{}, c{};
+    while (is && (is >> op >> a >> b >> c))
+    {
+        Eval(op_map[op], a, b, c, regs);
+    }
+
+    return {count, regs[0]};
 }
 
 } //namespace;
 
 TEST_CASE(TEST_NAME)
 {
-    SUBCASE("task1") {
-        MESSAGE(Count(std::ifstream{INPUT}));
-    }
+    auto result = Count(std::ifstream{INPUT});
+    MESSAGE(result.task1);
+    MESSAGE(result.task2);
 }
