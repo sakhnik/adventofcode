@@ -84,6 +84,7 @@ public:
 private:
     using _IntT = int;
     using _LimitsT = std::numeric_limits<_IntT>;
+
     struct _Pos
     {
         _IntT row;
@@ -93,22 +94,13 @@ private:
         {
             return row == o.row && col == o.col;
         }
-
-        bool operator<(const _Pos &o) const
-        {
-            return row < o.row || (row == o.row && col < o.col);
-        }
-
-        struct Hasher
-        {
-            std::size_t operator()(const _Pos &p) const
-            {
-                return std::hash<_IntT>()(p.row << 16 | p.col);
-            }
-        };
     };
-    using _MapT = std::unordered_map<_Pos, char, _Pos::Hasher>;
-    _MapT _map;
+
+    static constexpr auto _posHash = [](const _Pos &p) {
+        return std::hash<_IntT>()(p.row << 16 | p.col);
+    };
+    using _MapT = std::unordered_map<_Pos, char, decltype(_posHash)>;
+    _MapT _map = _MapT(1000, _posHash);
 
     _IntT _ymin = _LimitsT::max();
     _Pos _topleft = {0, _LimitsT::max()};
