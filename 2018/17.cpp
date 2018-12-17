@@ -73,6 +73,14 @@ public:
                              });
     }
 
+    int CountRemainingWater() const
+    {
+        return std::count_if(begin(_map), end(_map),
+                             [this](const auto &t) {
+                                return t.first.row >= _ymin && t.second == '~';
+                             });
+    }
+
 private:
     using _IntT = int;
     using _LimitsT = std::numeric_limits<_IntT>;
@@ -174,6 +182,7 @@ y=13, x=498..504
         m.Pour();
         m.Print();
         REQUIRE(57 == m.CountWater());
+        REQUIRE(29 == m.CountRemainingWater());
     }
 
     SUBCASE("task") {
@@ -181,5 +190,6 @@ y=13, x=498..504
         m.Pour();
         //m.Print();
         MESSAGE(m.CountWater());
+        MESSAGE(m.CountRemainingWater());
     }
 }
