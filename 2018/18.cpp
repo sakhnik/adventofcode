@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <unordered_map>
 
 namespace {
 
@@ -23,6 +24,7 @@ public:
         }
         _area.emplace_back(_area.back().size() + 2, ' ');
         _prev_area = _area;
+        _history.emplace(Dump(), 0);
     }
 
     std::string Dump(size_t margin = 1) const
@@ -39,12 +41,35 @@ public:
         return oss.str();
     }
 
-    void Evolve(int count = 1)
+    size_t Evolve(size_t count = 1)
     {
         for (; count > 0; --count)
         {
+            if (_period)
+            {
+                auto target = _start + (_round + count - _start) % _period;
+                auto it = std::find_if(begin(_history), end(_history),
+                                       [target](const auto &h) { return h.second == target; });
+                _round += count;
+                return GetValue2(it->first);
+            }
+
             _Evolve();
+            ++_round;
+
+            auto dump = Dump();
+            auto it = _history.find(dump);
+            if (it != end(_history) && !_period)
+            {
+                _start = it->second;
+                _period = _round - it->second;
+            }
+            else
+            {
+                _history.emplace(std::move(dump), _round);
+            }
         }
+        return GetValue();
     }
 
     size_t GetValue() const
@@ -52,9 +77,19 @@ public:
         return _Count('|') * _Count('#');
     }
 
+    static size_t GetValue2(const std::string &area)
+    {
+        return count(begin(area), end(area), '|') * count(begin(area), end(area), '#');
+    }
+
 private:
-    std::vector<std::string> _area;
-    std::vector<std::string> _prev_area;
+    using _AreaT = std::vector<std::string>;
+    _AreaT _area;
+    _AreaT _prev_area;
+    std::unordered_map<std::string, size_t> _history;
+    size_t _round = 0;
+    size_t _period = 0;
+    size_t _start = 0;
 
     int _Count(size_t row, size_t col, char kind) const
     {
@@ -194,5 +229,6 @@ TEST_CASE(TEST_NAME)
         Area a(std::ifstream{INPUT});
         a.Evolve(10);
         MESSAGE(a.GetValue());
+        MESSAGE(a.Evolve(1000000000 - 10));
     }
 }
