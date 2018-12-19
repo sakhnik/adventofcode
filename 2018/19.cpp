@@ -224,9 +224,14 @@ TEST_CASE(TEST_NAME)
             {
                 for (int64_t r3 = 1; r3 <= r4; ++r3)
                 {
-                    if (r3 * r1 == r4)
+                    auto m = r3 * r1;
+                    if (m == r4)
                     {
                         r0 += r1;
+                    }
+                    if (m > r4)
+                    {
+                        break;
                     }
                 }
             }
