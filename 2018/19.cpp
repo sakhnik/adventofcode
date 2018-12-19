@@ -4,6 +4,7 @@
 #include <sstream>
 #include <fstream>
 #include <algorithm>
+#include <iostream>
 
 
 namespace {
@@ -12,8 +13,10 @@ class Cpu
 {
 public:
     using IntT = int;
+    using RegsT = std::array<IntT, 6>;
 
-    Cpu(std::istream &&is)
+    Cpu(std::istream &&is, RegsT regs = RegsT{})
+        : _regs(regs)
     {
         std::string word;
         IntT a{}, b{}, c{};
@@ -55,14 +58,47 @@ public:
         }
     }
 
-    using RegsT = std::array<IntT, 6>;
     const RegsT& GetRegs() const
     {
         return _regs;
     }
 
+    void Print() const
+    {
+        for (size_t i = 0; i < _program.size(); ++i)
+        {
+            std::cout << i << ". ";
+            const auto &instr = _program[i];
+            auto a = instr.a;
+            auto b = instr.b;
+            auto c = instr.c;
+
+            std::cout << 'r' << c << " = ";
+            switch (instr.op)
+            {
+            case 0:  std::cout << 'r' << a << " + " << 'r' << b;  break;
+            case 1:  std::cout << 'r' << a << " + " << b;         break;
+            case 2:  std::cout << 'r' << a << " * " << 'r' << b;  break;
+            case 3:  std::cout << 'r' << a << " * " << b;         break;
+            case 4:  std::cout << 'r' << a << " & " << 'r' << b;  break;
+            case 5:  std::cout << 'r' << a << " & " << b;         break;
+            case 6:  std::cout << 'r' << a << " | " << 'r' << b;  break;
+            case 7:  std::cout << 'r' << a << " | " << b;         break;
+            case 8:  std::cout << 'r' << a;                       break;
+            case 9:  std::cout << a;                              break;
+            case 10: std::cout << a << " > " << 'r' << b;         break;
+            case 11: std::cout << 'r' << a << " > " << b;         break;
+            case 12: std::cout << 'r' << a << " > " << 'r' << b;  break;
+            case 13: std::cout << a << " == " << 'r' << b;        break;
+            case 14: std::cout << 'r' << a << " == " << b;        break;
+            case 15: std::cout << 'r' << a << " == " << 'r' << b; break;
+            }
+            std::cout << "\n";
+        }
+    }
+
 private:
-    RegsT _regs = {};
+    RegsT _regs;
     IntT *_ip{};
 
     struct _Instruction
@@ -126,5 +162,49 @@ TEST_CASE(TEST_NAME)
         Cpu cpu(std::ifstream{INPUT});
         cpu.Execute();
         MESSAGE(cpu.GetRegs()[0]);
+    }
+
+    SUBCASE("task2") {
+        Cpu cpu(std::ifstream{INPUT}, {1, 0, 0, 0, 0, 0});
+        //cpu.Execute();
+        //MESSAGE(cpu.GetRegs()[0]);
+        cpu.Print();
+
+        // 0. jump 16           // r2 = r2 + 16
+        // 1. r1 = 1
+        // 2. r3 = 1
+        // 3. r5 = r1 * r3
+        // 4. r5 = r5 == r4
+        // 5. jump +[r5]        // r2 = r5 + r2
+        // 6. jump +1           // r2 = r2 + 1
+        // 7. r0 = r1 + r0
+        // 8. r3 = r3 + 1
+        // 9. r5 = r3 > r4
+        // 10. jump +[r5]       // r2 = r2 + r5
+        // 11. jump 2           // r2 = 2
+        // 12. r1 = r1 + 1
+        // 13. r5 = r1 > r4
+        // 14. r2 = r5 + r2
+        // 15. jump 1           // r2 = 1
+        // 16. jump 16*16       // r2 = r2 * r2
+        // 17. r4 = r4 + 2
+        // 18. r4 = r4 * r4
+        // 19. r4 = r2 * r4
+        // 20. r4 = r4 * 11
+        // 21. r5 = r5 + 1
+        // 22. r5 = r5 * r2
+        // 23. r5 = r5 + 17
+        // 24. r4 = r4 + r5
+        // 25. jump +[r0]       // r2 = r2 + r0
+        // 26. jump 0           // r2 = 0
+        // 27. r5 = r2
+        // 28. r5 = r5 * r2
+        // 29. r5 = r2 + r5
+        // 30. r5 = r2 * r5
+        // 31. r5 = r5 * 14
+        // 32. r5 = r5 * r2
+        // 33. r4 = r4 + r5
+        // 34. r0 = 0
+        // 35. jump 0           // r2 = 0
     }
 }
