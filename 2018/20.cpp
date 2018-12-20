@@ -20,13 +20,21 @@ public:
         _Search({0,0}, s);
     }
 
-    int GetFartherst()
+    int GetFartherst() const
     {
         auto it = std::max_element(begin(_map), end(_map),
                                    [](const auto &a, const auto &b) {
                                         return a.second.dist < b.second.dist;
                                    });
         return it->second.dist;
+    }
+
+    int CountRooms1000DoorsAway() const
+    {
+        return std::count_if(begin(_map), end(_map),
+                             [](const auto &en) {
+                                return en.second.dist >= 1000;
+                             });
     }
 
 private:
@@ -94,5 +102,6 @@ TEST_CASE(TEST_NAME)
     SUBCASE("task") {
         Map m(std::ifstream{INPUT});
         MESSAGE(m.GetFartherst());
+        MESSAGE(m.CountRooms1000DoorsAway());
     }
 }
