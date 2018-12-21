@@ -1,6 +1,7 @@
 #include <doctest/doctest.h>
 #include "Cpu.h"
 #include <fstream>
+#include <memory>
 
 namespace {
 } //namespace;
@@ -73,6 +74,11 @@ TEST_CASE(TEST_NAME)
         }
 
         REQUIRE(0 == ::system("cd /tmp; g++ -std=c++17 -O2 test.cpp"));
-        REQUIRE(0 == ::system("/tmp/a.out"));
+        std::unique_ptr<FILE, int(*)(FILE*)> f(::popen("/tmp/a.out", "r"), &fclose);
+        int res{};
+        fscanf(f.get(), "%d", &res);
+        MESSAGE(res);
+        fscanf(f.get(), "%d", &res);
+        MESSAGE(res);
     }
 }
