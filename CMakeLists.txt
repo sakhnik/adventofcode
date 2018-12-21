@@ -4,12 +4,14 @@ find_package(Threads)
 list(APPEND sources main.cpp)
 
 foreach(src RANGE 1 2)
-    list(APPEND sources 2015/${src}.cpp)
+    string(REGEX REPLACE "^(.)$" "0\\1" zero_src ${src})
+    list(APPEND sources 2015/${zero_src}.cpp)
 endforeach()
 
 foreach(year RANGE 2016 2017)
     foreach(src RANGE 1 25)
-        list(APPEND sources ${year}/${src}.cpp)
+        string(REGEX REPLACE "^(.)$" "0\\1" zero_src ${src})
+        list(APPEND sources ${year}/${zero_src}.cpp)
     endforeach()
 endforeach()
 
