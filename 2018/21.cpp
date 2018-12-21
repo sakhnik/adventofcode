@@ -48,14 +48,31 @@ TEST_CASE(TEST_NAME)
         // Apparently, we can break the program the first time the line 28 is hit
         // for the task1 => the fewest instructions.
  
-        while (true)
         {
-            cpu.Step();
-            if (cpu.GetIp() == 28)
-            {
-                MESSAGE(cpu.GetRegs()[4]);
-                break;
-            }
+            std::ofstream ofs("/tmp/test.cpp");
+            cpu.Transcode(ofs,
+                          "#include <unordered_set>\n#include <iostream>\n",
+                          "std::unordered_set<int> seen;\nint prev = 0;\n",
+                          {{28, R"(
+                {
+                    auto x = r[4];
+                    if (seen.empty())
+                    {
+                        std::cout << x << std::endl;
+                    }
+                    auto it = seen.find(x);
+                    if (it != end(seen))
+                    {
+                        std::cout << prev << std::endl;
+                        return 0;
+                    }
+                    seen.insert(x);
+                    prev = x;
+                }
+                          )"}});
         }
+
+        REQUIRE(0 == ::system("cd /tmp; g++ -std=c++17 -O2 test.cpp"));
+        REQUIRE(0 == ::system("/tmp/a.out"));
     }
 }

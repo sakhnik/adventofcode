@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <unordered_map>
 
 namespace aoc2018 {
 
@@ -98,6 +99,66 @@ public:
             }
             std::cout << "\n";
         }
+    }
+
+    void Transcode(std::ostream &os,
+                   const std::string &include,
+                   const std::string &decl,
+                   const std::unordered_map<int, std::string> &hooks)
+    {
+        os << "#include <array>\n";
+        os << include;
+        os << "\n";
+        os << "int main(int argc, char *argv[])\n";
+        os << "{\n";
+        os << "    std::array<int,6> r{};\n";
+        os << "    int *ip = &r[" << (_ip - &_regs[0]) << "];\n";
+        os << decl;
+        os << "\n";
+        os << "    while (true) {\n";
+        os << "        switch (*ip) {\n";
+        for (size_t i = 0; i < _program.size(); ++i)
+        {
+            os << "        case " << i << ":\n            ";
+            const auto &instr = _program[i];
+            auto a = instr.a;
+            auto b = instr.b;
+            auto c = instr.c;
+
+            os << "r[" << c << "] = ";
+            switch (instr.op)
+            {
+            case 0:  os << "r[" << a << "] + " << "r[" << b << "]";  break;
+            case 1:  os << "r[" << a << "] + " << b;                 break;
+            case 2:  os << "r[" << a << "] * " << "r[" << b << "]";  break;
+            case 3:  os << "r[" << a << "] * " << b;                 break;
+            case 4:  os << "r[" << a << "] & " << "r[" << b << "]";  break;
+            case 5:  os << "r[" << a << "] & " << b;                 break;
+            case 6:  os << "r[" << a << "] | " << "r[" << b << "]";  break;
+            case 7:  os << "r[" << a << "] | " << b;                 break;
+            case 8:  os << "r[" << a << "]";                         break;
+            case 9:  os << a;                                        break;
+            case 10: os << a << " > " << "r[" << b << "]";           break;
+            case 11: os << "r[" << a << "] > " << b;                 break;
+            case 12: os << "r[" << a << "] > " << "r[" << b << "]";  break;
+            case 13: os << a << " == " << "r[" << b << "]";          break;
+            case 14: os << "r[" << a << "] == " << b;                break;
+            case 15: os << "r[" << a << "] == " << "r[" << b << "]"; break;
+            }
+            os << ";\n";
+            auto it = hooks.find(i);
+            if (it != end(hooks))
+            {
+                os << "            " << it->second << "\n";
+            }
+            os << "            break;\n";
+        }
+        os << "        default: return 0;\n";
+        os << "        }\n";
+        os << "        ++*ip;\n";
+        os << "    }\n";
+        os << "    return 0;\n";
+        os << "}\n";
     }
 
 private:
