@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <numeric>
+#include <unordered_map>
 
 namespace {
 
@@ -9,49 +10,62 @@ class Cave
 {
 public:
     using IntT = int64_t;
-    Cave(IntT depth, size_t targetX, size_t targetY)
-        : _width(targetX + 1)
-        , _height(targetY + 1)
-        , _levels(_width * _height)
+    Cave(IntT depth, int targetX, int targetY)
+        : _depth{depth}
+        , _targetX{targetX}
+        , _targetY{targetY}
     {
-        auto calcIndex = [&, targetX, targetY](size_t x, size_t y) -> IntT {
-            if (x == 0 && y == 0)
-                return 0;
-            if (x == targetX && y == targetY)
-                return 0;
-            if (y == 0)
-                return x * 16807;
-            if (x == 0)
-                return y * 48271;
-            return _levels[_Idx(x-1, y)] * _levels[_Idx(x, y-1)];
-        };
-
-        auto calcLevel = [&, depth](size_t x, size_t y) {
-            return (calcIndex(x, y) + depth) % 20183;
-        };
-
-        for (size_t y = 0; y < _height; ++y)
-        {
-            for (size_t x = 0; x < _width; ++x)
-            {
-                _levels[_Idx(x, y)] = calcLevel(x, y);
-            }
-        }
     }
 
-    IntT CalcRisk() const
+    IntT CalcRisk()
     {
-        return std::accumulate(begin(_levels), end(_levels), 0,
-                               [](auto s, auto l) { return s + l % 3; });
+        IntT sum{};
+
+        for (int y = 0; y <= _targetY; ++y)
+        {
+            for (int x = 0; x <= _targetX; ++x)
+            {
+                sum += _GetLevel(x, y) % 3;
+            }
+        }
+
+        return sum;
     }
 
 private:
-    size_t _width, _height;
-    std::vector<IntT> _levels;
-
-    size_t _Idx(size_t x, size_t y) const
+    IntT _depth;
+    int _targetX, _targetY;
+    struct _Pos
     {
-        return y * _width + x;
+        int x, y;
+        bool operator==(const _Pos &o) const { return x == o.x && y == o.y; }
+    };
+    static constexpr auto _posHash = [](const _Pos &p) {
+        return std::hash<IntT>()((static_cast<IntT>(p.x) << (4*sizeof(IntT))) + static_cast<IntT>(p.y));
+    };
+    std::unordered_map<_Pos, IntT, decltype(_posHash)> _levels{0, _posHash};
+
+    IntT _CalcIndex(int x, int y)
+    {
+        if (x == 0 && y == 0)
+            return 0;
+        if (x == _targetX && y == _targetY)
+            return 0;
+        if (y == 0)
+            return x * 16807;
+        if (x == 0)
+            return y * 48271;
+        return _GetLevel(x - 1, y) * _GetLevel(x, y - 1);
+    }
+
+    IntT _GetLevel(int x, int y)
+    {
+        auto it = _levels.find({x, y});
+        if (it != _levels.end())
+            return it->second;
+        auto level = (_CalcIndex(x, y) + _depth) % 20183;
+        _levels.insert({{x, y}, level});
+        return level;
     }
 };
 
