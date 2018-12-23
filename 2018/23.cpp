@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <regex>
+#include <iostream>
 
 namespace {
 
@@ -41,6 +42,73 @@ public:
                              });
     }
 
+    IntT Find() const
+    {
+        auto itX = std::minmax_element(begin(_bots), end(_bots),
+                                       [](const auto &a, const auto &b) { return a.pos.x < b.pos.x; });
+        auto itY = std::minmax_element(begin(_bots), end(_bots),
+                                       [](const auto &a, const auto &b) { return a.pos.y < b.pos.y; });
+        auto itZ = std::minmax_element(begin(_bots), end(_bots),
+                                       [](const auto &a, const auto &b) { return a.pos.z < b.pos.z; });
+
+        IntT minX{itX.first->pos.x};
+        IntT maxX{itX.second->pos.x};
+        IntT minY{itY.first->pos.y};
+        IntT maxY{itY.second->pos.y};
+        IntT minZ{itZ.first->pos.z};
+        IntT maxZ{itZ.second->pos.z};
+
+        auto dx = maxX - minX;
+        IntT prec{1};
+        while (prec < dx)
+            prec *= 2;
+
+        _Pos origin{0, 0, 0};
+
+        while (true)
+        {
+            int max_count{0};
+            _Pos position{};
+
+            for (auto x{minX}; x <= maxX; x += prec)
+            {
+                for (auto y{minY}; y <= maxY; y += prec)
+                {
+                    for (auto z{minZ}; z <= maxZ; z += prec)
+                    {
+                        _Pos p{x, y, z};
+                        auto count = count_if(begin(_bots), end(_bots),
+                                              [prec, &p](const _Bot &b) {
+                                                return (b.pos.Dist(p) - b.radius) / prec <= 0;
+                                              });
+                        if (count > max_count)
+                        {
+                            max_count = count;
+                            position = p;
+                        }
+                        else if (count == max_count && position.Dist(origin) < p.Dist(origin))
+                        {
+                            position = p;
+                        }
+                    }
+                }
+            }
+
+            if (prec == 1)
+            {
+                return position.Dist(origin);
+            }
+
+            minX = position.x - prec;
+            maxX = position.x + prec;
+            minY = position.y - prec;
+            maxY = position.y + prec;
+            minZ = position.z - prec;
+            maxZ = position.z + prec;
+            prec /= 2;
+        }
+    }
+
 private:
     struct _Pos
     {
@@ -56,6 +124,14 @@ private:
         IntT radius;
     };
     std::vector<_Bot> _bots;
+
+    size_t _CountInRange(const _Pos &p) const
+    {
+        return std::count_if(begin(_bots), end(_bots),
+                             [&](const auto &b) {
+                                return p.Dist(b.pos) <= b.radius;
+                             });
+    }
 };
 
 } //namespace;
@@ -80,5 +156,6 @@ TEST_CASE(TEST_NAME)
     SUBCASE("task") {
         Bots b(std::ifstream{INPUT});
         MESSAGE(b.CountInRange());
+        MESSAGE(b.Find());
     }
 }
