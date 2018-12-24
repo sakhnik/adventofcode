@@ -33,6 +33,7 @@ public:
             std::smatch m;
             REQUIRE(std::regex_match(line, m, r));
             _Group group{
+                .id = side->size() + 1,
                 .count = std::stoi(m[1]),
                 .hp = std::stoi(m[2]),
                 .damage = std::stoi(m[4]),
@@ -88,6 +89,14 @@ public:
                 std::cout << std::endl;
             }
             std::cout << std::endl;
+        }
+    }
+
+    void Boost(size_t side, int value)
+    {
+        for (auto &group : _sides[side])
+        {
+            group.damage += value;
         }
     }
 
@@ -191,16 +200,20 @@ public:
                 continue;
 
             auto &defender = enemies[target];
-            if (defender.count <= 0)
+            if (defender.count <= 0 || attacker.count <= 0)
                 continue;
 
             auto damage = defender.GetDamage(attacker);
             defender.count -= damage / defender.hp;
 
-            //std::cout << i.side << "." << i.idx << " attacks " << (1-i.side) << "." << target
+            //std::cout
+            //    << "initiative " << attacker.initiative << ": "
+            //    << (i.side + 1) << "." << attacker.id
+            //    << " attacks " << (2-i.side) << "." << defender.id
             //    << ", deals " << damage << " damage => kills " << (damage / defender.hp)
-            //    << std::endl;
+            //    << "\n";
         }
+        //std::cout << std::endl;
 
         for (auto &side : _sides)
         {
@@ -212,12 +225,37 @@ public:
         }
     }
 
-    int RunUntilVictory()
+    size_t RunUntilVictory()
     {
-        while (!_sides[0].empty() && !_sides[1].empty())
+        std::vector<size_t> prev_counts(_sides.size()), counts(_sides.size());
+        for (size_t i = 0; i < _sides.size(); ++i)
+            prev_counts[i] = GetUnitCount(i);
+
+        while (true)
+        {
             Round();
-        auto &victor = _sides[0].empty() ? _sides[1] : _sides[0];
-        return std::accumulate(victor.begin(), victor.end(), 0,
+
+            for (size_t i = 0; i < _sides.size(); ++i)
+            {
+                counts[i] = GetUnitCount(i);
+            }
+            auto it = std::find(counts.begin(), counts.end(), 0);
+            if (it != counts.end())
+            {
+                return 1 - (it - counts.begin());
+            }
+            if (counts == prev_counts)
+            {
+                return -1;
+            }
+            counts.swap(prev_counts);
+        }
+    }
+
+    int GetUnitCount(size_t side) const
+    {
+        auto &groups = _sides[side];
+        return std::accumulate(groups.begin(), groups.end(), 0,
                                [](int a, const auto &g) {
                                     return a + g.count;
                                });
@@ -226,6 +264,7 @@ public:
 private:
     struct _Group
     {
+        size_t id;
         int count;
         int hp;
         int damage;
@@ -233,8 +272,8 @@ private:
         int initiative;
         std::unordered_set<std::string> immunity, weakness;
 
-        _Group(const _Group &o) = delete;
-        _Group& operator=(const _Group &o) = delete;
+        _Group(const _Group &o) = default;
+        _Group& operator=(const _Group &o) = default;
         _Group(_Group &&o) = default;
         _Group& operator=(_Group &&) = default;
 
@@ -261,21 +300,59 @@ private:
 
 TEST_CASE(TEST_NAME)
 {
-    SUBCASE("test") {
-        Fight f(std::istringstream{R"(Immune System:
+    static constexpr char const *const TEST = R"(Immune System:
 17 units each with 5390 hit points (weak to radiation, bludgeoning) with an attack that does 4507 fire damage at initiative 2
 989 units each with 1274 hit points (immune to fire; weak to bludgeoning, slashing) with an attack that does 25 slashing damage at initiative 3
 
 Infection:
 801 units each with 4706 hit points (weak to radiation) with an attack that does 116 bludgeoning damage at initiative 1
 4485 units each with 2961 hit points (immune to radiation; weak to fire, cold) with an attack that does 12 slashing damage at initiative 4
-)"});
-        f.Round();
-        REQUIRE(5216 == f.RunUntilVictory());
+)";
+
+    //SUBCASE("test1") {
+    //    Fight f(std::istringstream{TEST});
+    //    f.Round();
+    //    REQUIRE(1 == f.RunUntilVictory());
+    //    REQUIRE(0 == f.GetUnitCount(0));
+    //    REQUIRE(5216 == f.GetUnitCount(1));
+    //}
+
+    //SUBCASE("task") {
+    //    Fight f(std::ifstream{INPUT});
+    //    auto win = f.RunUntilVictory();
+    //    CHECK(0 == f.GetUnitCount(1 - win));
+    //    MESSAGE(f.GetUnitCount(win));
+    //}
+
+    SUBCASE("test2") {
+        Fight f(std::istringstream{TEST});
+        f.Boost(0, 1570);
+        REQUIRE(0 == f.RunUntilVictory());
+        REQUIRE(0 == f.GetUnitCount(1));
+        REQUIRE(51 == f.GetUnitCount(0));
     }
 
-    SUBCASE("task") {
-        Fight f(std::ifstream{INPUT});
-        MESSAGE(f.RunUntilVictory());
+    SUBCASE("task2") {
+        const Fight original(std::ifstream{INPUT});
+
+        auto calc = [&](int val) {
+            Fight f(original);
+            f.Boost(0, val);
+            if (0 == f.RunUntilVictory())
+            {
+                MESSAGE(f.GetUnitCount(0));
+                return true;
+            }
+            return false;
+        };
+
+
+        for (int i = 1; ; ++i)
+        {
+            if (calc(i))
+            {
+                break;
+            }
+        }
     }
 }
