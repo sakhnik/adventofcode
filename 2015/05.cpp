@@ -35,14 +35,52 @@ bool IsNice(const std::string &s)
     return true;
 }
 
-size_t CountNice(std::istream &&is)
+bool IsNice2(const std::string &s)
+{
+    if (s.size() < 3)
+        return false;
+
+    bool is_nice = false;
+
+    for (size_t i = 0, n = s.size() - 2; i < n; ++i)
+    {
+        std::string_view p(s.data() + i, 2);
+        std::string_view tail(s.data() + i + 2);
+        if (tail.find(p) != tail.npos)
+        {
+            is_nice = true;
+            break;
+        }
+    }
+
+    if (!is_nice)
+    {
+        return false;
+    }
+
+    is_nice = false;
+
+    for (size_t i = 0, n = s.size() - 2; i < n; ++i)
+    {
+        if (s[i] == s[i+2])
+        {
+            is_nice = true;
+            break;
+        }
+    }
+
+    return is_nice;
+}
+
+template <typename Pred>
+size_t CountNice(std::istream &&is, Pred pred)
 {
     size_t count{};
 
     std::string s;
     while (is && (is >> s))
     {
-        if (IsNice(s))
+        if (pred(s))
         {
             ++count;
         }
@@ -55,7 +93,7 @@ size_t CountNice(std::istream &&is)
 
 TEST_CASE(TEST_NAME)
 {
-    SUBCASE("test") {
+    SUBCASE("test1") {
         REQUIRE(IsNice("ugknbfddgicrmopn"));
         REQUIRE(IsNice("aaa"));
         REQUIRE(!IsNice("jchzalrnumimnmhp"));
@@ -63,7 +101,15 @@ TEST_CASE(TEST_NAME)
         REQUIRE(!IsNice("dvszwmarrgswjxmb"));
     }
 
+    SUBCASE("test2") {
+        REQUIRE(IsNice2("qjhvhtzxzqqjkmpb"));
+        REQUIRE(IsNice2("xxyxx"));
+        REQUIRE(!IsNice2("uurcxstgmygtbstg"));
+        REQUIRE(!IsNice2("ieodomkazucvgmuy"));
+    }
+
     SUBCASE("task") {
-        MESSAGE(CountNice(std::ifstream{INPUT}));
+        MESSAGE(CountNice(std::ifstream{INPUT}, IsNice));
+        MESSAGE(CountNice(std::ifstream{INPUT}, IsNice2));
     }
 }
