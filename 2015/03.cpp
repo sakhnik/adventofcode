@@ -2,20 +2,23 @@
 #include <sstream>
 #include <fstream>
 #include <unordered_set>
+#include <vector>
 
 namespace {
 
 class Map
 {
 public:
-    Map(std::istream &&is)
+    Map(int count, std::istream &&is)
     {
-        _Pos cur{0, 0};
-        _houses.insert(cur);
+        std::vector<_Pos> clones(count, {0, 0});
+        _houses.insert(clones[0]);
+        int i = 0;
 
         char dir{};
         while (is && (is >> dir))
         {
+            auto &cur = clones[i];
             switch (dir)
             {
             case '<': --cur.x; break;
@@ -24,6 +27,7 @@ public:
             case 'v': ++cur.y; break;
             }
             _houses.insert(cur);
+            i = (i + 1) % clones.size();
         }
     }
 
@@ -49,13 +53,23 @@ private:
 
 TEST_CASE(TEST_NAME)
 {
-    SUBCASE("test") {
-        REQUIRE(2 == Map{std::istringstream{">"}}.GetCount());
-        REQUIRE(4 == Map{std::istringstream{"^>v<"}}.GetCount());
-        REQUIRE(2 == Map{std::istringstream{"^v^v^v^v^v"}}.GetCount());
+    SUBCASE("test1") {
+        REQUIRE(2 == Map(1, std::istringstream{">"}).GetCount());
+        REQUIRE(4 == Map(1, std::istringstream{"^>v<"}).GetCount());
+        REQUIRE(2 == Map(1, std::istringstream{"^v^v^v^v^v"}).GetCount());
     }
 
-    SUBCASE("task") {
-        MESSAGE(Map{std::ifstream{INPUT}}.GetCount());
+    SUBCASE("task1") {
+        MESSAGE(Map(1, std::ifstream{INPUT}).GetCount());
+    }
+
+    SUBCASE("test2") {
+        REQUIRE(3 == Map(2, std::istringstream{"^v"}).GetCount());
+        REQUIRE(3 == Map(2, std::istringstream{"^>v<"}).GetCount());
+        REQUIRE(11 == Map(2, std::istringstream{"^v^v^v^v^v"}).GetCount());
+    }
+
+    SUBCASE("task2") {
+        MESSAGE(Map(2, std::ifstream{INPUT}).GetCount());
     }
 }
