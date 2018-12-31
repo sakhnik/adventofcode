@@ -60,6 +60,16 @@ public:
         return _wires[a].Eval();
     }
 
+    void Reset()
+    {
+        uint16_t v = Eval("a");
+        for (auto &w : _wires)
+        {
+            w.second.Reset();
+        }
+        _wires["b"].Set(v);
+    }
+
 private:
     using _EvalT = std::function<uint16_t()>;
     struct _Node
@@ -71,15 +81,27 @@ private:
 
         _EvalT eval;
         uint16_t val{};
+        bool processed = false;
 
         uint16_t Eval()
         {
-            if (eval)
+            if (!processed)
             {
                 val = eval();
-                eval = nullptr;
+                processed = true;
             }
             return val;
+        }
+
+        void Reset()
+        {
+            processed = false;
+        }
+
+        void Set(uint16_t v)
+        {
+            processed = true;
+            val = v;
         }
     };
 
@@ -121,6 +143,9 @@ TEST_CASE(TEST_NAME)
 
     SUBCASE("task") {
         Calc c(std::ifstream{INPUT});
+        auto val = c.Eval("a");
+        MESSAGE(val);
+        c.Reset();
         MESSAGE(c.Eval("a"));
     }
 }
