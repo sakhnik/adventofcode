@@ -1,80 +1,74 @@
 #include <doctest/doctest.h>
 #include <fstream>
 #include <vector>
-#include <regex>
 #include <numeric>
 
 namespace {
 
-using LightsT = std::vector<int>;
+using LightT = int;
+using LightsT = std::vector<LightT>;
 const size_t WIDTH = 1000;
 
-void On(int row, int col, LightsT &lights)
+void On(LightT *l)
 {
-    lights[row * WIDTH + col] = 1;
+    *l = 1;
 }
 
-void Off(int row, int col, LightsT &lights)
+void Off(LightT *l)
 {
-    lights[row * WIDTH + col] = 0;
+    *l = 0;
 }
 
-void Toggle(int row, int col, LightsT &lights)
+void Toggle(LightT *l)
 {
-    auto &v = lights[row * WIDTH + col];
-    v = 1 - v;
+    *l = 1 - *l;
 }
 
-void On2(int row, int col, LightsT &lights)
+void On2(LightT *l)
 {
-    ++lights[row * WIDTH + col];
+    ++*l;
 }
 
-void Off2(int row, int col, LightsT &lights)
+void Off2(LightT *l)
 {
-    auto &v = lights[row * WIDTH + col];
-    if (v > 0)
-        --v;
+    if (*l > 0)
+        --*l;
 }
 
-void Toggle2(int row, int col, LightsT &lights)
+void Toggle2(LightT *l)
 {
-    auto &v = lights[row * WIDTH + col];
-    v += 2;
+    *l += 2;
 }
 
-template <typename OnT, typename OffT, typename ToggleT>
-size_t CountLit(std::ifstream &&is, OnT on, OffT off, ToggleT toggle)
+template <typename OpT>
+size_t CountLit(std::ifstream &&is, OpT on, OpT off, OpT toggle)
 {
     LightsT lights(WIDTH*WIDTH, 0);
 
     std::string line;
     while (is && getline(is, line))
     {
-        static const std::regex r(R"((turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+))");
-        std::smatch m;
-        REQUIRE(std::regex_match(line, m, r));
-        int r0 = std::stoi(m[2]);
-        int c0 = std::stoi(m[3]);
-        int r1 = std::stoi(m[4]);
-        int c1 = std::stoi(m[5]);
+        OpT op{};
+
+        int r0{}, c0{}, r1{}, c1{};
+        if (4 == sscanf(line.c_str(), "turn on %d,%d through %d,%d", &r0, &c0, &r1, &c1))
+        {
+            op = on;
+        }
+        else if (4 == sscanf(line.c_str(), "turn off %d,%d through %d,%d", &r0, &c0, &r1, &c1))
+        {
+            op = off;
+        }
+        else if (4 == sscanf(line.c_str(), "toggle %d,%d through %d,%d", &r0, &c0, &r1, &c1))
+        {
+            op = toggle;
+        }
 
         for (int r = r0; r <= r1; ++r)
         {
-            for (int c = c0; c <= c1; ++c)
+            for (LightT *l{&lights[r * WIDTH + c0]}, *l1{l + (c1 - c0)}; l <= l1; ++l)
             {
-                if (m[1] == "turn on")
-                {
-                    on(r, c, lights);
-                }
-                else if (m[1] == "turn off")
-                {
-                    off(r, c, lights);
-                }
-                else //if (m[1] == "toggle")
-                {
-                    toggle(r, c, lights);
-                }
+                op(l);
             }
         }
     }
