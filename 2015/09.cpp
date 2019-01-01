@@ -48,7 +48,7 @@ public:
         }
     }
 
-    int FindShortest() const
+    std::pair<int, int> Find() const
     {
         int idx[_ncities];
         std::iota(idx, idx + _ncities, 0);
@@ -61,6 +61,7 @@ public:
             return d;
         };
         int min_dist = dist(idx);
+        int max_dist = min_dist;
         while (std::next_permutation(idx, idx + _ncities))
         {
             auto d2 = dist(idx);
@@ -68,8 +69,12 @@ public:
             {
                 min_dist = d2;
             }
+            if (d2 > max_dist)
+            {
+                max_dist = d2;
+            }
         }
-        return min_dist;
+        return {min_dist, max_dist};
     }
 
 private:
@@ -87,12 +92,15 @@ TEST_CASE(TEST_NAME)
             "London to Belfast = 518\n"
             "Dublin to Belfast = 141\n";
         Tsp tsp(std::istringstream{TEST});
-        REQUIRE(605 == tsp.FindShortest());
-
+        auto d = tsp.Find();
+        REQUIRE(605 == d.first);
+        REQUIRE(982 == d.second);
     }
 
     SUBCASE("task") {
         Tsp tsp(std::ifstream{INPUT});
-        MESSAGE(tsp.FindShortest());
+        auto d = tsp.Find();
+        MESSAGE(d.first);
+        MESSAGE(d.second);
     }
 }
