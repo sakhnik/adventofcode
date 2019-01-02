@@ -99,6 +99,10 @@ TEST_CASE(TEST_NAME)
     }
 
     SUBCASE("task") {
-        MESSAGE(Next("vzbxkghb"));
+        std::string pass("vzbxkghb");
+        Next(pass);
+        MESSAGE(pass);
+        Next(pass);
+        MESSAGE(pass);
     }
 }
