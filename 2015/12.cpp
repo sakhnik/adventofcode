@@ -1,29 +1,61 @@
 #include <doctest/doctest.h>
 #include <fstream>
-#include <regex>
+#include <sstream>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <iostream>
 
 namespace {
 
-int SumNums(const std::string &json)
+namespace pt = boost::property_tree;
+
+bool NoRed(const pt::ptree &node)
 {
-    int res{};
-    static const std::regex r(R"(-?\d+)");
-    for (std::regex_iterator<std::string::const_iterator>
-            rit(json.begin(), json.end(), r),
-            rend;
-        rit != rend;
-        ++rit)
+    for (auto it : node)
     {
-        res += std::stoi(rit->str());
+        if (it.first != "" && it.second.get<std::string>("") == "red")
+            return false;
+    }
+    return true;
+}
+
+bool Anything(const pt::ptree &node)
+{
+    return true;
+}
+
+template <typename PredT>
+int SumNums(const pt::ptree &node, PredT pred)
+{
+    if (!pred(node))
+    {
+        return 0;
+    }
+
+    int res = node.get_value(0);
+    for (auto it : node)
+    {
+        res += SumNums(it.second, pred);
     }
     return res;
 }
 
-int SumNums(std::istream &&is)
+template <typename PredT>
+int SumNums(std::istream &&is, PredT pred)
 {
-    std::string line;
-    getline(is, line);
-    return SumNums(line);
+    pt::ptree root;
+    pt::read_json(is, root);
+    return SumNums(root, pred);
+}
+
+int SumNums(const char *json)
+{
+    return SumNums(std::istringstream{json}, Anything);
+}
+
+int SumNums2(const char *json)
+{
+    return SumNums(std::istringstream{json}, NoRed);
 }
 
 } //namespace;
@@ -39,9 +71,15 @@ TEST_CASE(TEST_NAME)
         REQUIRE(0 == SumNums(R"([-1,{"a":1}])"));
         REQUIRE(0 == SumNums("[]"));
         REQUIRE(0 == SumNums("{}"));
+
+        REQUIRE(6 == SumNums2("[1,2,3]"));
+        REQUIRE(4 == SumNums2(R"([1,{"c":"red","b":2},3])"));
+        REQUIRE(0 == SumNums2(R"({"d":"red","e":[1,2,3,4],"f":5})"));
+        REQUIRE(6 == SumNums2(R"([1,"red",5])"));
     }
 
     SUBCASE("task") {
-        MESSAGE(SumNums(std::ifstream{INPUT}));
+        MESSAGE(SumNums(std::ifstream{INPUT}, Anything));
+        MESSAGE(SumNums(std::ifstream{INPUT}, NoRed));
     }
 }
