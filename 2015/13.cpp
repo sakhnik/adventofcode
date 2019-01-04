@@ -30,6 +30,16 @@ public:
             _points[i][i] = 0;
     }
 
+    void AddMyself()
+    {
+        _GetNameIdx("Me");
+        for (size_t i = 0; i < _names.size(); ++i)
+        {
+            _points[i][_names.size() - 1] = 0;
+            _points[_names.size() - 1][i] = 0;
+        }
+    }
+
     void Print() const
     {
         for (size_t i = 0; i < _names.size(); ++i)
@@ -113,6 +123,8 @@ TEST_CASE(TEST_NAME)
 
     SUBCASE("task") {
         Table t(std::ifstream{INPUT});
+        MESSAGE(t.Arrange());
+        t.AddMyself();
         MESSAGE(t.Arrange());
     }
 }
