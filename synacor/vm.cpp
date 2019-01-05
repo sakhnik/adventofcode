@@ -20,6 +20,8 @@ int main(int argc, char *argv[])
     uint16_t regs[8] = {};
     size_t ip{};
     std::stack<uint16_t> st;
+    std::string line;
+    size_t cur{};
 
     auto getVal = [&regs](uint16_t &w) -> uint16_t& {
         if (w < 0x8000)
@@ -168,6 +170,18 @@ int main(int argc, char *argv[])
         case 19:  // out
             std::cout << static_cast<char>(getNext()) << std::flush;
             break;
+        case 20:
+            {
+                if (cur >= line.size())
+                {
+                    getline(std::cin, line);
+                    line.push_back('\n');
+                    cur = 0;
+                }
+                auto &a = getNext();
+                a = line[cur++];
+                break;
+            }
         case 21:  // noop
             break;
         default:
