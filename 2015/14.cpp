@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 
 namespace {
 
@@ -34,12 +35,45 @@ public:
         return max_dist;
     }
 
+    int GetWinner2(int time)
+    {
+        std::vector<int> dist(_deers.size(), 0);
+        std::vector<int> points(_deers.size(), 0);
+
+        for (int t = 0; t < time; ++t)
+        {
+            for (size_t i = 0; i < _deers.size(); ++i)
+            {
+                const auto &d = _deers[i];
+                if (d.IsRunning(t))
+                {
+                    dist[i] += d.speed;
+                }
+            }
+
+            auto lead = *std::max_element(dist.begin(), dist.end());
+            for (size_t i = 0; i < _deers.size(); ++i)
+            {
+                if (dist[i] == lead)
+                    ++points[i];
+            }
+        }
+
+        return *std::max_element(points.begin(), points.end());
+    }
+
 private:
     struct Deer
     {
         int speed;
         int dash;
         int rest;
+
+        bool IsRunning(int time) const
+        {
+            auto phase = time % (dash + rest);
+            return phase < dash;
+        }
 
         int GetDistance(int time) const
         {
@@ -61,10 +95,12 @@ TEST_CASE(TEST_NAME)
             "Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.\n";
         Race r(std::istringstream{TEST});
         REQUIRE(1120 == r.GetWinner(1000));
+        REQUIRE(689 == r.GetWinner2(1000));
     }
 
     SUBCASE("task") {
         Race r(std::ifstream{INPUT});
         MESSAGE(r.GetWinner(2503));
+        MESSAGE(r.GetWinner2(2503));
     }
 }
