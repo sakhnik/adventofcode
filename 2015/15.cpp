@@ -22,10 +22,10 @@ public:
         }
     }
 
-    int FindMax() const
+    int FindMax(int total_calories = -1) const
     {
         int m{};
-        _FindMax(100, 0, {}, m);
+        _FindMax(100, 0, {}, total_calories, m);
         return m;
     }
 
@@ -45,6 +45,7 @@ private:
             res.durability += spoons * o.durability;
             res.flavor += spoons * o.flavor;
             res.texture += spoons * o.texture;
+            res.calories += spoons * o.calories;
             return res;
         }
 
@@ -55,29 +56,34 @@ private:
     };
     std::vector<Ingredient> _ingredients;
 
-    void _FindMax(int spoons, size_t i, Ingredient acc, int &m) const
+    void _FindMax(int spoons, size_t i, Ingredient acc, int total_calories, int &m) const
     {
+        auto checkMax = [&]() {
+            if (total_calories < 0 || acc.calories == total_calories)
+            {
+                auto score = acc.GetScore();
+                if (score > m)
+                    m = score;
+            }
+        };
+
         if (!spoons)
         {
-            auto score = acc.GetScore();
-            if (score > m)
-                m = score;
+            checkMax();
             return;
         }
 
         if (i + 1 == _ingredients.size())
         {
             acc = acc.Add(spoons, _ingredients[i]);
-            auto score = acc.GetScore();
-            if (score > m)
-                m = score;
+            checkMax();
             return;
         }
 
         for (int s = 0; s < spoons; ++s)
         {
             auto new_acc = acc.Add(s, _ingredients[i]);
-            _FindMax(spoons - s, i + 1, new_acc, m);
+            _FindMax(spoons - s, i + 1, new_acc, total_calories, m);
         }
     }
 };
@@ -92,10 +98,12 @@ TEST_CASE(TEST_NAME)
             "Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3\n";
         Recipe r(std::istringstream{TEST});
         REQUIRE(62842880 == r.FindMax());
+        REQUIRE(57600000 == r.FindMax(500));
     }
 
     SUBCASE("task") {
         Recipe r(std::ifstream{INPUT});
         MESSAGE(r.FindMax());
+        MESSAGE(r.FindMax(500));
     }
 }
