@@ -8,7 +8,11 @@ namespace {
 class Ticket
 {
 public:
-    int Match(std::istream &&is) const
+    using TicketT = std::unordered_map<std::string, std::function<bool(int)>>;
+    const TicketT& GetTicket0() const { return _ticket0; }
+    const TicketT& GetTicket1() const { return _ticket1; }
+
+    static int Match(const TicketT &ticket, std::istream &&is)
     {
         std::string line;
         while (is && getline(is, line))
@@ -23,7 +27,7 @@ public:
             for (IterT it(line.begin(), line.end(), r), itend; it != itend; ++it)
             {
                 const auto &m = *it;
-                if (_ticket.find(m[1])->second != std::stoi(m[2]))
+                if (!ticket.find(m[1])->second(std::stoi(m[2])))
                 {
                     matched = false;
                     break;
@@ -40,17 +44,29 @@ public:
     }
 
 private:
-    std::unordered_map<std::string, int> _ticket = {
-        {"children", 3},
-        {"cats", 7},
-        {"samoyeds", 2},
-        {"pomeranians", 3},
-        {"akitas", 0},
-        {"vizslas", 0},
-        {"goldfish", 5},
-        {"trees", 3},
-        {"cars", 2},
-        {"perfumes", 1},
+    TicketT _ticket0 = {
+        {"children", [](int v) { return v == 3; }},
+        {"cats", [](int v) { return v == 7; }},
+        {"samoyeds", [](int v) { return v == 2; }},
+        {"pomeranians", [](int v) { return v == 3; }},
+        {"akitas", [](int v) { return v == 0; }},
+        {"vizslas", [](int v) { return v == 0; }},
+        {"goldfish", [](int v) { return v == 5; }},
+        {"trees", [](int v) { return v == 3; }},
+        {"cars", [](int v) { return v == 2; }},
+        {"perfumes", [](int v) { return v == 1; }},
+    };
+    TicketT _ticket1 = {
+        {"children", [](int v) { return v == 3; }},
+        {"cats", [](int v) { return v > 7; }},
+        {"samoyeds", [](int v) { return v == 2; }},
+        {"pomeranians", [](int v) { return v < 3; }},
+        {"akitas", [](int v) { return v == 0; }},
+        {"vizslas", [](int v) { return v == 0; }},
+        {"goldfish", [](int v) { return v < 5; }},
+        {"trees", [](int v) { return v > 3; }},
+        {"cars", [](int v) { return v == 2; }},
+        {"perfumes", [](int v) { return v == 1; }},
     };
 };
 
@@ -60,6 +76,7 @@ TEST_CASE(TEST_NAME)
 {
     SUBCASE("task") {
         Ticket t;
-        MESSAGE(t.Match(std::ifstream{INPUT}));
+        MESSAGE(t.Match(t.GetTicket0(), std::ifstream{INPUT}));
+        MESSAGE(t.Match(t.GetTicket1(), std::ifstream{INPUT}));
     }
 }
