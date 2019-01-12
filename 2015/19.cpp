@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include <unordered_set>
+#include <algorithm>
 
 namespace {
 
@@ -46,6 +47,33 @@ public:
         return res.size();
     }
 
+    size_t Count2()
+    {
+        size_t count{};
+        std::string cur{_formula};
+        while (cur != "e")
+        {
+            size_t prev_count{count};
+            for (const auto &tr : _trans)
+            {
+                auto i = cur.find(tr.to);
+                if (i != cur.npos)
+                {
+                    ++count;
+                    cur = cur.substr(0, i) + tr.from + cur.substr(i + tr.to.size());
+                }
+            }
+
+            if (prev_count == count)
+            {
+                count = 0;
+                cur = _formula;
+                std::random_shuffle(_trans.begin(), _trans.end());
+            }
+        }
+        return count;
+    }
+
 private:
     struct _Trans
     {
@@ -60,7 +88,7 @@ private:
 
 TEST_CASE(TEST_NAME)
 {
-    SUBCASE("test") {
+    SUBCASE("test1") {
         const char *const TEST =
             "H => HO\n"
             "H => OH\n"
@@ -74,5 +102,7 @@ TEST_CASE(TEST_NAME)
     SUBCASE("task") {
         Chem c(std::ifstream{INPUT});
         MESSAGE(c.Count());
+        MESSAGE(c.Count2());
     }
+
 }
