@@ -3,14 +3,14 @@
 
 namespace {
 
-int Find(int target)
+size_t Find(size_t target, int mul, int max_repeat)
 {
-    target /= 10;
+    target /= mul;
 
-    std::vector<int> counts(target, 0);
-    for (int i = 1, in = counts.size(); i < in; ++i)
+    std::vector<size_t> counts(target, 0);
+    for (size_t i = 1, in = counts.size(); i < in; ++i)
     {
-        for (int j = i; j < in; j += i)
+        for (size_t j = i, jn = std::min(in, max_repeat * i); j < jn; j += i)
         {
             counts[j] += i;
             if (counts[i] >= target)
@@ -26,5 +26,7 @@ int Find(int target)
 
 TEST_CASE(TEST_NAME)
 {
-    MESSAGE(Find(36000000));
+    const size_t target = 36000000;
+    MESSAGE(Find(target, 10, target));
+    MESSAGE(Find(target, 11, 50));
 }
