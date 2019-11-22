@@ -69,7 +69,6 @@ private:
     std::string _pots;
     std::string _prev_pots;
     bool _rules[1 << 5] = { 0 };
-    bool _stable_detected = false;
 
     uint8_t _Parse(const char *s)
     {
