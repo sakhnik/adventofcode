@@ -1,14 +1,18 @@
 #!/bin/bash -ex
 
-this_dir=`readlink -f $(dirname ${BASH_SOURCE[0]})`
-
-cd `dirname ${BASH_SOURCE[0]}`
+cd "$(dirname "${BASH_SOURCE[0]}")"
 mkdir -p BUILD
 
-mkdir -p /tmp/aoc2017-build
-bindfs -n /tmp/aoc2017-build BUILD
+mkdir -p /tmp/adventofcode-build
+bindfs -n /tmp/adventofcode-build BUILD
 
 (
 cd BUILD
-CC=clang CXX=clang++ cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug ..
+CC=clang CXX=clang++ cmake \
+    -G Ninja \
+    -DCMAKE_BUILD_TYPE=Debug \
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=Yes \
+    ..
 )
+
+ln -sf BUILD/compile_commands.json .
