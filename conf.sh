@@ -3,9 +3,6 @@
 cd "$(dirname "${BASH_SOURCE[0]}")"
 mkdir -p BUILD
 
-mkdir -p /tmp/adventofcode-build
-bindfs -n /tmp/adventofcode-build BUILD
-
 (
 cd BUILD
 CC=clang CXX=clang++ cmake \
