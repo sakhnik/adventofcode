@@ -4,46 +4,34 @@
 #include <iostream>
 
 
-TEST_CASE(TEST_NAME)
+using MemoryT = std::unordered_map<int, int>;
+
+int Run(MemoryT memory, int noun, int verb)
 {
-    // The program numbers
-    std::unordered_map<int, int> program;
-
-    // Input the program from the file
-    std::ifstream ifs{INPUT};
-    int idx{0};
-    while (ifs)
-    {
-        int val{};
-        char comma;
-        ifs >> val >> comma;
-        program[idx++] = val;
-    }
-
     // Tweak the initials as required in the task 1
-    program[1] = 12;
-    program[2] = 2;
+    memory[1] = noun;
+    memory[2] = verb;
 
-    // Run the program until it halts
-    int pc{0};
+    // Run the memory until it halts
+    int ip{0};
 
     while (true)
     {
-        int opcode = program[pc++];
+        int opcode = memory[ip++];
         if (opcode == 99)
         {
             break;
         }
-        int a = program[pc++];
-        int b = program[pc++];
-        int c = program[pc++];
+        int a = memory[ip++];
+        int b = memory[ip++];
+        int c = memory[ip++];
         if (opcode == 1)
         {
-            program[c] = program[a] + program[b];
+            memory[c] = memory[a] + memory[b];
         }
         else if (opcode == 2)
         {
-            program[c] = program[a] * program[b];
+            memory[c] = memory[a] * memory[b];
         }
         else
         {
@@ -52,6 +40,38 @@ TEST_CASE(TEST_NAME)
         }
     }
 
+    return memory[0];
+}
+
+TEST_CASE(TEST_NAME)
+{
+    // The memory numbers
+    std::unordered_map<int, int> memory;
+
+    // Input the memory from the file
+    std::ifstream ifs{INPUT};
+    int idx{0};
+    while (ifs)
+    {
+        int val{};
+        char comma;
+        ifs >> val >> comma;
+        memory[idx++] = val;
+    }
+
     // Output the number in the first register
-    MESSAGE(program[0]);
+    MESSAGE(Run(memory, 12, 2));
+
+    // Task 2
+    for (int noun = 0; noun < 100; ++noun)
+    {
+        for (int verb = 0; verb < 100; ++verb)
+        {
+            if (19690720 == Run(memory, noun, verb))
+            {
+                MESSAGE(noun * 100 + verb);
+                break;
+            }
+        }
+    }
 }
