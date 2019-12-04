@@ -1,9 +1,11 @@
 #include <doctest/doctest.h>
 #include <array>
 #include <algorithm>
+#include <boost/range/irange.hpp>
 
 
-bool IsPassword(int p)
+template <typename PredT>
+bool IsPassword(int p, PredT pred)
 {
     std::array<char, 6> digits;
     for (int i = 0; i < 6; ++i)
@@ -15,31 +17,62 @@ bool IsPassword(int p)
     {
         return false;
     }
-    auto it = std::adjacent_find(begin(digits), end(digits),
-                                 [](char a, char b) { return a == b; });
-    return it != end(digits);
+    return pred(begin(digits), end(digits));
 }
 
-int CountPasswords(int begin, int end)
-{
-    int count{};
+auto IsPassword1 = [](int p) {
+    return IsPassword(p, [](auto begin, auto end) {
+                          auto it = std::unique(begin, end);
+                          return it - begin < end - begin;
+                      });
+};
 
-    for (int i = begin; i <= end; ++i)
+template <typename IterT>
+bool HaveRL2(IterT begin, IterT end)
+{
+    int rl{1};
+    for (++begin; begin != end; ++begin)
     {
-        if (IsPassword(i))
+        if (*begin == *(begin - 1))
         {
-            ++count;
+            ++rl;
+        }
+        else
+        {
+            if (rl == 2)
+            {
+                return true;
+            }
+            rl = 1;
         }
     }
+    return rl == 2;
+}
 
-    return count;
+auto IsPassword2 = [](int p) {
+    return IsPassword(p, [](auto begin, auto end) {
+                          return HaveRL2(begin, end);
+                      });
+};
+
+template <typename PredT>
+int CountPasswords(int begin, int end, PredT pred)
+{
+    auto r = boost::irange(begin, end);
+    return std::count_if(std::begin(r), std::end(r), pred);
 }
 
 TEST_CASE(TEST_NAME)
 {
-    REQUIRE(IsPassword(111111));
-    REQUIRE(!IsPassword(223450));
-    REQUIRE(!IsPassword(123789));
+    REQUIRE(IsPassword1(111111));
+    REQUIRE(!IsPassword1(223450));
+    REQUIRE(!IsPassword1(123789));
 
-    MESSAGE(CountPasswords(256310, 732736));
+    MESSAGE(CountPasswords(256310, 732736, IsPassword1));
+
+    REQUIRE(IsPassword2(112233));
+    REQUIRE(!IsPassword2(123444));
+    REQUIRE(IsPassword2(111122));
+
+    MESSAGE(CountPasswords(256310, 732736, IsPassword2));
 }
