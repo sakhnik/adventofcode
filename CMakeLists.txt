@@ -16,7 +16,7 @@ foreach(year RANGE 2016 2018)
     endforeach()
 endforeach()
 
-foreach(src RANGE 1 3)
+foreach(src RANGE 1 4)
     string(REGEX REPLACE "^(.)$" "0\\1" zero_src ${src})
     list(APPEND sources 2019/${zero_src}.cpp)
 endforeach()
