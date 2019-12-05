@@ -8,6 +8,10 @@ class IntCode
 {
 public:
     IntCode(std::istream &is);
+    IntCode(std::istream &&is)
+        : IntCode(is)
+    {
+    }
 
     IntCode(const IntCode &) = default;
     IntCode& operator=(const IntCode &) = default;

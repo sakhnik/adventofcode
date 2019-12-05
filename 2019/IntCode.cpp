@@ -45,27 +45,61 @@ void IntCode::Run(std::istream &is, std::ostream &os)
                 auto a = getArg();
                 auto b = getArg();
                 getArg() = a + b;
+                break;
             }
-            break;
         case 2:
             {
                 auto a = getArg();
                 auto b = getArg();
                 getArg() = a * b;
+                break;
             }
-            break;
         case 3:
             {
                 int val{};
                 is >> val;
                 getArg() = val;
+                break;
             }
-            break;
         case 4:
-            {
-                os << getArg();
-            }
+            os << getArg();
             break;
+        case 5:
+            {
+                auto cond = getArg();
+                auto addr = getArg();
+                if (cond)
+                {
+                    ip = addr;
+                    continue;
+                }
+                break;
+            }
+        case 6:
+            {
+                auto cond = getArg();
+                auto addr = getArg();
+                if (!cond)
+                {
+                    ip = addr;
+                    continue;
+                }
+                break;
+            }
+        case 7:
+            {
+                auto a = getArg();
+                auto b = getArg();
+                getArg() = a < b;
+                break;
+            }
+        case 8:
+            {
+                auto a = getArg();
+                auto b = getArg();
+                getArg() = a == b;
+                break;
+            }
         case 99:
             return;
         default:
