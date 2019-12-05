@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iosfwd>
+#include <iostream>
 #include <unordered_map>
 
 
@@ -14,7 +14,7 @@ public:
     IntCode(IntCode &&) = default;
     IntCode& operator=(IntCode &&) = default;
 
-    void Run();
+    void Run(std::istream & = std::cin, std::ostream & = std::cout);
 
     int GetMemory(int addr) const
     {
