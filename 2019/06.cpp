@@ -32,6 +32,25 @@ public:
                                });
     }
 
+    int CalcDistance(const std::string &a, const std::string &b) const
+    {
+        const auto &dataA = _map.find(a)->second;
+        const auto &dataB = _map.find(b)->second;
+        if (dataA.parent == dataB.parent)
+        {
+            return 0;
+        }
+        if (dataA.depth > dataB.depth)
+        {
+            return 1 + CalcDistance(dataA.parent, b);
+        }
+        if (dataA.depth < dataB.depth)
+        {
+            return 1 + CalcDistance(a, dataB.parent);
+        }
+        return 2 + CalcDistance(dataA.parent, dataB.parent);
+    }
+
 private:
     struct Data
     {
@@ -56,7 +75,8 @@ private:
 
 TEST_CASE(TEST_NAME)
 {
-    std::istringstream iss(R"(COM)B
+    {
+        std::istringstream iss(R"(COM)B
 B)C
 C)D
 D)E
@@ -68,10 +88,31 @@ E)J
 J)K
 K)L)");
 
-    REQUIRE(42 == Map{iss}.CalcSumOfDepths());
+        REQUIRE(42 == Map{iss}.CalcSumOfDepths());
+    }
 
     std::ifstream ifs(INPUT);
     Map map{ifs};
     MESSAGE(map.CalcSumOfDepths());
 
+    {
+        std::istringstream iss(R"(COM)B
+B)C
+C)D
+D)E
+E)F
+B)G
+G)H
+D)I
+E)J
+J)K
+K)L
+K)YOU
+I)SAN)");
+        Map map(iss);
+        map.CalcSumOfDepths();
+        REQUIRE(4 == map.CalcDistance("YOU", "SAN"));
+    }
+
+    MESSAGE(map.CalcDistance("YOU", "SAN"));
 }
