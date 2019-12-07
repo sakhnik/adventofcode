@@ -1,4 +1,6 @@
 #include "IntCode.h"
+#include <iostream>
+#include <boost/scope_exit.hpp>
 
 
 IntCode::IntCode(std::istream &is)
@@ -13,95 +15,119 @@ IntCode::IntCode(std::istream &is)
     }
 }
 
-void IntCode::Run(std::istream &is, std::ostream &os)
+int IntCode::_GetArgIdx(int state_flags, int num)
 {
-    // Run the memory until it halts
-    int ip{0};
+    for (int i = 0; i < num; ++i)
+    {
+        state_flags /= 10;
+    }
+    int mode = state_flags % 10;
 
+    switch (mode)
+    {
+    case 0:
+        return _memory[_ip + num + 1];
+    case 1:
+        return _ip + num + 1;
+    default:
+        throw "Mode not implemented";
+    }
+}
+
+int IntCode::Advance(int input)
+{
     while (true)
     {
-        int cmd = _memory[ip++];
+        int cmd = _memory[_ip];
         int opcode = cmd % 100;
-        cmd /= 100;
-
-        auto getArg = [&]() -> int& {
-            int mode = cmd % 10;
-            cmd /= 10;
-            switch (mode)
-            {
-            case 0:
-                return _memory[_memory[ip++]];
-            case 1:
-                return _memory[ip++];
-            default:
-                throw "Mode not implemented";
-            }
-        };
+        int state_flags = cmd / 100;
 
         switch (opcode)
         {
         case 1:
             {
-                auto a = getArg();
-                auto b = getArg();
-                getArg() = a + b;
+                auto a = _GetArgIdx(state_flags, 0);
+                auto b = _GetArgIdx(state_flags, 1);
+                auto c = _GetArgIdx(state_flags, 2);
+                _memory[c] = _memory[a] + _memory[b];
+                _ip += 4;
                 break;
             }
         case 2:
             {
-                auto a = getArg();
-                auto b = getArg();
-                getArg() = a * b;
+                auto a = _GetArgIdx(state_flags, 0);
+                auto b = _GetArgIdx(state_flags, 1);
+                auto c = _GetArgIdx(state_flags, 2);
+                _memory[c] = _memory[a] * _memory[b];
+                _ip += 4;
                 break;
             }
         case 3:
+            if (_state == S_INPUT)
             {
-                int val{};
-                is >> val;
-                getArg() = val;
+                auto a = _GetArgIdx(state_flags, 0);
+                _memory[a] = input;
+                _state = S_RUN;
+                _ip += 2;
                 break;
             }
+            assert(_state == S_RUN);
+            return _state = S_INPUT;
         case 4:
-            os << getArg();
+            if (_state == S_RUN)
+            {
+                _state = S_OUTPUT;
+                auto v = _GetArgIdx(state_flags, 0);
+                return _memory[v];
+            }
+            assert(_state = S_OUTPUT);
+            _ip += 2;
+            _state = S_RUN;
             break;
         case 5:
             {
-                auto cond = getArg();
-                auto addr = getArg();
-                if (cond)
+                auto cond = _GetArgIdx(state_flags, 0);
+                auto addr = _GetArgIdx(state_flags, 1);
+                if (_memory[cond])
                 {
-                    ip = addr;
+                    _ip = _memory[addr];
                     continue;
                 }
+                _ip += 3;
                 break;
             }
         case 6:
             {
-                auto cond = getArg();
-                auto addr = getArg();
-                if (!cond)
+                auto cond = _GetArgIdx(state_flags, 0);
+                auto addr = _GetArgIdx(state_flags, 1);
+                if (!_memory[cond])
                 {
-                    ip = addr;
+                    _ip = _memory[addr];
                     continue;
                 }
+                _ip += 3;
                 break;
             }
         case 7:
             {
-                auto a = getArg();
-                auto b = getArg();
-                getArg() = a < b;
+                auto a = _GetArgIdx(state_flags, 0);
+                auto b = _GetArgIdx(state_flags, 1);
+                auto c = _GetArgIdx(state_flags, 2);
+                _memory[c] = _memory[a] < _memory[b];
+                _ip += 4;
                 break;
             }
         case 8:
             {
-                auto a = getArg();
-                auto b = getArg();
-                getArg() = a == b;
+                auto a = _GetArgIdx(state_flags, 0);
+                auto b = _GetArgIdx(state_flags, 1);
+                auto c = _GetArgIdx(state_flags, 2);
+                _memory[c] = _memory[a] == _memory[b];
+                _ip += 4;
                 break;
             }
         case 99:
-            return;
+            return _state = S_HALT;
         default:
             std::cout << "HCF" << std::endl;
             break;

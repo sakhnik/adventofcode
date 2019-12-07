@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <unordered_map>
 
 
@@ -18,7 +17,16 @@ public:
     IntCode(IntCode &&) = default;
     IntCode& operator=(IntCode &&) = default;
 
-    void Run(std::istream & = std::cin, std::ostream & = std::cout);
+    enum State
+    {
+        S_RUN = std::numeric_limits<int>::min(),
+        S_HALT = S_RUN + 1,
+        S_INPUT = S_RUN + 2,
+        S_OUTPUT = S_RUN + 3,
+        // Every other value is output.
+    };
+
+    int Advance(int);
 
     int GetMemory(int addr) const
     {
@@ -38,4 +46,8 @@ public:
 private:
     using MemoryT = std::unordered_map<int, int>;
     MemoryT _memory;
+    State _state = S_RUN;
+    int _ip = 0;
+
+    int _GetArgIdx(int state_flags, int num);
 };

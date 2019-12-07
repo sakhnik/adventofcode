@@ -14,7 +14,7 @@ TEST_CASE(TEST_NAME)
         IntCode task{master};
         task.SetMemory(1, noun);
         task.SetMemory(2, verb);
-        task.Run();
+        task.Advance(0);
         return task.GetMemory(0);
     };
 

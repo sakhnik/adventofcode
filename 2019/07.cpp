@@ -4,23 +4,50 @@
 #include <numeric>
 #include <algorithm>
 #include <fstream>
+#include <iostream>
 
 
-template <typename IterT>
-int Calculate(const IntCode &program, IterT begin, IterT end)
+int Calculate(const IntCode &program, int phases[])
 {
-    int res{};
+    std::vector<IntCode> amps(5, program);
 
-    for (; begin != end; ++begin)
+    // Prime
+    for (auto &a : amps)
     {
-        std::istringstream iss(std::to_string(*begin) + " " + std::to_string(res));
-        std::ostringstream oss;
-        IntCode amp{program};
-        amp.Run(iss, oss);
-        res = std::stoi(oss.str());
+        CHECK(IntCode::S_INPUT == a.Advance(0));
     }
 
-    return res;
+    // Configure the phases
+    for (int i = 0; i < 5; ++i)
+    {
+        CHECK(IntCode::S_INPUT == amps[i].Advance(phases[i]));
+    }
+
+    // Do a single amplification
+    auto processInput = [&](auto &p, int i) {
+        auto o = p.Advance(i);
+        if (o == IntCode::S_HALT)
+        {
+            return o;
+        }
+        auto r = p.Advance(0);
+        bool isOk = IntCode::S_INPUT == r || IntCode::S_HALT == r;
+        CHECK(isOk);
+        return o;
+    };
+
+    auto last{0};
+    auto res{0};
+    for (int i = 0; res != IntCode::S_HALT; i = (i + 1) % 5)
+    {
+        if (!i)
+        {
+            last = res;
+        }
+        res = processInput(amps[i], res);
+    }
+
+    return last;
 }
 
 int FindMaxCombination(const IntCode &program)
@@ -29,7 +56,7 @@ int FindMaxCombination(const IntCode &program)
     int result{};
     do
     {
-        auto val = Calculate(program, std::begin(phases), std::end(phases));
+        auto val = Calculate(program, phases);
         if (val > result)
         {
             result = val;
@@ -44,7 +71,7 @@ TEST_CASE(TEST_NAME)
     {
         IntCode p{std::istringstream{"3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0"}};
         int phases[] = {4,3,2,1,0};
-        REQUIRE(43210 == Calculate(p, phases, phases + 5));
+        REQUIRE(43210 == Calculate(p, phases));
         REQUIRE(43210 == FindMaxCombination(p));
     }
 
