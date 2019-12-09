@@ -6,6 +6,12 @@
 
 
 template <typename IntT>
+int to_int(IntT v)
+{
+    return v;
+}
+
+template <typename IntT>
 class IntCodeImpl
 {
 public:
@@ -45,8 +51,8 @@ public:
         while (true)
         {
             auto cmd = _memory[_ip];
-            int opcode = cmd % 100;
-            int state_flags = cmd / 100;
+            int opcode = to_int(cmd) % 100;
+            int state_flags = to_int(cmd) / 100;
 
             switch (opcode)
             {
@@ -78,7 +84,8 @@ public:
                     break;
                 }
                 assert(_state == S_RUN);
-                return _state = S_INPUT;
+                _state = S_INPUT;
+                return 0;
             case 4:
                 if (_state == S_RUN)
                 {
@@ -96,7 +103,7 @@ public:
                     auto addr = _GetArgIdx(state_flags, 1);
                     if (_memory[cond])
                     {
-                        _ip = _memory[addr];
+                        _ip = to_int(_memory[addr]);
                         continue;
                     }
                     _ip += 3;
@@ -108,7 +115,7 @@ public:
                     auto addr = _GetArgIdx(state_flags, 1);
                     if (!_memory[cond])
                     {
-                        _ip = _memory[addr];
+                        _ip = to_int(_memory[addr]);
                         continue;
                     }
                     _ip += 3;
@@ -132,8 +139,16 @@ public:
                     _ip += 4;
                     break;
                 }
+            case 9:
+                {
+                    auto a = _GetArgIdx(state_flags, 0);
+                    _rb += to_int(_memory[a]);
+                    _ip += 2;
+                    break;
+                }
             case 99:
-                return _state = S_HALT;
+                _state = S_HALT;
+                return 0;
             default:
                 std::cout << "HCF" << std::endl;
                 break;
@@ -161,6 +176,7 @@ private:
     MemoryT _memory;
     State _state = S_RUN;
     int _ip = 0;
+    int _rb = 0;
 
     int _GetArgIdx(int state_flags, int num)
     {
@@ -173,9 +189,11 @@ private:
         switch (mode)
         {
         case 0:
-            return _memory[_ip + num + 1];
+            return to_int(_memory[_ip + num + 1]);
         case 1:
             return _ip + num + 1;
+        case 2:
+            return _rb + to_int(_memory[_ip + num + 1]);
         default:
             throw "Mode not implemented";
         }
