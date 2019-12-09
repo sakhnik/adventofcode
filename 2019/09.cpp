@@ -39,12 +39,20 @@ TEST_CASE(TEST_NAME)
     IntCodeB program{ifs};
 
     {
-        IntCodeB t1{program};
-        auto r = t1.Advance(0);
-        REQUIRE(t1.GetState() == t1.S_INPUT);
-        r = t1.Advance(1);
-        REQUIRE(t1.GetState() == t1.S_OUTPUT);
+        IntCodeB t{program};
+        auto r = t.Advance(0);
+        REQUIRE(t.GetState() == t.S_INPUT);
+        r = t.Advance(1);
+        REQUIRE(t.GetState() == t.S_OUTPUT);
         std::cout << r << std::endl;
     }
 
+    {
+        IntCodeB t{program};
+        auto r = t.Advance(0);
+        REQUIRE(t.GetState() == t.S_INPUT);
+        r = t.Advance(2);
+        REQUIRE(t.GetState() == t.S_OUTPUT);
+        std::cout << r << std::endl;
+    }
 }
