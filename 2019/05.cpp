@@ -15,18 +15,21 @@ TEST_CASE(TEST_NAME)
 
         while (true)
         {
-            switch (auto r = program.Advance(input))
+            auto r = program.Advance(input);
+            switch (program.GetState())
             {
             case IntCode::S_HALT:
                 return buf;
             case IntCode::S_INPUT:
                 continue;
-            default:
+            case IntCode::S_OUTPUT:
                 if (!buf.empty())
                 {
                     buf += " ";
                 }
                 buf += std::to_string(r);
+                break;
+            default:
                 break;
             }
         }

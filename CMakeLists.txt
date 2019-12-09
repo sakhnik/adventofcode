@@ -36,5 +36,5 @@ foreach(src ${sources})
     )
 endforeach()
 
-add_executable(aoc ${sources} 2019/IntCode.cpp)
+add_executable(aoc ${sources})
 target_link_libraries(aoc ${CMAKE_THREAD_LIBS_INIT} -lssl -lcrypto)

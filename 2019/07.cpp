@@ -14,37 +14,46 @@ int Calculate(const IntCode &program, int phases[])
     // Prime
     for (auto &a : amps)
     {
-        CHECK(IntCode::S_INPUT == a.Advance(0));
+        a.Advance(0);
+        CHECK(IntCode::S_INPUT == a.GetState());
     }
 
     // Configure the phases
     for (int i = 0; i < 5; ++i)
     {
-        CHECK(IntCode::S_INPUT == amps[i].Advance(phases[i]));
+        amps[i].Advance(phases[i]);
+        CHECK(IntCode::S_INPUT == amps[i].GetState());
     }
 
     // Do a single amplification
     auto processInput = [&](auto &p, int i) {
         auto o = p.Advance(i);
-        if (o == IntCode::S_HALT)
+        if (p.GetState() == IntCode::S_HALT)
         {
-            return o;
+            throw "Halt";
         }
-        auto r = p.Advance(0);
-        bool isOk = IntCode::S_INPUT == r || IntCode::S_HALT == r;
+        CHECK(p.GetState() == IntCode::S_OUTPUT);
+        p.Advance(0);
+        bool isOk = IntCode::S_INPUT == p.GetState() || IntCode::S_HALT == p.GetState();
         CHECK(isOk);
         return o;
     };
 
     auto last{0};
-    auto res{0};
-    for (int i = 0; res != IntCode::S_HALT; i = (i + 1) % 5)
+    try
     {
-        if (!i)
+        auto res{0};
+        for (int i = 0; ; i = (i + 1) % 5)
         {
-            last = res;
+            if (!i)
+            {
+                last = res;
+            }
+            res = processInput(amps[i], res);
         }
-        res = processInput(amps[i], res);
+    }
+    catch (...)
+    {
     }
 
     return last;
