@@ -10,8 +10,17 @@
 
 const double EPS = 0.00001;
 
-using MapT = std::vector<std::string>;
-using PosT = std::pair<int,int>;
+struct Pos
+{
+    int x, y;
+
+    bool operator==(const Pos &o) const
+    {
+        return x == o.x && y == o.y;
+    }
+};
+
+using MapT = std::vector<Pos>;
 
 namespace {
 
@@ -19,13 +28,21 @@ MapT GetInput(std::istream &&is)
 {
     MapT map;
     std::string line;
+    int y{0};
     while (getline(is, line))
     {
         if (line.empty())
         {
             continue;
         }
-        map.emplace_back(std::move(line));
+        for (int x = 0; x < line.size(); ++x)
+        {
+            if (line[x] == '#')
+            {
+                map.push_back({x, y});
+            }
+        }
+        ++y;
     }
     return map;
 }
@@ -50,10 +67,10 @@ std::ostream& operator<<(std::ostream &os, Bearing b)
     return os << b.v;
 }
 
-Bearing CalcBearing(int x0, int y0, int x, int y)
+Bearing CalcBearing(Pos p0, Pos p)
 {
-    int dx = x - x0;
-    int dy = y - y0;
+    int dx = p.x - p0.x;
+    int dy = p.y - p0.y;
     double angle = std::atan2(dx, -dy) / M_PI * 180.0;
     if (angle < 0)
     {
@@ -62,52 +79,37 @@ Bearing CalcBearing(int x0, int y0, int x, int y)
     return {angle};
 }
 
-int CountDirect(int row0, int col0, const MapT &map)
+int CountDirect(Pos orig, const MapT &map)
 {
 
-    std::map<Bearing, PosT> bearings;
+    std::map<Bearing, Pos> bearings;
 
     int count{};
-    for (int row = 0; row < map.size(); ++row)
+    for (auto a : map)
     {
-        for (int col = 0; col < map.front().size(); ++col)
+        if (a == orig)
         {
-            if (map[row][col] != '#')
-            {
-                continue;
-            }
-
-            if (col == col0 && row == row0)
-            {
-                continue;
-            }
-
-            Bearing b = CalcBearing(col0, row0, col, row);
-            auto [it, inserted] = bearings.insert({b, PosT{col, row}});
-            count += inserted;
+            continue;
         }
+
+        Bearing b = CalcBearing(orig, a);
+        auto [it, inserted] = bearings.insert({b, a});
+        count += inserted;
     }
 
     return count;
 }
 
-int FindLocation(const MapT &map, PosT &pos)
+int FindLocation(const MapT &map, Pos &pos)
 {
     int max_count = 0;
-    for (int row = 0; row < map.size(); ++row)
+    for (auto a : map)
     {
-        for (int col = 0; col < map.front().size(); ++col)
+        int count = CountDirect(a, map);
+        if (count > max_count)
         {
-            if (map[row][col] != '#')
-            {
-                continue;
-            }
-            int count = CountDirect(row, col, map);
-            if (count > max_count)
-            {
-                max_count = count;
-                pos = {col, row};
-            }
+            max_count = count;
+            pos = a;
         }
     }
     return max_count;
@@ -118,21 +120,21 @@ int FindLocation(const MapT &map, PosT &pos)
 TEST_CASE(TEST_NAME)
 {
     {
-        auto b = CalcBearing(0, 0, 0, -1);
+        auto b = CalcBearing({0, 0}, {0, -1});
         REQUIRE(b == Bearing{0.});
-        b = CalcBearing(0, 0, 1, -1);
+        b = CalcBearing({0, 0}, {1, -1});
         REQUIRE(b == Bearing{45});
-        b = CalcBearing(0, 0, 1, 0);
+        b = CalcBearing({0, 0}, {1, 0});
         REQUIRE(b == Bearing{90});
-        b = CalcBearing(0, 0, 1, 1);
+        b = CalcBearing({0, 0}, {1, 1});
         REQUIRE(b == Bearing{135});
-        b = CalcBearing(0, 0, 0, 1);
+        b = CalcBearing({0, 0}, {0, 1});
         REQUIRE(b == Bearing{180});
-        b = CalcBearing(0, 0, -1, 1);
+        b = CalcBearing({0, 0}, {-1, 1});
         REQUIRE(b == Bearing{225});
-        b = CalcBearing(0, 0, -1, 0);
+        b = CalcBearing({0, 0}, {-1, 0});
         REQUIRE(b == Bearing{270});
-        b = CalcBearing(0, 0, -1, -1);
+        b = CalcBearing({0, 0}, {-1, -1});
         REQUIRE(b == Bearing{315});
     }
 
@@ -144,10 +146,10 @@ TEST_CASE(TEST_NAME)
 ....#
 ...##)";
         auto map = GetInput(std::istringstream{s});
-        PosT pos;
+        Pos pos;
         REQUIRE(8 == FindLocation(map, pos));
-        REQUIRE(pos.first == 3);
-        REQUIRE(pos.second == 4);
+        REQUIRE(pos.x == 3);
+        REQUIRE(pos.y == 4);
     }
 
     {
@@ -163,10 +165,10 @@ TEST_CASE(TEST_NAME)
 ##...#..#.
 .#....####)";
         auto map = GetInput(std::istringstream{s});
-        PosT pos;
+        Pos pos;
         REQUIRE(33 == FindLocation(map, pos));
-        REQUIRE(pos.first == 5);
-        REQUIRE(pos.second == 8);
+        REQUIRE(pos.x == 5);
+        REQUIRE(pos.y == 8);
     }
 
     {
@@ -182,10 +184,10 @@ TEST_CASE(TEST_NAME)
 ......#...
 .####.###.)";
         auto map = GetInput(std::istringstream{s});
-        PosT pos;
+        Pos pos;
         REQUIRE(35 == FindLocation(map, pos));
-        REQUIRE(pos.first == 1);
-        REQUIRE(pos.second == 2);
+        REQUIRE(pos.x == 1);
+        REQUIRE(pos.y == 2);
     }
 
     {
@@ -201,10 +203,10 @@ TEST_CASE(TEST_NAME)
 .##...##.#
 .....#.#..)";
         auto map = GetInput(std::istringstream{s});
-        PosT pos;
+        Pos pos;
         REQUIRE(41 == FindLocation(map, pos));
-        REQUIRE(pos.first == 6);
-        REQUIRE(pos.second == 3);
+        REQUIRE(pos.x == 6);
+        REQUIRE(pos.y == 3);
     }
 
     {
@@ -230,16 +232,16 @@ TEST_CASE(TEST_NAME)
 #.#.#.#####.####.###
 ###.##.####.##.#..##)";
         auto map = GetInput(std::istringstream{s});
-        PosT pos;
+        Pos pos;
         REQUIRE(210 == FindLocation(map, pos));
-        REQUIRE(pos.first == 11);
-        REQUIRE(pos.second == 13);
+        REQUIRE(pos.x == 11);
+        REQUIRE(pos.y == 13);
     }
 
     {
         // task 1
         auto map = GetInput(std::ifstream{INPUT});
-        PosT pos;
+        Pos pos;
         MESSAGE(FindLocation(map, pos));
     }
 }
