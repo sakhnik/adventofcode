@@ -6,6 +6,8 @@
 #include <map>
 #include <iostream>
 #include <cmath>
+#include <algorithm>
+#include <list>
 
 
 const double EPS = 0.00001;
@@ -238,10 +240,71 @@ TEST_CASE(TEST_NAME)
         REQUIRE(pos.y == 13);
     }
 
+    // task 1
+    auto map = GetInput(std::ifstream{INPUT});
+    Pos pos;
+    MESSAGE(FindLocation(map, pos));
+
+    auto calcD = [](Pos a, Pos b) {
+        auto dx = b.x - a.x;
+        auto dy = b.y - a.y;
+        return dx * dx + dy * dy;
+    };
+
+    struct Info
     {
-        // task 1
-        auto map = GetInput(std::ifstream{INPUT});
         Pos pos;
-        MESSAGE(FindLocation(map, pos));
+        Bearing b;
+        int dist;
+    };
+
+    std::list<Info> queue;
+    for (Pos p : map)
+    {
+        if (p == pos)
+        {
+            continue;
+        }
+        queue.push_back({p, CalcBearing(pos, p), calcD(pos, p)});
     }
+
+    queue.sort(
+        [&](Info &a, Info &b) {
+            if (a.b < b.b)
+            {
+                return true;
+            }
+            if (a.b == b.b)
+            {
+                return a.dist < b.dist;
+            }
+            return false;
+        });
+
+    int count{200};
+    while (count > 0)
+    {
+        Bearing last_b{-1};
+        for (auto it = queue.begin(); it != queue.end(); )
+        {
+            auto b = it->b;
+            if (b == last_b)
+            {
+                // skip
+                ++it;
+            }
+            else
+            {
+                if (--count <= 0)
+                {
+                    MESSAGE(it->pos.x * 100 + it->pos.y);
+                    break;
+                }
+
+                it = queue.erase(it);
+                last_b = b;
+            }
+        }
+    }
+
 }
