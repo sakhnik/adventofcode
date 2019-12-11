@@ -30,40 +30,42 @@ MapT GetInput(std::istream &&is)
     return map;
 }
 
+struct Bearing
+{
+    double v;
+
+    bool operator==(Bearing o) const
+    {
+        return std::abs(v - o.v) < EPS;
+    }
+
+    bool operator<(const Bearing &o) const
+    {
+        return std::abs(v - o.v) > EPS && v < o.v;
+    }
+};
+
+std::ostream& operator<<(std::ostream &os, Bearing b)
+{
+    return os << b.v;
+}
+
+Bearing CalcBearing(int x0, int y0, int x, int y)
+{
+    int dx = x - x0;
+    int dy = y - y0;
+    double angle = std::atan2(dx, -dy) / M_PI * 180.0;
+    if (angle < 0)
+    {
+        angle += 360.0;
+    }
+    return {angle};
+}
+
 int CountDirect(int row0, int col0, const MapT &map)
 {
-    struct VecT
-    {
-        double x;
-        double y;
 
-        bool operator==(const VecT &o) const
-        {
-            return std::abs(x - o.x) < EPS && std::abs(y - o.y) < EPS;
-        }
-
-        bool operator<(const VecT &o) const
-        {
-            if (std::abs(x - o.x) > EPS)
-            {
-                if (x < o.x)
-                {
-                    return true;
-                }
-                if (x > o.x)
-                {
-                    return false;
-                }
-            }
-            if (std::abs(y - o.y) > EPS)
-            {
-                return y < o.y;
-            }
-            return false;
-        }
-    };
-
-    std::map<VecT, PosT> vectors;
+    std::map<Bearing, PosT> bearings;
 
     int count{};
     for (int row = 0; row < map.size(); ++row)
@@ -80,12 +82,8 @@ int CountDirect(int row0, int col0, const MapT &map)
                 continue;
             }
 
-            int dx = col - col0;
-            int dy = row - row0;
-            double length = std::sqrt(dx * dx + dy * dy);
-            VecT vec{dx / length, dy / length};
-
-            auto [it, inserted] = vectors.insert({vec, PosT{col, row}});
+            Bearing b = CalcBearing(col0, row0, col, row);
+            auto [it, inserted] = bearings.insert({b, PosT{col, row}});
             count += inserted;
         }
     }
@@ -119,6 +117,25 @@ int FindLocation(const MapT &map, PosT &pos)
 
 TEST_CASE(TEST_NAME)
 {
+    {
+        auto b = CalcBearing(0, 0, 0, -1);
+        REQUIRE(b == Bearing{0.});
+        b = CalcBearing(0, 0, 1, -1);
+        REQUIRE(b == Bearing{45});
+        b = CalcBearing(0, 0, 1, 0);
+        REQUIRE(b == Bearing{90});
+        b = CalcBearing(0, 0, 1, 1);
+        REQUIRE(b == Bearing{135});
+        b = CalcBearing(0, 0, 0, 1);
+        REQUIRE(b == Bearing{180});
+        b = CalcBearing(0, 0, -1, 1);
+        REQUIRE(b == Bearing{225});
+        b = CalcBearing(0, 0, -1, 0);
+        REQUIRE(b == Bearing{270});
+        b = CalcBearing(0, 0, -1, -1);
+        REQUIRE(b == Bearing{315});
+    }
+
     {
         const char *const s = R"(
 .#..#
