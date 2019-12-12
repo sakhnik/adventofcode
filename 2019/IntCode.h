@@ -53,6 +53,7 @@ public:
             auto cmd = _memory[_ip];
             int opcode = to_int(cmd) % 100;
             int state_flags = to_int(cmd) / 100;
+            std::cout << opcode << std::endl;
 
             switch (opcode)
             {
@@ -150,8 +151,8 @@ public:
                 _state = S_HALT;
                 return 0;
             default:
-                std::cout << "HCF" << std::endl;
-                break;
+                std::cout << "Unknown opcode " << opcode << std::endl;
+                throw "HCF";
             }
         }
     }

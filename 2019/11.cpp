@@ -4,70 +4,127 @@
 #include <set>
 
 
+struct Pos
+{
+    int x,y;
+    bool operator<(const Pos &o) const
+    {
+        if (x < o.x) return true;
+        if (x > o.x) return false;
+        return y < o.y;
+    }
+};
+
+class Bot
+{
+public:
+    Bot(IntCode prog)
+        : _prog{prog}
+    {
+    }
+
+    void Paint(bool is_white)
+    {
+        if (is_white)
+        {
+            _whites.insert({0,0});
+        }
+
+        int x{}, y{};
+        int dir{};
+        int dx[] = {0, 1, 0, -1};
+        int dy[] = {-1, 0, 1, 0};
+
+        while (true)
+        {
+            _prog.Advance(0);
+            if (_prog.GetState() == _prog.S_HALT)
+            {
+                break;
+            }
+            REQUIRE(_prog.GetState() == _prog.S_INPUT);
+            auto it = _whites.find({x, y});
+            is_white = it != _whites.end();
+
+            auto r = _prog.Advance(is_white);
+            REQUIRE(_prog.GetState() == _prog.S_OUTPUT);
+            if (r != is_white)
+            {
+                // Need to repaint
+                _repaints.insert({x,y});
+                if (r)
+                {
+                    _whites.insert({x,y});
+                }
+                else
+                {
+                    _whites.erase(it);
+                }
+            }
+
+            r = _prog.Advance(0);
+            REQUIRE(_prog.GetState() == _prog.S_OUTPUT);
+
+            if (r)
+            {
+                dir = (dir + 1) % 4;
+            }
+            else
+            {
+                dir = (4 + dir - 1) % 4;
+            }
+            x += dx[dir];
+            y += dy[dir];
+        }
+    }
+
+    int CountRepaints() const
+    {
+        return _repaints.size();
+    }
+
+    std::string Print() const
+    {
+        Pos tl{}, br{};
+        for (auto p : _whites)
+        {
+            tl.x = std::min(tl.x, p.x);
+            tl.y = std::min(tl.y, p.y);
+            br.x = std::max(br.x, p.x);
+            br.y = std::max(br.y, p.y);
+        }
+
+        std::string res;
+        for (int y = tl.y; y != br.y; ++y)
+        {
+            for (int x = tl.x; x != br.x; ++x)
+            {
+                res.push_back(_whites.find({x,y}) != _whites.end() ? '#' : ' ');
+            }
+            res.push_back('\n');
+        }
+        return res;
+    }
+
+private:
+    IntCode _prog;
+    std::set<Pos> _repaints;
+    std::set<Pos> _whites;
+};
+
+
 TEST_CASE(TEST_NAME)
 {
     std::ifstream ifs{INPUT};
     IntCode prog{ifs};
 
-    struct Pos
-    {
-        int x,y;
-        bool operator<(const Pos &o) const
-        {
-            if (x < o.x) return true;
-            if (x > o.x) return false;
-            return y < o.y;
-        }
-    };
+    //Bot b1{prog};
+    //b1.Paint(false);
 
-    std::set<Pos> repaints;
-    std::set<Pos> whites;
-    int x{}, y{};
-    int dir{};
-    int dx[] = {0, 1, 0, -1};
-    int dy[] = {-1, 0, 1, 0};
+    //MESSAGE(b1.CountRepaints());
 
-    while (true)
-    {
-        prog.Advance(0);
-        if (prog.GetState() == prog.S_HALT)
-        {
-            break;
-        }
-        REQUIRE(prog.GetState() == prog.S_INPUT);
-        auto it = whites.find({x, y});
-        bool is_white = it != whites.end();
+    Bot b2{prog};
+    b2.Paint(true);
 
-        auto r = prog.Advance(is_white);
-        REQUIRE(prog.GetState() == prog.S_OUTPUT);
-        if (r != is_white)
-        {
-            // Need to repaint
-            repaints.insert({x,y});
-            if (r)
-            {
-                whites.insert({x,y});
-            }
-            else
-            {
-                whites.erase(it);
-            }
-        }
-
-        r = prog.Advance(0);
-        REQUIRE(prog.GetState() == prog.S_OUTPUT);
-
-        if (r)
-        {
-            dir = (dir + 1) % 4;
-        }
-        else
-        {
-            dir = (4 + dir - 1) % 4;
-        }
-        x += dx[dir];
-        y += dy[dir];
-    }
-
-    MESSAGE(repaints.size());
+    MESSAGE("\n" << b2.Print());
 }
