@@ -18,7 +18,7 @@ struct Pos
 class Bot
 {
 public:
-    Bot(IntCode prog)
+    Bot(IntCodeB prog)
         : _prog{prog}
     {
     }
@@ -95,9 +95,9 @@ public:
         }
 
         std::string res;
-        for (int y = tl.y; y != br.y; ++y)
+        for (int y = tl.y; y <= br.y; ++y)
         {
-            for (int x = tl.x; x != br.x; ++x)
+            for (int x = tl.x; x <= br.x; ++x)
             {
                 res.push_back(_whites.find({x,y}) != _whites.end() ? '#' : ' ');
             }
@@ -107,7 +107,7 @@ public:
     }
 
 private:
-    IntCode _prog;
+    IntCodeB _prog;
     std::set<Pos> _repaints;
     std::set<Pos> _whites;
 };
@@ -116,12 +116,12 @@ private:
 TEST_CASE(TEST_NAME)
 {
     std::ifstream ifs{INPUT};
-    IntCode prog{ifs};
+    IntCodeB prog{ifs};
 
-    //Bot b1{prog};
-    //b1.Paint(false);
+    Bot b1{prog};
+    b1.Paint(false);
 
-    //MESSAGE(b1.CountRepaints());
+    MESSAGE(b1.CountRepaints());
 
     Bot b2{prog};
     b2.Paint(true);

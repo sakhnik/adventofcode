@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <iostream>
 #include <cassert>
+#include <boost/multiprecision/gmp.hpp>
 
 
 template <typename IntT>
@@ -53,7 +54,6 @@ public:
             auto cmd = _memory[_ip];
             int opcode = to_int(cmd) % 100;
             int state_flags = to_int(cmd) / 100;
-            std::cout << opcode << std::endl;
 
             switch (opcode)
             {
@@ -202,3 +202,12 @@ private:
 };
 
 using IntCode = IntCodeImpl<int>;
+
+using BigIntT = boost::multiprecision::mpz_int;
+using IntCodeB = IntCodeImpl<BigIntT>;
+
+template<>
+inline int to_int(BigIntT v)
+{
+    return v.convert_to<int>();
+}

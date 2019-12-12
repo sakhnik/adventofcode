@@ -1,17 +1,7 @@
 #include <doctest/doctest.h>
 #include "IntCode.h"
-#include <boost/multiprecision/gmp.hpp>
 #include <fstream>
 
-
-using IntT = boost::multiprecision::mpz_int;
-using IntCodeB = IntCodeImpl<IntT>;
-
-template<>
-int to_int(IntT v)
-{
-    return v.convert_to<int>();
-}
 
 TEST_CASE(TEST_NAME)
 {
