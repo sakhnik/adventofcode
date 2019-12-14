@@ -3,18 +3,23 @@
 #include <sstream>
 #include <iostream>
 #include <array>
+#include <cmath>
+#include <numeric>
 
 
 namespace {
 
+const auto SIZE = 4;
+const auto DIM = 3;
+
 class Moons
 {
 public:
-    const static auto DIM = 3;
-    using PosT = std::array<int, DIM>;
+    using PosT = std::array<int64_t, DIM>;
+    using MoonsT = std::vector<PosT>;
 
-    Moons(std::initializer_list<PosT> l)
-        : _pos(l)
+    Moons(const MoonsT &moons)
+        : _pos(moons)
         , _vel(_pos.size())
     {
     }
@@ -24,38 +29,18 @@ public:
         std::ostringstream oss;
         for (const auto &m : _pos)
         {
-            oss << "<" << m[0] << "," << m[1] << "," << m[2] << ">";
+            oss << m[0] << "," << m[1] << "," << m[2];
         }
         return oss.str();
     }
 
     void Simulate(int steps)
     {
-        while (--steps >= 0)
+        for (int dim = 0; dim < DIM; ++dim)
         {
-            for (int i = 0; i < _pos.size(); ++i)
+            for (int i = 0; i < steps; ++i)
             {
-                for (int j = 0; j < DIM; ++j)
-                {
-                    int dv{};
-                    for (int k = 0; k < _pos.size(); ++k)
-                    {
-                        if (_pos[i][j] == _pos[k][j])
-                        {
-                            continue;
-                        }
-                        dv += _pos[i][j] < _pos[k][j] ? 1 : -1;
-                    }
-                    _vel[i][j] += dv;
-                }
-            }
-
-            for (int i = 0, in = _pos.size(); i < in; ++i)
-            {
-                for (int j = 0; j < DIM; ++j)
-                {
-                    _pos[i][j] += _vel[i][j];
-                }
+                _Simulate1(dim);
             }
         }
     }
@@ -64,14 +49,14 @@ public:
     {
         int ret{};
 
-        for (int i = 0; i < _pos.size(); ++i)
+        for (int i = 0; i < SIZE; ++i)
         {
             int pot{};
             int kin{};
-            for (int j = 0; j < DIM; ++j)
+            for (int dim = 0; dim < DIM; ++dim)
             {
-                pot += std::abs(_pos[i][j]);
-                kin += std::abs(_vel[i][j]);
+                pot += std::abs(_pos[i][dim]);
+                kin += std::abs(_vel[i][dim]);
             }
             ret += pot * kin;
         }
@@ -79,9 +64,58 @@ public:
         return ret;
     }
 
+    uint64_t FindPeriod()
+    {
+        std::array<int, DIM> periods{0};
+        for (int dim = 0; dim < DIM; ++dim)
+        {
+            auto pos0 = _pos;
+            auto vel0 = _vel;
+
+            auto returned = [dim](const auto &a, const auto &b) {
+                for (int i = 0; i != SIZE; ++i)
+                {
+                    if (a[i][dim] != b[i][dim])
+                        return false;
+                }
+                return true;
+            };
+
+            do {
+                _Simulate1(dim);
+                ++periods[dim];
+            } while (!returned(_pos, pos0) || !returned(_vel, vel0));
+        }
+
+        return std::accumulate(begin(periods), end(periods), 1ull,
+                               [](auto a, auto b) { return std::lcm(a, b); });
+    }
+
 private:
-    using MoonsT = std::vector<PosT>;
     MoonsT _pos, _vel;
+
+    void _Simulate1(int dim)
+    {
+        for (int i{0}, in{SIZE-1}; i < in; ++i)
+        {
+            for (int j{i+1}; j < SIZE; ++j)
+            {
+                auto d = _pos[i][dim] - _pos[j][dim];
+                if (!d)
+                {
+                    continue;
+                }
+                auto dv = d > 0 ? -1 : 1;
+                _vel[i][dim] += dv;
+                _vel[j][dim] -= dv;
+            }
+        }
+
+        for (int i = 0, in = SIZE; i < in; ++i)
+        {
+            _pos[i][dim] += _vel[i][dim];
+        }
+    }
 };
 
 } //namespace;
@@ -89,13 +123,15 @@ private:
 TEST_CASE(TEST_NAME)
 {
     {
-        Moons test1{{-1, 0, 2}, {2, -10, -7}, {4, -8, 8}, {3, 5, -1}};
+        Moons test1({{-1, 0, 2}, {2, -10, -7}, {4, -8, 8}, {3, 5, -1}});
         test1.Simulate(10);
         REQUIRE(179 == test1.CalcTotalEnergy());
     }
 
-    Moons task1{{-16, 15, -9}, {-14, 5, 4}, {2, 0, 6}, {-3, 18, 9}};
-    task1.Simulate(1000);
-    MESSAGE(task1.CalcTotalEnergy());
+    Moons::MoonsT init{{-16, 15, -9}, {-14, 5, 4}, {2, 0, 6}, {-3, 18, 9}};
 
+    Moons task{init};
+    task.Simulate(1000);
+    MESSAGE(task.CalcTotalEnergy());
+    MESSAGE(task.FindPeriod());
 }
