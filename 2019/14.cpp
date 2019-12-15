@@ -82,8 +82,8 @@ TEST_CASE(TEST_NAME)
 
     auto order = TopoSort("FUEL", reactions);
 
-    auto oreNeeded = [&](int fuel) {
-        std::map<std::string, int> amountNeeded{{"FUEL", fuel}};
+    auto oreNeeded = [&](int64_t fuel) {
+        std::map<std::string, int64_t> amountNeeded{{"FUEL", fuel}};
         for (auto it = rbegin(order); it != rend(order); ++it)
         {
             const auto &[outcome, ingredients] = reactions[*it];
@@ -97,4 +97,19 @@ TEST_CASE(TEST_NAME)
     };
 
     MESSAGE(oreNeeded(1));
+
+    const auto TRILLION = 1000LL * 1000 * 1000 * 1000;
+    auto lower = 0LL;
+    auto upper = TRILLION;
+
+    while (lower < upper)
+    {
+        auto test = lower + (upper - lower) / 2;
+        if (oreNeeded(test) <= TRILLION)
+            lower = test + 1;
+        else
+            upper = test;
+    }
+
+    MESSAGE(lower - 1);
 }
