@@ -7,6 +7,9 @@
 #include <vector>
 #include <sstream>
 
+
+namespace {
+
 struct Data
 {
 	unsigned weight = 0;
@@ -88,6 +91,8 @@ unsigned CheckWeight(const TreeT &tree, const std::string &node)
 
 	return it->second.weight + total;
 }
+
+} //namespace;
 
 TEST_CASE(TEST_NAME)
 {
