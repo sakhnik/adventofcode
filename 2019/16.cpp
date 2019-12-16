@@ -65,14 +65,15 @@ TEST_CASE(TEST_NAME)
         REQUIRE(std::equal(s1.begin(), s1.end(), c1.begin()));
     }
 
-    auto toString = [](MsgT &msg) {
+    auto toString = [](MsgT &msg, int count) {
         std::string res;
-        for (auto v : msg)
-            res.push_back(v + '0');
+        for (int i = 0; i < count; ++i)
+            res.push_back(msg[i] + '0');
         return res;
     };
 
     {
+        // Task 1
         std::ifstream ifs{INPUT};
         auto msg = getInput(ifs);
 
@@ -81,6 +82,28 @@ TEST_CASE(TEST_NAME)
             phase(msg);
         }
 
-        MESSAGE(toString(msg).substr(0, 8));
+        MESSAGE(toString(msg, 8));
+    }
+
+    {
+        // Task 2
+        std::ifstream ifs{INPUT};
+        auto msg = getInput(ifs);
+
+        size_t offset{};
+        for (int i = 0; i < 7; ++i)
+            offset = offset * 10 + msg[i];
+
+        MsgT bigMsg;
+        for (size_t i{offset}, in{10000*msg.size()}; i < in; ++i)
+            bigMsg.push_back(msg[i % msg.size()]);
+
+        for (int i{0}; i < 100; ++i)
+        {
+            for (ssize_t j = bigMsg.size() - 2; j >= 0; --j)
+                bigMsg[j] = (bigMsg[j] + bigMsg[j+1]) % 10;
+        }
+
+        MESSAGE(toString(bigMsg, 8));
     }
 }
