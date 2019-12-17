@@ -7,11 +7,11 @@
 TEST_CASE(TEST_NAME)
 {
     std::ifstream ifs{INPUT};
-    IntCodeB prog{ifs};
+    IntCode prog{ifs};
 
     std::ostringstream oss;
     {
-        IntCodeB p1{prog};
+        IntCode p1{prog};
         while (p1.GetState() != p1.S_HALT)
         {
             auto r = p1.Advance(0);
@@ -138,9 +138,9 @@ TEST_CASE(TEST_NAME)
             "L,8,R,6,R,6,R,10,L,8\n"
             "n\n";
 
-        IntCodeB p2{prog};
+        IntCode p2{prog};
         p2.SetMemory(0, 2);
-        BigIntT input = 0;
+        int input = 0;
 
         while (p2.GetState() != p2.S_HALT)
         {
