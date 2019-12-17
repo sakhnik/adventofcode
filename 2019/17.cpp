@@ -55,4 +55,60 @@ TEST_CASE(TEST_NAME)
         }
     }
     MESSAGE(cs);
+
+    {
+        // Trace the path (could be done manually)
+        const std::string directions = "^>v<";
+        auto bot = map.find_first_of(directions);
+        int row = bot / (width + 1);
+        int col = bot % (width + 1);
+        int dir = directions.find(getTile(row, col));
+
+        auto getTurn = [&]() {
+            const int ldx[] = {-1, 0, 1, 0};
+            const int ldy[] = {0, -1, 0, 1};
+            if (getTile(row + ldy[dir], col + ldx[dir]) == '#')
+            {
+                dir = (dir + 3) % 4;
+                return 'L';
+            }
+            const int rdx[] = {1, 0, -1, 0};
+            const int rdy[] = {0, 1, 0, -1};
+            if (getTile(row + rdy[dir], col + rdx[dir]) == '#')
+            {
+                dir = (dir + 1) % 4;
+                return 'R';
+            }
+            return 'X';
+        };
+
+        auto move = [&]() {
+            const int dx[] = {0, 1, 0, -1};
+            const int dy[] = {-1, 0, 1, 0};
+            int cnt{};
+            while (true)
+            {
+                auto r = row + dy[dir];
+                auto c = col + dx[dir];
+                if (getTile(r, c) != '#')
+                    return cnt;
+                ++cnt;
+                row = r;
+                col = c;
+            }
+        };
+
+        std::ostringstream oss;
+        while (true)
+        {
+            auto t = getTurn();
+            if (t == 'X')
+                break;
+            oss << t << ",";
+            oss << move() << ",";
+        }
+        std::string trace = oss.str();
+        trace.erase(trace.size() - 1);
+        MESSAGE(trace);
+    }
 }
