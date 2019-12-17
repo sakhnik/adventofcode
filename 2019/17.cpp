@@ -7,23 +7,26 @@
 TEST_CASE(TEST_NAME)
 {
     std::ifstream ifs{INPUT};
-    IntCode prog{ifs};
+    IntCodeB prog{ifs};
 
     std::ostringstream oss;
-    while (prog.GetState() != prog.S_HALT)
     {
-        auto r = prog.Advance(0);
-        switch (prog.GetState())
+        IntCodeB p1{prog};
+        while (p1.GetState() != p1.S_HALT)
         {
-        case prog.S_RUN:
-        case prog.S_HALT:
-            break;
-        case prog.S_INPUT:
-            REQUIRE(!"Not supported");
-            break;
-        case prog.S_OUTPUT:
-            oss << char(r);
-            break;
+            auto r = p1.Advance(0);
+            switch (p1.GetState())
+            {
+            case p1.S_RUN:
+            case p1.S_HALT:
+                break;
+            case p1.S_INPUT:
+                REQUIRE(!"Not supported");
+                break;
+            case p1.S_OUTPUT:
+                oss << char(r);
+                break;
+            }
         }
     }
 
@@ -98,17 +101,71 @@ TEST_CASE(TEST_NAME)
             }
         };
 
-        std::ostringstream oss;
+        std::vector<std::string> commands;
         while (true)
         {
             auto t = getTurn();
             if (t == 'X')
                 break;
-            oss << t << ",";
-            oss << move() << ",";
+            commands.emplace_back(std::string{t});
+            commands.emplace_back(std::to_string(move()));
         }
-        std::string trace = oss.str();
-        trace.erase(trace.size() - 1);
-        MESSAGE(trace);
+
+        for (auto s : commands)
+            std::cout << s << ",";
+        std::cout << std::endl;
+
+        // L,8,R,10,L,8,R,8,L,12,R,8,R,8,L,8,R,10,L,8,R,8,L,8,R,6,R,6,R,10,L,8,L,8,R,6,R,6,R,10,L,8,L,8,R,10,L,8,R,8,L,12,R,8,R,8,L,8,R,6,R,6,R,10,L,8,L,12,R,8,R,8,L,12,R,8,R,8
+        //
+        // A,L,12,R,8,R,8,A,L,8,R,6,R,6,R,10,L,8,L,8,R,6,R,6,R,10,L,8,A,L,12,R,8,R,8,L,8,R,6,R,6,R,10,L,8,L,12,R,8,R,8,L,12,R,8,R,8
+        // A = L,8,R,10,L,8,R,8
+        //
+        // A,B,A,L,8,R,6,R,6,R,10,L,8,L,8,R,6,R,6,R,10,L,8,A,B,L,8,R,6,R,6,R,10,L,8,B,B
+        // A = L,8,R,10,L,8,R,8
+        // B = L,12,R,8,R,8
+        //
+        // A,B,A,C,C,A,B,C,B,B
+        // A = L,8,R,10,L,8,R,8
+        // B = L,12,R,8,R,8
+        // C = L,8,R,6,R,6,R,10,L,8
+    }
+
+    {
+        const char *commands =
+            "A,B,A,C,C,A,B,C,B,B\n"
+            "L,8,R,10,L,8,R,8\n"
+            "L,12,R,8,R,8\n"
+            "L,8,R,6,R,6,R,10,L,8\n"
+            "n\n";
+
+        IntCodeB p2{prog};
+        p2.SetMemory(0, 2);
+        BigIntT input = 0;
+
+        while (p2.GetState() != p2.S_HALT)
+        {
+            auto r = p2.Advance(input);
+            switch (p2.GetState())
+            {
+            case p2.S_RUN:
+            case p2.S_HALT:
+                break;
+            case p2.S_INPUT:
+                input = *commands++;
+                break;
+            case p2.S_OUTPUT:
+                if (r < 256)
+                {
+                    // Prompts, map output
+                    std::cout << char(r);
+                }
+                else
+                {
+                    // The score
+                    MESSAGE(r);
+                }
+                break;
+            }
+        }
     }
 }
