@@ -8,6 +8,7 @@
 #include <numeric>
 #include <unordered_map>
 #include <boost/functional/hash.hpp>
+#include <boost/scope_exit.hpp>
 
 
 const int MAX_DIST = std::numeric_limits<int>::max();
@@ -66,14 +67,17 @@ std::vector<Key> GetKeysBfs(int position, const std::string &map, int width, int
     return keys;
 }
 
+template <typename PositionT>
 struct KnownPath
 {
-    int position;
+    PositionT position;
     KeySetT keysLeft;
 
     bool operator==(const KnownPath &o) const
     {
-        return position == o.position && keysLeft == o.keysLeft;
+        return size(position) == size(o.position)
+            && std::equal(begin(position), end(position), begin(o.position))
+            && keysLeft == o.keysLeft;
     }
 
     bool operator<(const KnownPath &o) const
@@ -84,9 +88,10 @@ struct KnownPath
     }
 };
 
+template <typename PositionT>
 struct KnownPathHash
 {
-    typedef KnownPath argument_type;
+    typedef KnownPath<PositionT> argument_type;
     typedef std::size_t result_type;
     result_type operator()(argument_type const& s) const noexcept
     {
@@ -97,9 +102,8 @@ struct KnownPathHash
     }
 };
 
-using KnownPathsT = std::unordered_map<KnownPath, int, KnownPathHash>;
-
-int SearchImpl(int position,
+template <typename PositionT, typename KnownPathsT>
+int SearchImpl(PositionT &position,
                std::string &map, int width,
                KeySetT keysLeft, KnownPathsT &knownPaths)
 {
@@ -113,35 +117,57 @@ int SearchImpl(int position,
     if (keysLeft.none())
         return 0;
 
-    auto keys = GetKeysBfs(position, map, width, keysLeft.count());
-
     int minDist{MAX_DIST};
 
-    for (auto &key : keys)
+    for (auto &pos : position)
     {
-        auto distanceToKey = key.dist;
-        if (distanceToKey >= minDist)
-            continue;
+        auto keys = GetKeysBfs(pos, map, width, keysLeft.count());
 
-        // Pick up the key
-        map[position] = '.';
-        map[key.position] = '@';       // move the player to the key
-        auto doorTile = 'A' + (key.key - 'a');
-        auto doorPosition = map.find(doorTile);
-        if (doorPosition != map.npos)
-            map[doorPosition] = ' ';  // unlock the door
-        keysLeft.reset(key.key - 'a');
+        for (auto &key : keys)
+        {
+            auto distanceToKey = key.dist;
+            if (distanceToKey >= minDist)
+                continue;
 
-        auto newDist = distanceToKey + SearchImpl(key.position, map, width, keysLeft, knownPaths);
+            // Pick up the key
+            map[pos] = '.';
+            BOOST_SCOPE_EXIT_ALL(&) {
+                map[pos] = '@';
+            };
 
-        keysLeft.set(key.key - 'a');
-        if (doorPosition != map.npos)
-            map[doorPosition] = doorTile;
-        map[key.position] = key.key;
-        map[position] = '@';
+            // Move the player to the key on the map
+            map[key.position] = '@';
+            BOOST_SCOPE_EXIT_ALL(&) {
+                map[key.position] = key.key;
+            };
 
-        if (newDist < minDist)
-            minDist = newDist;
+            // Unlock the door
+            auto doorTile = 'A' + (key.key - 'a');
+            auto doorPosition = map.find(doorTile);
+            if (doorPosition != map.npos)
+                map[doorPosition] = ' ';
+            BOOST_SCOPE_EXIT_ALL(&) {
+                if (doorPosition != map.npos)
+                    map[doorPosition] = doorTile;
+            };
+
+            // Modify the position
+            auto oldPos = pos;
+            pos = key.position;
+            BOOST_SCOPE_EXIT_ALL(&) {
+                pos = oldPos;
+            };
+
+            // Mark the key has been taken
+            keysLeft.reset(key.key - 'a');
+            BOOST_SCOPE_EXIT_ALL(&) {
+                keysLeft.set(key.key - 'a');
+            };
+
+            auto newDist = distanceToKey + SearchImpl(position, map, width, keysLeft, knownPaths);
+            if (newDist < minDist)
+                minDist = newDist;
+        }
     }
 
     knownPaths[{position, keysLeft}] = minDist;
@@ -157,8 +183,9 @@ int SearchMin(std::string &map)
                                         return set;
                                     });
     auto width = map.find("\n") + 1;
-    auto position = map.find("@");
-    KnownPathsT knownPaths;
+    using PositionT = std::array<int,1>;
+    PositionT position{static_cast<int>(map.find("@"))};
+    std::unordered_map<KnownPath<PositionT>, int, KnownPathHash<PositionT>> knownPaths;
     return SearchImpl(position, map, width, keysLeft, knownPaths);
 }
 
