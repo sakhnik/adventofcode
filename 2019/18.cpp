@@ -189,9 +189,9 @@ int SearchMin(std::string &map)
     PositionT position;
     int p{0};
 
-    for (int i = 0; i < N; ++i)
+    for (int i = 0; i < N; ++i, ++p)
     {
-        p = map.find("@");
+        p = map.find("@", p);
         REQUIRE(p != map.npos);
         position[i] = p;
     }
@@ -261,5 +261,20 @@ TEST_CASE(TEST_NAME)
                         std::istreambuf_iterator<char>{});
 
         MESSAGE(SearchMin<1>(map));
+
+        auto width = map.find("\n") + 1;
+        auto pos = map.find("@");
+
+        map[pos-1-width] = '@';
+        map[pos-width] = '#';
+        map[pos-width+1] = '@';
+        map[pos-1] = '#';
+        map[pos] = '#';
+        map[pos+1] = '#';
+        map[pos+width-1] = '@';
+        map[pos+width] = '#';
+        map[pos+width+1] = '@';
+
+        MESSAGE(SearchMin<4>(map));
     }
 }
