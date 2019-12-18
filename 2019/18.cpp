@@ -174,6 +174,7 @@ int SearchImpl(PositionT &position,
     return minDist;
 }
 
+template <int N>
 int SearchMin(std::string &map)
 {
     auto keysLeft = std::accumulate(begin(map), end(map), KeySetT{},
@@ -183,8 +184,18 @@ int SearchMin(std::string &map)
                                         return set;
                                     });
     auto width = map.find("\n") + 1;
-    using PositionT = std::array<int,1>;
-    PositionT position{static_cast<int>(map.find("@"))};
+
+    using PositionT = std::array<int,N>;
+    PositionT position;
+    int p{0};
+
+    for (int i = 0; i < N; ++i)
+    {
+        p = map.find("@");
+        REQUIRE(p != map.npos);
+        position[i] = p;
+    }
+
     std::unordered_map<KnownPath<PositionT>, int, KnownPathHash<PositionT>> knownPaths;
     return SearchImpl(position, map, width, keysLeft, knownPaths);
 }
@@ -196,7 +207,7 @@ TEST_CASE(TEST_NAME)
             "#########\n"
             "#b.A.@.a#\n"
             "#########";
-        REQUIRE(8 == SearchMin(m));
+        REQUIRE(8 == SearchMin<1>(m));
     }
 
     {
@@ -206,7 +217,7 @@ TEST_CASE(TEST_NAME)
             "######################.#\n"
             "#d.....................#\n"
             "########################";
-        REQUIRE(86 == SearchMin(m));
+        REQUIRE(86 == SearchMin<1>(m));
     }
 
     {
@@ -216,7 +227,7 @@ TEST_CASE(TEST_NAME)
             "#.######################\n"
             "#.....@.a.B.c.d.A.e.F.g#\n"
             "########################";
-        REQUIRE(132 == SearchMin(m));
+        REQUIRE(132 == SearchMin<1>(m));
     }
 
     {
@@ -230,7 +241,7 @@ TEST_CASE(TEST_NAME)
             "########.########\n"
             "#l.F..d...h..C.m#\n"
             "#################";
-        REQUIRE(136 == SearchMin(m));
+        REQUIRE(136 == SearchMin<1>(m));
     }
 
     {
@@ -241,7 +252,7 @@ TEST_CASE(TEST_NAME)
             "###A#B#C################\n"
             "###g#h#i################\n"
             "########################";
-        REQUIRE(81 == SearchMin(m));
+        REQUIRE(81 == SearchMin<1>(m));
     }
 
     {
@@ -249,6 +260,6 @@ TEST_CASE(TEST_NAME)
         std::string map(std::istreambuf_iterator<char>{ifs},
                         std::istreambuf_iterator<char>{});
 
-        MESSAGE(SearchMin(map));
+        MESSAGE(SearchMin<1>(map));
     }
 }
