@@ -62,14 +62,44 @@ int CountArea(int x0, int y0, int x_max, int y_max, const IntCode &prog)
     return count;
 }
 
+int FindFit(int x0, int y0, int size, const IntCode &prog)
+{
+    int x{x0}, y{y0};
+    int x_min{x0};
+
+
+    while (true)
+    {
+        if (TestLocation(x, y, prog))
+        {
+            // (x,y) may be the bottom left corner
+            // Now check the top right corner
+            int x1 = x + size - 1;
+            int y1 = y - size + 1;
+
+            if (y1 > 0 && TestLocation(x1, y1, prog))
+            {
+                return x * 10000 + y1;
+            }
+
+            x = x_min;
+            ++y;
+        }
+        else
+        {
+            x_min = ++x;
+        }
+    }
+}
+
 TEST_CASE(TEST_NAME)
 {
     std::ifstream ifs{INPUT};
     IntCode prog{ifs};
 
-    for (int y = 0; y < 10; ++y)
+    for (int y = 0; y < 20; ++y)
     {
-        for (int x = 0; x < 10; ++x)
+        for (int x = 0; x < 20; ++x)
         {
             std::cout << TestLocation(x, y, prog);
         }
@@ -77,4 +107,5 @@ TEST_CASE(TEST_NAME)
     }
 
     MESSAGE(CountArea(3, 4, 50, 50, prog));
+    MESSAGE(FindFit(3, 4, 100, prog));
 }
