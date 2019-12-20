@@ -85,6 +85,11 @@ public:
         return FindWayImpl([this](int level, int pos) { return _Task1Rule(level, pos); });
     }
 
+    int FindWayTask2()
+    {
+        return FindWayImpl([this](int level, int pos) { return _Task2Rule(level, pos); });
+    }
+
 private:
     std::string _map;
     int _width;
@@ -100,7 +105,7 @@ private:
         return _map[idx];
     }
 
-    std::tuple<bool, int, int> _Task1Rule(int level, int pos)
+    std::tuple<bool, int, int> _Task1Rule(int level, int pos) const
     {
         auto featureIt = _features.find(pos);
         if (featureIt != _features.end())
@@ -114,6 +119,28 @@ private:
                 if (innerIt != _innerFeatures.end() && innerIt->second != pos)
                     return {true, level, innerIt->second};
             }
+        }
+        return {false, 0, 0};
+    }
+
+    std::tuple<bool, int, int> _Task2Rule(int level, int pos) const
+    {
+        auto featureIt = _features.find(pos);
+        if (featureIt == _features.end())
+            return {false, 0, 0};
+
+        auto innerIt = _innerFeatures.find(featureIt->second);
+        if (innerIt != _innerFeatures.end())
+        {
+            if (innerIt->second != pos)
+                return {level > 0, level - 1, innerIt->second};
+        }
+
+        auto outerIt = _outerFeatures.find(featureIt->second);
+        if (outerIt != _outerFeatures.end())
+        {
+            if (outerIt->second != pos)
+                return {true, level + 1, outerIt->second};
         }
         return {false, 0, 0};
     }
@@ -135,7 +162,7 @@ private:
             auto tile = _map[pos];
             if (tile != '.')
                 return;
-            auto &distancesOnLevel = distances.at(level);
+            auto &distancesOnLevel = distances[level];
             auto it = distancesOnLevel.find(pos);
             if (it != distancesOnLevel.end())
                 return;
@@ -159,9 +186,7 @@ private:
 
             auto [teleport, newLevel, newPos] = rule(level, curPos);
             if (teleport)
-            {
                 probe(newLevel, newPos, curDist + 1);
-            }
         }
 
         return -1;
@@ -197,12 +222,58 @@ TEST_CASE(TEST_NAME)
 
         Maze m{iss};
         REQUIRE(23 == m.FindWayTask1());
+        REQUIRE(26 == m.FindWayTask2());
+    }
+
+    {
+        std::istringstream iss{
+"             Z L X W       C                 \n"
+"             Z P Q B       K                 \n"
+"  ###########.#.#.#.#######.###############  \n"
+"  #...#.......#.#.......#.#.......#.#.#...#  \n"
+"  ###.#.#.#.#.#.#.#.###.#.#.#######.#.#.###  \n"
+"  #.#...#.#.#...#.#.#...#...#...#.#.......#  \n"
+"  #.###.#######.###.###.#.###.###.#.#######  \n"
+"  #...#.......#.#...#...#.............#...#  \n"
+"  #.#########.#######.#.#######.#######.###  \n"
+"  #...#.#    F       R I       Z    #.#.#.#  \n"
+"  #.###.#    D       E C       H    #.#.#.#  \n"
+"  #.#...#                           #...#.#  \n"
+"  #.###.#                           #.###.#  \n"
+"  #.#....OA                       WB..#.#..ZH\n"
+"  #.###.#                           #.#.#.#  \n"
+"CJ......#                           #.....#  \n"
+"  #######                           #######  \n"
+"  #.#....CK                         #......IC\n"
+"  #.###.#                           #.###.#  \n"
+"  #.....#                           #...#.#  \n"
+"  ###.###                           #.#.#.#  \n"
+"XF....#.#                         RF..#.#.#  \n"
+"  #####.#                           #######  \n"
+"  #......CJ                       NM..#...#  \n"
+"  ###.#.#                           #.###.#  \n"
+"RE....#.#                           #......RF\n"
+"  ###.###        X   X       L      #.#.#.#  \n"
+"  #.....#        F   Q       P      #.#.#.#  \n"
+"  ###.###########.###.#######.#########.###  \n"
+"  #.....#...#.....#.......#...#.....#.#...#  \n"
+"  #####.#.###.#######.#######.###.###.#.#.#  \n"
+"  #.......#.......#.#.#.#.#...#...#...#.#.#  \n"
+"  #####.###.#####.#.#.#.#.###.###.#.###.###  \n"
+"  #.......#.....#.#...#...............#...#  \n"
+"  #############.#.#.###.###################  \n"
+"               A O F   N                     \n"
+"               A A D   M                     "
+        };
+        Maze m{iss};
+        REQUIRE(396 == m.FindWayTask2());
     }
 
     {
         std::ifstream ifs{INPUT};
         Maze m{ifs};
         MESSAGE(m.FindWayTask1());
+        MESSAGE(m.FindWayTask2());
     }
 
 }
