@@ -14,7 +14,11 @@ public:
         : _map(std::istreambuf_iterator<char>{is}, std::istreambuf_iterator<char>{})
         , _width(_map.find("\n") + 1)
     {
-        std::unordered_map<std::string, int> halves;
+        int height = (_map.size() + _width - 1) / _width;
+
+        auto isOuter = [&](int r, int c) {
+            return r < 4 || r > height - 4 || c < 4 || c > _width - 5;
+        };
 
         auto addFeature = [&](int r, int c, char a, char b) {
             auto idx = r * _width + c;
@@ -22,24 +26,11 @@ public:
             std::string name;
             name.push_back(a);
             name.push_back(b);
-            if (name == "AA")
-                _start = idx;
-            else if (name == "ZZ")
-                _finish = idx;
-            else
-            {
-                auto it = halves.find(name);
-                if (it == halves.end())
-                    halves[name] = idx;
-                else
-                {
-                    _warps[it->second] = idx;
-                    _warps[idx] = it->second;
-                }
-            }
+
+            _features[idx] = name;
+            (isOuter(r, c) ?  _outerFeatures[name] : _innerFeatures[name]) = idx;
         };
 
-        int height = (_map.size() + _width - 1) / _width;
         for (int r = 0; r < height; ++r)
         {
             for (int c = 0; c < _width; ++c)
@@ -84,13 +75,19 @@ public:
                 }
             }
         }
+
+        CHECK(_features.size() == _innerFeatures.size() * 2 + 2);
+        CHECK(_innerFeatures.size() + 2 == _outerFeatures.size());
     }
 
     int FindWay() const
     {
-        std::unordered_map<int, int> distance{{_start, 0}};
+        auto start = _outerFeatures.at("AA");
+        auto finish = _outerFeatures.at("ZZ");
+
+        std::unordered_map<int, int> distance{{start, 0}};
         std::queue<int> toProcess;
-        toProcess.push(_start);
+        toProcess.push(start);
 
         auto probe = [&](int pos, int dist) {
             auto tile = _map[pos];
@@ -105,21 +102,31 @@ public:
 
         while (!toProcess.empty())
         {
-            auto cur = toProcess.front();
+            auto curPos = toProcess.front();
             toProcess.pop();
 
-            auto curDist = distance.at(cur);
-            if (cur == _finish)
+            auto curDist = distance.at(curPos);
+            if (curPos == finish)
                 return curDist;
 
-            probe(cur - 1, curDist + 1);
-            probe(cur + 1, curDist + 1);
-            probe(cur - _width, curDist + 1);
-            probe(cur + _width, curDist + 1);
+            probe(curPos - 1, curDist + 1);
+            probe(curPos + 1, curDist + 1);
+            probe(curPos - _width, curDist + 1);
+            probe(curPos + _width, curDist + 1);
 
-            auto warpIt = _warps.find(cur);
-            if (warpIt != _warps.end())
-                probe(warpIt->second, curDist + 1);
+            auto featureIt = _features.find(curPos);
+            if (featureIt != _features.end())
+            {
+                auto outerIt = _outerFeatures.find(featureIt->second);
+                if (outerIt != _outerFeatures.end() && outerIt->second != curPos)
+                    probe(outerIt->second, curDist + 1);
+                else
+                {
+                    auto innerIt = _innerFeatures.find(featureIt->second);
+                    if (innerIt != _innerFeatures.end() && innerIt->second != curPos)
+                        probe(innerIt->second, curDist + 1);
+                }
+            }
         }
 
         return -1;
@@ -128,9 +135,9 @@ public:
 private:
     std::string _map;
     int _width;
-    int _start;
-    int _finish;
-    std::unordered_map<int,int> _warps;
+    std::unordered_map<int, std::string> _features;
+    std::unordered_map<std::string, int> _outerFeatures;
+    std::unordered_map<std::string, int> _innerFeatures;
 
     char _GetTile(int row, int col) const
     {
