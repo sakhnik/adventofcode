@@ -80,7 +80,46 @@ public:
         CHECK(_innerFeatures.size() + 2 == _outerFeatures.size());
     }
 
-    int FindWay() const
+    int FindWayTask1()
+    {
+        return FindWayImpl([this](int level, int pos) { return _Task1Rule(level, pos); });
+    }
+
+private:
+    std::string _map;
+    int _width;
+    std::unordered_map<int, std::string> _features;
+    std::unordered_map<std::string, int> _outerFeatures;
+    std::unordered_map<std::string, int> _innerFeatures;
+
+    char _GetTile(int row, int col) const
+    {
+        auto idx = row * _width + col;
+        if (idx > _map.size())
+            return '#';
+        return _map[idx];
+    }
+
+    std::tuple<bool, int, int> _Task1Rule(int level, int pos)
+    {
+        auto featureIt = _features.find(pos);
+        if (featureIt != _features.end())
+        {
+            auto outerIt = _outerFeatures.find(featureIt->second);
+            if (outerIt != _outerFeatures.end() && outerIt->second != pos)
+                return {true, level, outerIt->second};
+            else
+            {
+                auto innerIt = _innerFeatures.find(featureIt->second);
+                if (innerIt != _innerFeatures.end() && innerIt->second != pos)
+                    return {true, level, innerIt->second};
+            }
+        }
+        return {false, 0, 0};
+    }
+
+    template <typename RuleT>
+    int FindWayImpl(RuleT rule) const
     {
         auto start = _outerFeatures.at("AA");
         auto finish = _outerFeatures.at("ZZ");
@@ -118,38 +157,16 @@ public:
             probe(level, curPos - _width, curDist + 1);
             probe(level, curPos + _width, curDist + 1);
 
-            auto featureIt = _features.find(curPos);
-            if (featureIt != _features.end())
+            auto [teleport, newLevel, newPos] = rule(level, curPos);
+            if (teleport)
             {
-                auto outerIt = _outerFeatures.find(featureIt->second);
-                if (outerIt != _outerFeatures.end() && outerIt->second != curPos)
-                    probe(level, outerIt->second, curDist + 1);
-                else
-                {
-                    auto innerIt = _innerFeatures.find(featureIt->second);
-                    if (innerIt != _innerFeatures.end() && innerIt->second != curPos)
-                        probe(level, innerIt->second, curDist + 1);
-                }
+                probe(newLevel, newPos, curDist + 1);
             }
         }
 
         return -1;
     }
 
-private:
-    std::string _map;
-    int _width;
-    std::unordered_map<int, std::string> _features;
-    std::unordered_map<std::string, int> _outerFeatures;
-    std::unordered_map<std::string, int> _innerFeatures;
-
-    char _GetTile(int row, int col) const
-    {
-        auto idx = row * _width + col;
-        if (idx > _map.size())
-            return '#';
-        return _map[idx];
-    }
 };
 
 
@@ -179,13 +196,13 @@ TEST_CASE(TEST_NAME)
         };
 
         Maze m{iss};
-        REQUIRE(23 == m.FindWay());
+        REQUIRE(23 == m.FindWayTask1());
     }
 
     {
         std::ifstream ifs{INPUT};
         Maze m{ifs};
-        MESSAGE(m.FindWay());
+        MESSAGE(m.FindWayTask1());
     }
 
 }
