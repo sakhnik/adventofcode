@@ -85,46 +85,50 @@ public:
         auto start = _outerFeatures.at("AA");
         auto finish = _outerFeatures.at("ZZ");
 
-        std::unordered_map<int, int> distance{{start, 0}};
-        std::queue<int> toProcess;
-        toProcess.push(start);
+        // level -> position on the level -> distance
+        std::unordered_map<int, std::unordered_map<int, int>> distances;
+        distances[0] = {{start, 0}};
+        // {level, position}
+        std::queue<std::pair<int, int>> toProcess;
+        toProcess.push({0, start});
 
-        auto probe = [&](int pos, int dist) {
+        auto probe = [&](int level, int pos, int dist) {
             auto tile = _map[pos];
             if (tile != '.')
                 return;
-            auto it = distance.find(pos);
-            if (it != distance.end())
+            auto &distancesOnLevel = distances.at(level);
+            auto it = distancesOnLevel.find(pos);
+            if (it != distancesOnLevel.end())
                 return;
-            distance[pos] = dist;
-            toProcess.push(pos);
+            distancesOnLevel[pos] = dist;
+            toProcess.push({level, pos});
         };
 
         while (!toProcess.empty())
         {
-            auto curPos = toProcess.front();
+            auto [level, curPos] = toProcess.front();
             toProcess.pop();
 
-            auto curDist = distance.at(curPos);
-            if (curPos == finish)
+            auto curDist = distances.at(level).at(curPos);
+            if (level == 0 && curPos == finish)
                 return curDist;
 
-            probe(curPos - 1, curDist + 1);
-            probe(curPos + 1, curDist + 1);
-            probe(curPos - _width, curDist + 1);
-            probe(curPos + _width, curDist + 1);
+            probe(level, curPos - 1, curDist + 1);
+            probe(level, curPos + 1, curDist + 1);
+            probe(level, curPos - _width, curDist + 1);
+            probe(level, curPos + _width, curDist + 1);
 
             auto featureIt = _features.find(curPos);
             if (featureIt != _features.end())
             {
                 auto outerIt = _outerFeatures.find(featureIt->second);
                 if (outerIt != _outerFeatures.end() && outerIt->second != curPos)
-                    probe(outerIt->second, curDist + 1);
+                    probe(level, outerIt->second, curDist + 1);
                 else
                 {
                     auto innerIt = _innerFeatures.find(featureIt->second);
                     if (innerIt != _innerFeatures.end() && innerIt->second != curPos)
-                        probe(innerIt->second, curDist + 1);
+                        probe(level, innerIt->second, curDist + 1);
                 }
             }
         }
