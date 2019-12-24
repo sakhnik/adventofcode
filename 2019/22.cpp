@@ -3,9 +3,10 @@
 #include <numeric>
 #include <vector>
 #include <string_view>
-#include <algorithm>
 #include <sstream>
 #include <iostream>
+#include <boost/multiprecision/gmp.hpp>
+#include <boost/multiprecision/integer.hpp>
 
 
 using DeckT = std::vector<int>;
@@ -47,6 +48,59 @@ DeckT Deal(int count, std::istream &is)
     }
 
     return deck;
+}
+
+
+using IntT = boost::multiprecision::mpz_int;
+
+int64_t Deal2(IntT count, IntT repeat, int pos, std::istream &is)
+{
+    using MatT = std::array<IntT, 4>;
+
+    auto mult = [count](MatT a, MatT b) {
+        MatT c = {
+            ((a[0]*b[0] + a[1]*b[2]) % count + count) % count,
+            ((a[0]*b[1] + a[1]*b[3]) % count + count) % count,
+            ((a[2]*b[0] + a[3]*b[2]) % count + count) % count,
+            ((a[2]*b[1] + a[3]*b[3]) % count + count) % count
+        };
+        return c;
+    };
+
+    MatT m{1, 0, 0, 1};
+
+    std::string line;
+    while (getline(is, line))
+    {
+        if (line == "deal into new stack")
+        {
+            m = mult(m, MatT{-1, count-1, 0, 1});
+        }
+        else if (std::string_view{line.data(), 4} == "cut ")
+        {
+            auto num = std::stoi(line.substr(4));
+            CHECK(num < count);
+            m = mult(m, MatT{1, num, 0, 1});
+        }
+        else
+        {
+            const std::string INCR = "deal with increment ";
+            CHECK(std::string_view{line.data(), INCR.size()} == INCR);
+            auto num = std::stoi(line.substr(INCR.size()));
+            m = mult(m, MatT{powm(IntT{num}, count-2, count), 0, 0, 1});
+        }
+    }
+
+    auto pow = [mult](MatT m, IntT exp, auto pow) {
+        if (!exp)
+            return MatT{1, 0, 0, 1};
+        MatT ret = pow(m, exp >> 1, pow);
+        ret = mult(ret, ret);
+        return (exp & 1) ? mult(m, ret) : ret;
+    };
+
+    m = pow(m, repeat, pow);
+    return ((m[0] * pos + m[1]) % count).convert_to<int64_t>();
 }
 
 TEST_CASE(TEST_NAME)
@@ -109,5 +163,10 @@ TEST_CASE(TEST_NAME)
         auto deck = Deal(10007, ifs);
         auto it = std::find(begin(deck), end(deck), 2019);
         MESSAGE(it - begin(deck));
+    }
+
+    {
+        std::ifstream ifs{INPUT};
+        MESSAGE(Deal2(119315717514047LL, 101741582076661LL, 2020, ifs));
     }
 }
