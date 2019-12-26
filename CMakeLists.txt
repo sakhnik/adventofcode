@@ -9,16 +9,11 @@ foreach(src RANGE 1 20)
     list(APPEND sources 2015/${zero_src}.cpp)
 endforeach()
 
-foreach(year RANGE 2016 2018)
+foreach(year RANGE 2016 2019)
     foreach(src RANGE 1 25)
         string(REGEX REPLACE "^(.)$" "0\\1" zero_src ${src})
         list(APPEND sources ${year}/${zero_src}.cpp)
     endforeach()
-endforeach()
-
-foreach(src RANGE 1 24)
-    string(REGEX REPLACE "^(.)$" "0\\1" zero_src ${src})
-    list(APPEND sources 2019/${zero_src}.cpp)
 endforeach()
 
 add_definitions(-std=c++17 -Wall)
