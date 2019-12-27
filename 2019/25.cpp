@@ -132,9 +132,32 @@ TEST_CASE(TEST_NAME)
         std::cout << Execute(s, prog);
     }
 
-    std::string cmd;
-    while (getline(std::cin, cmd))
+
+    // Pick a correct combination of items
+    int combination{(1 << items.size()) - 1};
+    for (int i = 0, n = 1 << items.size(); i < n; ++i)
     {
-        std::cout << Execute(cmd, prog);
+        for (int j = 0; j < items.size(); ++j)
+        {
+            bool needJ = (i >> j) & 1;
+            bool hasJ = (combination >> j) & 1;
+            if (needJ == hasJ)
+                continue;
+            std::string cmd = (hasJ ? "drop " : "take ") + items[j] + "\n";
+            std::cout << cmd << Execute(cmd, prog);
+        }
+        combination = i;
+
+        auto output = Execute("north", prog);
+        std::cout << output;
+        static const std::regex e("You may proceed.");
+        if (std::regex_search(output, e))
+            break;
     }
+
+    //std::string cmd;
+    //while (getline(std::cin, cmd))
+    //{
+    //    std::cout << Execute(cmd, prog);
+    //}
 }
