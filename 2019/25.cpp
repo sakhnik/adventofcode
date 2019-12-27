@@ -42,96 +42,78 @@ TEST_CASE(TEST_NAME)
     std::ifstream ifs{INPUT};
     IntCodeB prog{ifs};
 
-    struct Pos
-    {
-        int x,y;
-        bool operator<(const Pos &o) const
-        {
-            if (x < o.x) return true;
-            if (x > o.x) return false;
-            return y < o.y;
-        }
-        bool operator==(const Pos &o) const
-        {
-            return x == o.x && y == o.y;
-        }
-    };
-
-    std::set<Pos> visited{{0,0}};
+    std::unordered_set<std::string> visited;
 
     struct Path
     {
         std::string command;
-        Pos pos;
         bool isMotion = false;
     };
 
-    std::vector<Path> commands{{"", {0,0}}};
+    std::vector<Path> commands{{""}};
     std::vector<std::string> items;
+    std::string roomName;
 
     while (!commands.empty())
     {
-        auto [cmd,pos,isMotion] = commands.back();
+        auto [cmd,isMotion] = commands.back();
         commands.pop_back();
         std::cout << cmd << std::endl;
 
         if (isMotion)
         {
             if (cmd == "north")
-                commands.push_back({"south", Pos{pos.x, pos.y + 1}});
+                commands.push_back({"south"});
             else if (cmd == "south")
-                commands.push_back({"north", Pos{pos.x, pos.y - 1}});
+                commands.push_back({"north"});
             else if (cmd == "east")
-                commands.push_back({"west", Pos{pos.x - 1, pos.y}});
+                commands.push_back({"west"});
             else if (cmd == "west")
-                commands.push_back({"east", Pos{pos.x + 1, pos.y}});
+                commands.push_back({"east"});
         }
 
         std::string output = Execute(cmd, prog);
         std::cout << output;
 
-        const std::regex e("\n- ([a-z0-9 ]+)");
-        for (std::regex_token_iterator<std::string::iterator> rit(output.begin(), output.end(), e, 1), rend;
-             rit != rend; ++rit)
+        const std::regex ename("== [^=]+==");
+        std::smatch mname;
+        if (std::regex_search(output, mname, ename))
+            roomName = mname.str();
+
+        if (visited.insert(roomName).second)
         {
-            auto feature = rit->str();
-            if (feature == "north")
+            const std::regex e("\n- ([a-z0-9 ]+)");
+            for (std::regex_token_iterator<std::string::iterator> rit(output.begin(), output.end(), e, 1), rend;
+                 rit != rend; ++rit)
             {
-                Pos newPos{pos.x, pos.y - 1};
-                if (visited.insert(newPos).second)
-                    commands.push_back({"north", newPos, true});
-            }
-            else if (feature == "south")
-            {
-                Pos newPos{pos.x, pos.y + 1};
-                if (visited.insert(newPos).second)
-                    commands.push_back({"south", newPos, true});
-            }
-            else if (feature == "west")
-            {
-                Pos newPos{pos.x - 1, pos.y};
-                if (visited.insert(newPos).second)
-                    commands.push_back({"west", newPos, true});
-            }
-            else if (feature == "east")
-            {
-                Pos newPos{pos.x + 1, pos.y};
-                if (visited.insert(newPos).second)
-                    commands.push_back({"east", newPos, true});
-            }
-            else
-            {
-                static const std::unordered_set<std::string> IGNORES{
-                    "infinite loop", "giant electromagnet", "photons"
-                };
-                if (!IGNORES.count(feature))
+                auto feature = rit->str();
+                if (feature == "north")
+                    commands.push_back({"north", true});
+                else if (feature == "south")
+                    commands.push_back({"south", true});
+                else if (feature == "west")
+                    commands.push_back({"west", true});
+                else if (feature == "east")
+                    commands.push_back({"east", true});
+                else
                 {
-                    commands.push_back({"take " + feature, pos});
-                    items.push_back(feature);
+                    static const std::unordered_set<std::string> IGNORES{
+                        "infinite loop", "giant electromagnet", "photons",
+                        "molten lava", "escape pod"
+                    };
+                    if (!IGNORES.count(feature))
+                    {
+                        commands.push_back({"take " + feature});
+                        items.push_back(feature);
+                    }
                 }
             }
         }
     }
 
-    std::cout << items.size() << std::endl;
+    std::string cmd;
+    while (getline(std::cin, cmd))
+    {
+        std::cout << Execute(cmd, prog);
+    }
 }
