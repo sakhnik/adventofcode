@@ -3,8 +3,9 @@
 #include <iostream>
 #include <fstream>
 #include <regex>
-#include <set>
 #include <unordered_set>
+#include <unordered_map>
+#include <algorithm>
 
 
 std::string Execute(std::string command, IntCodeB &prog)
@@ -54,6 +55,14 @@ TEST_CASE(TEST_NAME)
     std::vector<std::string> items;
     std::string roomName;
 
+    const std::unordered_map<std::string, std::string> BACK_MOVES{
+        {"north", "south"},
+        {"south", "north"},
+        {"east", "west"},
+        {"west", "east"}
+    };
+    std::vector<std::string> pathToSecurity;
+
     while (!commands.empty())
     {
         auto [cmd,isMotion] = commands.back();
@@ -61,16 +70,7 @@ TEST_CASE(TEST_NAME)
         std::cout << cmd << std::endl;
 
         if (isMotion)
-        {
-            if (cmd == "north")
-                commands.push_back({"south"});
-            else if (cmd == "south")
-                commands.push_back({"north"});
-            else if (cmd == "east")
-                commands.push_back({"west"});
-            else if (cmd == "west")
-                commands.push_back({"east"});
-        }
+            commands.push_back({BACK_MOVES.at(cmd)});
 
         std::string output = Execute(cmd, prog);
         std::cout << output;
@@ -78,7 +78,22 @@ TEST_CASE(TEST_NAME)
         const std::regex ename("== [^=]+==");
         std::smatch mname;
         if (std::regex_search(output, mname, ename))
+        {
             roomName = mname.str();
+            if (roomName == "== Security Checkpoint ==" && pathToSecurity.empty())
+            {
+                // Remember the path to the security checkpoint
+                for (auto it = commands.begin(); it != commands.end(); ++it)
+                {
+                    if (!it->isMotion)
+                    {
+                        auto move = BACK_MOVES.find(it->command);
+                        if (move != BACK_MOVES.end())
+                            pathToSecurity.push_back(move->second);
+                    }
+                }
+            }
+        }
 
         if (visited.insert(roomName).second)
         {
@@ -109,6 +124,12 @@ TEST_CASE(TEST_NAME)
                 }
             }
         }
+    }
+
+    // Go to the security checkpoint
+    for (const auto &s : pathToSecurity)
+    {
+        std::cout << Execute(s, prog);
     }
 
     std::string cmd;
