@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <limits>
 
 // The idea is to search for the configuration with the smallest
 // bounding box. This may fail if there is a rogue light, not participating

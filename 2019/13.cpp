@@ -37,8 +37,8 @@ TEST_CASE(TEST_NAME)
 
         int r{};
         int score{};
-        int pad_x{}, pad_y{};
-        int ball_x{}, ball_y{};
+        int pad_x{}/*, pad_y{}*/;
+        int ball_x{}/*, ball_y{}*/;
 
         while (p2.GetState() != p2.S_HALT)
         {
@@ -50,7 +50,7 @@ TEST_CASE(TEST_NAME)
             case p2.S_OUTPUT:
                 {
                     int x = r;
-                    int y = p2.Advance(0);
+                    /*int y =*/ p2.Advance(0);
                     CHECK(p2.GetState() == p2.S_OUTPUT);
                     int z = p2.Advance(0);
                     CHECK(p2.GetState() == p2.S_OUTPUT);
@@ -61,12 +61,12 @@ TEST_CASE(TEST_NAME)
                     else if (z == 3)
                     {
                         pad_x = x;
-                        pad_y = y;
+                        //pad_y = y;
                     }
                     else if (z == 4)
                     {
                         ball_x = x;
-                        ball_y = y;
+                        //ball_y = y;
                     }
                     r = p2.Advance(0);
                 }

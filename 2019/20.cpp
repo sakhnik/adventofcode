@@ -99,7 +99,7 @@ private:
 
     char _GetTile(int row, int col) const
     {
-        auto idx = row * _width + col;
+        size_t idx = row * _width + col;
         if (idx > _map.size())
             return '#';
         return _map[idx];

@@ -49,9 +49,9 @@ TEST_CASE(TEST_NAME)
     };
 
     int cs{};
-    for (auto row = 1; row < height - 1; ++row)
+    for (size_t row = 1; row < height - 1; ++row)
     {
-        for (auto col = 1; col < width - 1; ++col)
+        for (size_t col = 1; col < width - 1; ++col)
         {
             if (isIntersection(row, col))
                 cs += row * col;

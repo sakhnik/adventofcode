@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <limits>
 
 
 TEST_CASE(TEST_NAME)

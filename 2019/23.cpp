@@ -18,7 +18,7 @@ TEST_CASE(TEST_NAME)
 
     size_t queue_size{};
     std::vector<Node> nodes(50, {prog});
-    for (int i = 0; i < nodes.size(); ++i)
+    for (size_t i = 0; i < nodes.size(); ++i)
     {
         nodes[i].input.push_front(0);
         nodes[i].input.push_back(i);
@@ -32,7 +32,7 @@ TEST_CASE(TEST_NAME)
     bool exit{false};
     while (!exit)
     {
-        for (int i = 0; i < nodes.size(); ++i)
+        for (size_t i = 0; i < nodes.size(); ++i)
         {
             auto &n = nodes[i];
 

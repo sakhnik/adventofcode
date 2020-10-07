@@ -135,9 +135,9 @@ TEST_CASE(TEST_NAME)
 
     // Pick a correct combination of items
     int combination{(1 << items.size()) - 1};
-    for (int i = 0, n = 1 << items.size(); i < n; ++i)
+    for (size_t i = 0, n = 1 << items.size(); i < n; ++i)
     {
-        for (int j = 0; j < items.size(); ++j)
+        for (size_t j = 0; j < items.size(); ++j)
         {
             bool needJ = (i >> j) & 1;
             bool hasJ = (combination >> j) & 1;

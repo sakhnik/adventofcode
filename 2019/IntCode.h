@@ -94,7 +94,7 @@ public:
                     auto v = _GetArgIdx(state_flags, 0);
                     return _memory[v];
                 }
-                assert(_state = S_OUTPUT);
+                assert(_state == S_OUTPUT);
                 _ip += 2;
                 _state = S_RUN;
                 break;

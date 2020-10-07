@@ -43,10 +43,10 @@ TEST_CASE(TEST_NAME)
     auto phase = [getPat](MsgT &msg) {
         MsgT res;
 
-        for (int i = 0; i < msg.size(); ++i)
+        for (size_t i = 0; i < msg.size(); ++i)
         {
             int v{};
-            for (int j = 0; j < msg.size(); ++j)
+            for (size_t j = 0; j < msg.size(); ++j)
             {
                 v += msg[j] * getPat(i, j);
             }

@@ -37,7 +37,7 @@ MapT GetInput(std::istream &&is)
         {
             continue;
         }
-        for (int x = 0; x < line.size(); ++x)
+        for (int x = 0; x < static_cast<int>(line.size()); ++x)
         {
             if (line[x] == '#')
             {
