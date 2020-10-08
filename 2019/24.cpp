@@ -133,7 +133,9 @@ TEST_CASE(TEST_NAME)
                         case 0: return j * 5;
                         case 1: return j;
                         case 2: return 4 + j * 5;
-                        case 3: return 4 * 5 + j;
+                        case 3:
+                        default:
+                            return 4 * 5 + j;
                         }
                         assert(false);
                     };
