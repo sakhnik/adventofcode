@@ -178,7 +178,7 @@ template <int N>
 int SearchMin(std::string &map)
 {
     auto keysLeft = std::accumulate(begin(map), end(map), KeySetT{},
-                                    [](auto &set, char t) {
+                                    [](auto &&set, char t) {
                                         if (t >= 'a' && t <= 'z')
                                             set.set(t - 'a');
                                         return set;

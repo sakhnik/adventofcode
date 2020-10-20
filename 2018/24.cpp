@@ -272,11 +272,6 @@ private:
         int initiative;
         std::unordered_set<std::string> immunity, weakness;
 
-        _Group(const _Group &o) = default;
-        _Group& operator=(const _Group &o) = default;
-        _Group(_Group &&o) = default;
-        _Group& operator=(_Group &&) = default;
-
         int GetEffectivePower() const
         {
             return count * damage;

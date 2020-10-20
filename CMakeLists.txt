@@ -16,7 +16,7 @@ foreach(year RANGE 2016 2019)
     endforeach()
 endforeach()
 
-add_definitions(-std=c++17 -Wall)
+add_definitions(-std=c++20 -Wall)
 
 foreach(src ${sources})
     string(REPLACE ".cpp" ".txt" input ${src})
