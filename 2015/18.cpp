@@ -1,11 +1,13 @@
-#include <doctest/doctest.h>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <boost/ut.hpp>
 
 namespace {
+
+using namespace boost::ut;
 
 class Life
 {
@@ -22,7 +24,7 @@ public:
                 _width = line.size() + 2;
                 _lights.resize(_width * _width, '.');
             }
-            REQUIRE(line.size() + 2 == _width);
+            expect(line.size() + 2 == _width);
             std::copy(line.begin(), line.end(),
                       _lights.begin() + _width * row + 1);
             ++row;
@@ -120,20 +122,17 @@ private:
     }
 };
 
-} //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    const char *const TEST =
-        ".#.#.#\n"
-        "...##.\n"
-        "#....#\n"
-        "..#...\n"
-        "#.#..#\n"
-        "####..\n";
-    SUBCASE("test1") {
+const char *const TEST =
+    ".#.#.#\n"
+    "...##.\n"
+    "#....#\n"
+    "..#...\n"
+    "#.#..#\n"
+    "####..\n";
+suite s = [] {
+    "2015-18.test1"_test = [] {
         Life l(std::istringstream{TEST});
-        REQUIRE(15 == l.CountOn());
+        expect(15_u == l.CountOn());
         //l.Animate(1);
         //REQUIRE(11 == l.CountOn());
         //l.Animate(1);
@@ -141,33 +140,35 @@ TEST_CASE(TEST_NAME)
         //l.Animate(1);
         //REQUIRE(4 == l.CountOn());
         l.Animate(4);
-        REQUIRE(4 == l.CountOn());
-    }
+        expect(4_u == l.CountOn());
+    };
 
-    SUBCASE("task1") {
+    "2015-18.task1"_test = [] {
         Life l(std::ifstream{INPUT});
         l.Animate(100);
-        MESSAGE(l.CountOn());
-    }
+        std::cout << "2015-18.1: " << l.CountOn() << std::endl;
+    };
 
-    SUBCASE("test2") {
+    "2015-18.test2"_test = [] {
         Life l(std::istringstream{TEST}, true);
-        REQUIRE(17 == l.CountOn());
+        expect(17_u == l.CountOn());
         l.Animate(1);
-        REQUIRE(18 == l.CountOn());
+        expect(18_u == l.CountOn());
         l.Animate(1);
-        REQUIRE(18 == l.CountOn());
+        expect(18_u == l.CountOn());
         l.Animate(1);
-        REQUIRE(18 == l.CountOn());
+        expect(18_u == l.CountOn());
         l.Animate(1);
-        REQUIRE(14 == l.CountOn());
+        expect(14_u == l.CountOn());
         l.Animate(1);
-        REQUIRE(17 == l.CountOn());
-    }
+        expect(17_u == l.CountOn());
+    };
 
-    SUBCASE("task2") {
+    "2015-18.task2"_test = [] {
         Life l(std::ifstream{INPUT}, true);
         l.Animate(100);
-        MESSAGE(l.CountOn());
-    }
-}
+        std::cout << "2015-18.2: " << l.CountOn() << std::endl;
+    };
+};
+
+} //namespace;

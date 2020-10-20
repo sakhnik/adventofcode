@@ -1,7 +1,7 @@
-#include <doctest/doctest.h>
 #include <fstream>
 #include <unordered_map>
 #include <regex>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -70,13 +70,14 @@ private:
     };
 };
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("task") {
+suite s = [] {
+    "2015-16"_test = [] {
         Ticket t;
-        MESSAGE(t.Match(t.GetTicket0(), std::ifstream{INPUT}));
-        MESSAGE(t.Match(t.GetTicket1(), std::ifstream{INPUT}));
-    }
-}
+        std::cout << "2015-16.1: " << t.Match(t.GetTicket0(), std::ifstream{INPUT}) << std::endl;
+        std::cout << "2015-16.2: " << t.Match(t.GetTicket1(), std::ifstream{INPUT}) << std::endl;
+    };
+};
+
+} //namespace;

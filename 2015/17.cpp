@@ -1,6 +1,6 @@
-#include <doctest/doctest.h>
 #include <vector>
 #include <limits>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -55,22 +55,23 @@ int Count2(int target, IterT first, IterT last)
     return counter.GetCount();
 }
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
+suite s = [] {
+    "2015-17.test"_test = [] {
         int sizes[] = {20, 15, 10, 5, 5};
-        REQUIRE(4 == Count(25, std::begin(sizes), std::end(sizes)));
-        REQUIRE(3 == Count2(25, std::begin(sizes), std::end(sizes)));
-    }
+        expect(4_i == Count(25, std::begin(sizes), std::end(sizes)));
+        expect(3_i == Count2(25, std::begin(sizes), std::end(sizes)));
+    };
 
-    SUBCASE("task") {
+    "2015-17.task"_test = [] {
         int sizes[] = {
             11, 30, 47, 31, 32, 36, 3, 1, 5, 3,
             32, 36, 15, 11, 46, 26, 28, 1, 19, 3
         };
-        MESSAGE(Count(150, std::begin(sizes), std::end(sizes)));
-        MESSAGE(Count2(150, std::begin(sizes), std::end(sizes)));
-    }
-}
+        std::cout << "2015-17.1: " << Count(150, std::begin(sizes), std::end(sizes)) << std::endl;
+        std::cout << "2015-17.2: " << Count2(150, std::begin(sizes), std::end(sizes)) << std::endl;
+    };
+};
+
+} //namespace;

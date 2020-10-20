@@ -1,10 +1,10 @@
-#include <doctest/doctest.h>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <iostream>
 #include <unordered_set>
 #include <algorithm>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -84,11 +84,10 @@ private:
     std::string _formula;
 };
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test1") {
+suite s = [] {
+    "2015-19.test"_test = [] {
         const char *const TEST =
             "H => HO\n"
             "H => OH\n"
@@ -96,13 +95,14 @@ TEST_CASE(TEST_NAME)
             "\n"
             "HOH\n";
         Chem c(std::istringstream{TEST});
-        REQUIRE(4 == c.Count());
-    }
+        expect(4_u == c.Count());
+    };
 
-    SUBCASE("task") {
+    "2015-19.task"_test = [] {
         Chem c(std::ifstream{INPUT});
-        MESSAGE(c.Count());
-        MESSAGE(c.Count2());
-    }
+        std::cout << "2015-19.1: " << c.Count() << std::endl;
+        std::cout << "2015-19.1: " << c.Count2() << std::endl;
+    };
+};
 
-}
+} //namespace;

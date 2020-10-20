@@ -1,5 +1,5 @@
-#include <doctest/doctest.h>
 #include <vector>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -22,11 +22,14 @@ size_t Find(size_t target, int mul, int max_repeat)
     return -1;
 }
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    const size_t target = 36000000;
-    MESSAGE(Find(target, 10, target));
-    MESSAGE(Find(target, 11, 50));
-}
+suite s = [] {
+    "2015-20"_test = [] {
+        const size_t target = 36000000;
+        std::cout << "2015-20.1: " << Find(target, 10, target) << std::endl;
+        std::cout << "2015-20.2: " << Find(target, 11, 50) << std::endl;
+    };
+};
+
+} //namespace;
