@@ -1,7 +1,7 @@
-#include <doctest/doctest.h>
 #include <fstream>
 #include <algorithm>
 #include <regex>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -89,27 +89,24 @@ size_t CountNice(std::istream &&is, Pred pred)
     return count;
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+    "2015-05"_test = [] {
+        expect(IsNice("ugknbfddgicrmopn"));
+        expect(IsNice("aaa"));
+        expect(!IsNice("jchzalrnumimnmhp"));
+        expect(!IsNice("haegwjzuvuyypxyu"));
+        expect(!IsNice("dvszwmarrgswjxmb"));
+
+        expect(IsNice2("qjhvhtzxzqqjkmpb"));
+        expect(IsNice2("xxyxx"));
+        expect(!IsNice2("uurcxstgmygtbstg"));
+        expect(!IsNice2("ieodomkazucvgmuy"));
+
+        std::cout << "2015-05.1: " << CountNice(std::ifstream{INPUT}, IsNice) << std::endl;
+        std::cout << "2015-05.2: " << CountNice(std::ifstream{INPUT}, IsNice2) << std::endl;
+    };
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test1") {
-        REQUIRE(IsNice("ugknbfddgicrmopn"));
-        REQUIRE(IsNice("aaa"));
-        REQUIRE(!IsNice("jchzalrnumimnmhp"));
-        REQUIRE(!IsNice("haegwjzuvuyypxyu"));
-        REQUIRE(!IsNice("dvszwmarrgswjxmb"));
-    }
-
-    SUBCASE("test2") {
-        REQUIRE(IsNice2("qjhvhtzxzqqjkmpb"));
-        REQUIRE(IsNice2("xxyxx"));
-        REQUIRE(!IsNice2("uurcxstgmygtbstg"));
-        REQUIRE(!IsNice2("ieodomkazucvgmuy"));
-    }
-
-    SUBCASE("task") {
-        MESSAGE(CountNice(std::ifstream{INPUT}, IsNice));
-        MESSAGE(CountNice(std::ifstream{INPUT}, IsNice2));
-    }
-}

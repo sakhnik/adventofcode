@@ -1,7 +1,7 @@
-#include <doctest/doctest.h>
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -88,22 +88,23 @@ private:
     }
 };
 
-} // namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
+suite s = [] {
+    "2015-15.test"_test = [] {
         const char *const TEST =
             "Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8\n"
             "Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3\n";
         Recipe r(std::istringstream{TEST});
-        REQUIRE(62842880 == r.FindMax());
-        REQUIRE(57600000 == r.FindMax(500));
-    }
+        expect(62842880_i == r.FindMax());
+        expect(57600000_i == r.FindMax(500));
+    };
 
-    SUBCASE("task") {
+    "2015-15.task"_test = [] {
         Recipe r(std::ifstream{INPUT});
-        MESSAGE(r.FindMax());
-        MESSAGE(r.FindMax(500));
-    }
-}
+        std::cout << "2015-15.1: " << r.FindMax() << std::endl;
+        std::cout << "2015-15.2: " << r.FindMax(500) << std::endl;
+    };
+};
+
+} // namespace;

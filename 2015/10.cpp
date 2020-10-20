@@ -1,5 +1,5 @@
-#include <doctest/doctest.h>
 #include <string>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -46,19 +46,19 @@ std::string Run(int count, std::string s)
     return s;
 }
 
+using namespace boost::ut;
+using namespace std::string_literals;
+
+suite s = [] {
+    "2015-10"_test = [] {
+        expect(eq("11"s, Rle("1")));
+        expect(eq("21"s, Rle("11")));
+        expect(eq("1211"s, Rle("21")));
+        expect(eq("111221"s, Rle("1211")));
+
+        std::cout << "2015-10.1: " << Run(40, "3113322113").size() << std::endl;
+        std::cout << "2015-10.2: " << Run(50, "3113322113").size() << std::endl;
+    };
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
-        REQUIRE("11" == Rle("1"));
-        REQUIRE("21" == Rle("11"));
-        REQUIRE("1211" == Rle("21"));
-        REQUIRE("111221" == Rle("1211"));
-    }
-
-    SUBCASE("task") {
-        MESSAGE(Run(40, "3113322113").size());
-        MESSAGE(Run(50, "3113322113").size());
-    }
-}

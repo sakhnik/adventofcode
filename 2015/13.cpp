@@ -1,9 +1,9 @@
-#include <doctest/doctest.h>
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
 #include <numeric>
 #include <algorithm>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -99,11 +99,10 @@ private:
     }
 };
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
+suite s = [] {
+    "2015-13.test"_test = [] {
         const char *const TEST =
             "Alice would gain 54 happiness units by sitting next to Bob.\n"
             "Alice would lose 79 happiness units by sitting next to Carol.\n"
@@ -118,13 +117,15 @@ TEST_CASE(TEST_NAME)
             "David would lose 7 happiness units by sitting next to Bob.\n"
             "David would gain 41 happiness units by sitting next to Carol.\n";
         Table t(std::istringstream{TEST});
-        REQUIRE(330 == t.Arrange());
-    }
+        expect(330_i == t.Arrange());
+    };
 
-    SUBCASE("task") {
+    "2015-13.task"_test = [] {
         Table t(std::ifstream{INPUT});
-        MESSAGE(t.Arrange());
+        std::cout << "2015-13.1: " << t.Arrange() << std::endl;
         t.AddMyself();
-        MESSAGE(t.Arrange());
-    }
-}
+        std::cout << "2015-13.2: " << t.Arrange() << std::endl;
+    };
+};
+
+} //namespace;

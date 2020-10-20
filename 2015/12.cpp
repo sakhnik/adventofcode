@@ -1,9 +1,9 @@
-#include <doctest/doctest.h>
 #include <fstream>
 #include <sstream>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <iostream>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -58,28 +58,27 @@ int SumNums2(const char *json)
     return SumNums(std::istringstream{json}, NoRed);
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+    "2015-12"_test = [] {
+        expect(6_i == SumNums("[1,2,3]"));
+        expect(6_i == SumNums(R"({"a":2,"b":4})"));
+        expect(3_i == SumNums(R"([[[3]]])"));
+        expect(3_i == SumNums(R"({"a":{"b":4},"c":-1})"));
+        expect(0_i == SumNums(R"({"a":[-1,1]})"));
+        expect(0_i == SumNums(R"([-1,{"a":1}])"));
+        expect(0_i == SumNums("[]"));
+        expect(0_i == SumNums("{}"));
+
+        expect(6_i == SumNums2("[1,2,3]"));
+        expect(4_i == SumNums2(R"([1,{"c":"red","b":2},3])"));
+        expect(0_i == SumNums2(R"({"d":"red","e":[1,2,3,4],"f":5})"));
+        expect(6_i == SumNums2(R"([1,"red",5])"));
+
+        std::cout << "2015-12.1: " << SumNums(std::ifstream{INPUT}, Anything) << std::endl;
+        std::cout << "2015-12.2: " << SumNums(std::ifstream{INPUT}, NoRed) << std::endl;
+    };
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
-        REQUIRE(6 == SumNums("[1,2,3]"));
-        REQUIRE(6 == SumNums(R"({"a":2,"b":4})"));
-        REQUIRE(3 == SumNums(R"([[[3]]])"));
-        REQUIRE(3 == SumNums(R"({"a":{"b":4},"c":-1})"));
-        REQUIRE(0 == SumNums(R"({"a":[-1,1]})"));
-        REQUIRE(0 == SumNums(R"([-1,{"a":1}])"));
-        REQUIRE(0 == SumNums("[]"));
-        REQUIRE(0 == SumNums("{}"));
-
-        REQUIRE(6 == SumNums2("[1,2,3]"));
-        REQUIRE(4 == SumNums2(R"([1,{"c":"red","b":2},3])"));
-        REQUIRE(0 == SumNums2(R"({"d":"red","e":[1,2,3,4],"f":5})"));
-        REQUIRE(6 == SumNums2(R"([1,"red",5])"));
-    }
-
-    SUBCASE("task") {
-        MESSAGE(SumNums(std::ifstream{INPUT}, Anything));
-        MESSAGE(SumNums(std::ifstream{INPUT}, NoRed));
-    }
-}

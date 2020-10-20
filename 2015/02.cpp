@@ -1,10 +1,15 @@
-#include <doctest/doctest.h>
 #include <fstream>
 #include <numeric>
 #include <array>
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <boost/ut.hpp>
+
+
+namespace {
+
+using namespace boost::ut;
 
 using BoxT = std::array<int, 3>;
 using BoxesT = std::vector<BoxT>;
@@ -27,13 +32,13 @@ BoxesT GetInput()
 
 int CalcArea(const BoxT &box)
 {
-    REQUIRE(std::is_sorted(begin(box), end(box)));
+    expect(std::is_sorted(begin(box), end(box)));
     return 3*box[0]*box[1] + 2*(box[1]*box[2] + box[0]*box[2]);
 }
 
 int CalcRibbon(const BoxT &box)
 {
-    REQUIRE(std::is_sorted(begin(box), end(box)));
+    expect(std::is_sorted(begin(box), end(box)));
     return 2*(box[0] + box[1]) + box[0]*box[1]*box[2];
 }
 
@@ -44,15 +49,18 @@ int Accumulate(const BoxesT &boxes, Func func)
                            [func](int a, const auto &b) { return a + func(b); });
 }
 
-TEST_CASE(TEST_NAME)
-{
-    REQUIRE(58 == CalcArea({2,3,4}));
-    REQUIRE(43 == CalcArea({1,1,10}));
+suite s = [] {
+    "2015-02"_test = [] {
+        expect(58_i == CalcArea({2, 3, 4}));
+        expect(43_i == CalcArea({1, 1, 10}));
 
-    MESSAGE(Accumulate(GetInput(), CalcArea));
+        std::cout << "2015-02.1: " << Accumulate(GetInput(), CalcArea) << std::endl;
 
-    REQUIRE(34 == CalcRibbon({2,3,4}));
-    REQUIRE(14 == CalcRibbon({1,1,10}));
+        expect(34_i == CalcRibbon({2, 3, 4}));
+        expect(14_i == CalcRibbon({1, 1, 10}));
 
-    MESSAGE(Accumulate(GetInput(), CalcRibbon));
-}
+        std::cout << "2015-02.2: " << Accumulate(GetInput(), CalcRibbon) << std::endl;
+    };
+};
+
+} //namespace;

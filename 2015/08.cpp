@@ -1,7 +1,7 @@
-#include <doctest/doctest.h>
 #include <sstream>
 #include <fstream>
 #include <algorithm>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -45,21 +45,20 @@ size_t CountEscape2(std::istream &&is)
     return count;
 }
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
+suite s = [] {
+    "2015-08"_test = [] {
         const char *const TEST = R"(""
 "abc"
 "aaa\"aaa"
 "\x27")";
-        REQUIRE(12 == CountEscape(std::istringstream{TEST}));
-        REQUIRE(19 == CountEscape2(std::istringstream{TEST}));
-    }
+        expect(12_u == CountEscape(std::istringstream{TEST}));
+        expect(19_u == CountEscape2(std::istringstream{TEST}));
 
-    SUBCASE("task") {
-        MESSAGE(CountEscape(std::ifstream{INPUT}));
-        MESSAGE(CountEscape2(std::ifstream{INPUT}));
-    }
-}
+        std::cout << "2015-08.1: " << CountEscape(std::ifstream{INPUT}) << std::endl;
+        std::cout << "2015-08.2: " << CountEscape2(std::ifstream{INPUT}) << std::endl;
+    };
+};
+
+} //namespace;

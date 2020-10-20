@@ -1,8 +1,9 @@
-#include <doctest/doctest.h>
 #include <string>
 #include <fstream>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -34,26 +35,29 @@ int Position(const std::string_view &s)
     return -1;
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+    "2015-01"_test = [] {
+        expect(0_i == Count("(())"));
+        expect(3_i == Count("((("));
+        expect(3_i == Count("(()(()("));
+        expect(3_i == Count("))((((("));
+        expect(-1_i == Count("())"));
+        expect(-1_i == Count("))("));
+        expect(-3_i == Count(")))"));
+        expect(-3_i == Count(")())())"));
+
+        std::ifstream ifs{INPUT};
+        std::string input((std::istreambuf_iterator<char>(ifs)),
+                          std::istreambuf_iterator<char>());
+        std::cout << "2015-01.1: " << Count(input) << std::endl;
+
+        expect(1_i == Position(")"));
+        expect(5_i == Position("()())"));
+
+        std::cout << "2015-01.2: " << Position(input) << std::endl;
+    };
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    REQUIRE(0 == Count("(())"));
-    REQUIRE(3 == Count("((("));
-    REQUIRE(3 == Count("(()(()("));
-    REQUIRE(3 == Count("))((((("));
-    REQUIRE(-1 == Count("())"));
-    REQUIRE(-1 == Count("))("));
-    REQUIRE(-3 == Count(")))"));
-    REQUIRE(-3 == Count(")())())"));
-
-    std::ifstream ifs{INPUT};
-    std::string input((std::istreambuf_iterator<char>(ifs)),
-                      std::istreambuf_iterator<char>());
-    MESSAGE(Count(input));
-
-    REQUIRE(1 == Position(")"));
-    REQUIRE(5 == Position("()())"));
-
-    MESSAGE(Position(input));
-}

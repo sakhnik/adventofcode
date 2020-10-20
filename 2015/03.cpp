@@ -1,8 +1,8 @@
-#include <doctest/doctest.h>
 #include <sstream>
 #include <fstream>
 #include <unordered_set>
 #include <vector>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -49,27 +49,22 @@ private:
     std::unordered_set<_Pos, decltype(_posHash)> _houses{0, _posHash};
 };
 
+using namespace boost::ut;
+
+suite s = [] {
+    "2015-03"_test = [] {
+        expect(2_u == Map(1, std::istringstream{">"}).GetCount());
+        expect(4_u == Map(1, std::istringstream{"^>v<"}).GetCount());
+        expect(2_u == Map(1, std::istringstream{"^v^v^v^v^v"}).GetCount());
+
+        std::cout << "2015-03.1: " << Map(1, std::ifstream{INPUT}).GetCount() << std::endl;
+
+        expect(3_u == Map(2, std::istringstream{"^v"}).GetCount());
+        expect(3_u == Map(2, std::istringstream{"^>v<"}).GetCount());
+        expect(11_u == Map(2, std::istringstream{"^v^v^v^v^v"}).GetCount());
+
+        std::cout << "2015-03.2: " << Map(2, std::ifstream{INPUT}).GetCount() << std::endl;
+    };
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test1") {
-        REQUIRE(2 == Map(1, std::istringstream{">"}).GetCount());
-        REQUIRE(4 == Map(1, std::istringstream{"^>v<"}).GetCount());
-        REQUIRE(2 == Map(1, std::istringstream{"^v^v^v^v^v"}).GetCount());
-    }
-
-    SUBCASE("task1") {
-        MESSAGE(Map(1, std::ifstream{INPUT}).GetCount());
-    }
-
-    SUBCASE("test2") {
-        REQUIRE(3 == Map(2, std::istringstream{"^v"}).GetCount());
-        REQUIRE(3 == Map(2, std::istringstream{"^>v<"}).GetCount());
-        REQUIRE(11 == Map(2, std::istringstream{"^v^v^v^v^v"}).GetCount());
-    }
-
-    SUBCASE("task2") {
-        MESSAGE(Map(2, std::ifstream{INPUT}).GetCount());
-    }
-}

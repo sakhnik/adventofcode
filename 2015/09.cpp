@@ -1,9 +1,9 @@
-#include <doctest/doctest.h>
 #include <fstream>
 #include <sstream>
 #include <iostream>
 #include <numeric>
 #include <algorithm>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -82,25 +82,26 @@ private:
     int _dist[10][10];
 };
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
+suite s = [] {
+    "2015-09.test"_test = [] {
         const char *const TEST =
             "London to Dublin = 464\n"
             "London to Belfast = 518\n"
             "Dublin to Belfast = 141\n";
         Tsp tsp(std::istringstream{TEST});
         auto d = tsp.Find();
-        REQUIRE(605 == d.first);
-        REQUIRE(982 == d.second);
-    }
+        expect(605_i == d.first);
+        expect(982_i == d.second);
+    };
 
-    SUBCASE("task") {
+    "2015-09.task"_test = [] {
         Tsp tsp(std::ifstream{INPUT});
         auto d = tsp.Find();
-        MESSAGE(d.first);
-        MESSAGE(d.second);
-    }
-}
+        std::cout << "2015-09.1: " << d.first << std::endl;
+        std::cout << "2015-09.2: " << d.second << std::endl;
+    };
+};
+
+} //namespace;

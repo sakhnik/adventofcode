@@ -1,7 +1,7 @@
-#include <doctest/doctest.h>
 #include <fstream>
 #include <vector>
 #include <numeric>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -76,12 +76,13 @@ size_t CountLit(std::ifstream &&is, OpT on, OpT off, OpT toggle)
     return std::accumulate(lights.begin(), lights.end(), 0u);
 }
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("task") {
-        MESSAGE(CountLit(std::ifstream{INPUT}, On, Off, Toggle));
-        MESSAGE(CountLit(std::ifstream{INPUT}, On2, Off2, Toggle2));
-    }
-}
+suite s = [] {
+    "2015-06"_test = [] {
+        std::cout << "2015-06.1: " << CountLit(std::ifstream{INPUT}, On, Off, Toggle) << std::endl;
+        std::cout << "2015-06.2: " << CountLit(std::ifstream{INPUT}, On2, Off2, Toggle2) << std::endl;
+    };
+};
+
+} //namespace;

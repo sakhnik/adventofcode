@@ -1,7 +1,11 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include <doctest/doctest.h>
+#include <boost/ut.hpp>
 
-TEST_CASE("main")
+using namespace boost::ut;
+
+int main(int argc, char *argv[])
 {
-    REQUIRE(true);
+    using namespace boost::ut;
+    cfg<override> = {.filter = argc > 1 ? argv[1] : ""};
+    expect(1_i == 1);
+    return 0;
 }

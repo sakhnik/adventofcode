@@ -1,8 +1,8 @@
-#include <doctest/doctest.h>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <algorithm>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -85,22 +85,23 @@ private:
     std::vector<Deer> _deers;
 };
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
+suite s = [] {
+    "2015-14.test"_test = [] {
         const char *const TEST =
             "Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.\n"
             "Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.\n";
         Race r(std::istringstream{TEST});
-        REQUIRE(1120 == r.GetWinner(1000));
-        REQUIRE(689 == r.GetWinner2(1000));
-    }
+        expect(1120_i == r.GetWinner(1000));
+        expect(689_i == r.GetWinner2(1000));
+    };
 
-    SUBCASE("task") {
+    "2015-14.task"_test = [] {
         Race r(std::ifstream{INPUT});
-        MESSAGE(r.GetWinner(2503));
-        MESSAGE(r.GetWinner2(2503));
-    }
-}
+        std::cout << "2015-14.1: " << r.GetWinner(2503) << std::endl;
+        std::cout << "2015-14.2: " << r.GetWinner2(2503) << std::endl;
+    };
+};
+
+} //namespace;

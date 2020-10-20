@@ -1,9 +1,9 @@
-#include <doctest/doctest.h>
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
 #include <functional>
 #include <iostream>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -116,11 +116,10 @@ private:
     }
 };
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
+suite s = [] {
+    "2015-07.test"_test = [] {
         const char *const TEST =
             "123 -> x\n"
             "456 -> y\n"
@@ -131,21 +130,23 @@ TEST_CASE(TEST_NAME)
             "NOT x -> h\n"
             "NOT y -> i\n";
         Calc c(std::istringstream{TEST});
-        REQUIRE(72 == c.Eval("d"));
-        REQUIRE(507 == c.Eval("e"));
-        REQUIRE(492 == c.Eval("f"));
-        REQUIRE(114 == c.Eval("g"));
-        REQUIRE(65412 == c.Eval("h"));
-        REQUIRE(65079 == c.Eval("i"));
-        REQUIRE(123 == c.Eval("x"));
-        REQUIRE(456 == c.Eval("y"));
-    }
+        expect(72_i == c.Eval("d"));
+        expect(507_i == c.Eval("e"));
+        expect(492_i == c.Eval("f"));
+        expect(114_i == c.Eval("g"));
+        expect(65412_i == c.Eval("h"));
+        expect(65079_i == c.Eval("i"));
+        expect(123_i == c.Eval("x"));
+        expect(456_i == c.Eval("y"));
+    };
 
-    SUBCASE("task") {
+    "2015-07.task"_test = [] {
         Calc c(std::ifstream{INPUT});
         auto val = c.Eval("a");
-        MESSAGE(val);
+        std::cout << "2015-07.1: " << val << std::endl;
         c.Reset();
-        MESSAGE(c.Eval("a"));
-    }
-}
+        std::cout << "2015-07.2: " << c.Eval("a") << std::endl;
+    };
+};
+
+} //namespace;

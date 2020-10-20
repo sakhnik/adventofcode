@@ -1,4 +1,4 @@
-#include <doctest/doctest.h>
+#include <boost/ut.hpp>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -86,11 +86,12 @@ int walk(std::istream &&is)
 	return -1;
 }
 
+using namespace boost::ut;
+
+"2016/01"_test = [] {
+	expect(4_i == walk(std::istringstream{"R8, R4, R4, R8"}));
+
+	std::cout << walk(std::ifstream{INPUT}) << std::endl;
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(4 == walk(std::istringstream{"R8, R4, R4, R8"}));
-
-	MESSAGE(walk(std::ifstream{INPUT}));
-}

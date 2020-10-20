@@ -1,5 +1,5 @@
-#include <doctest/doctest.h>
 #include <string>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -80,29 +80,31 @@ std::string Next(std::string &&pass)
     return std::move(pass);
 }
 
-} //namespace;
+using namespace boost::ut;
+using namespace std::string_literals;
 
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
-        REQUIRE("xy" == Increment("xx"));
-        REQUIRE("xz" == Increment("xy"));
-        REQUIRE("ya" == Increment("xz"));
-        REQUIRE("yb" == Increment("ya"));
+suite s = [] {
+    "2015-11.test"_test = [] {
+        expect(eq("xy"s, Increment("xx")));
+        expect(eq("xz"s, Increment("xy")));
+        expect(eq("ya"s, Increment("xz")));
+        expect(eq("yb"s, Increment("ya")));
 
-        REQUIRE(!IsValid("hijklmmn"));
-        REQUIRE(!IsValid("abbceffg"));
-        REQUIRE(!IsValid("abbcegjk"));
+        expect(!IsValid("hijklmmn"));
+        expect(!IsValid("abbceffg"));
+        expect(!IsValid("abbcegjk"));
 
-        REQUIRE("abcdffaa" == Next("abcdefgh"));
-        REQUIRE("ghjaabcc" == Next("ghijklmn"));
-    }
+        expect(eq("abcdffaa"s, Next("abcdefgh")));
+        expect(eq("ghjaabcc"s, Next("ghijklmn")));
+    };
 
-    SUBCASE("task") {
+    "2015-11.task"_test = [] {
         std::string pass("vzbxkghb");
         Next(pass);
-        MESSAGE(pass);
+        std::cout << "2015-11.1: " << pass << std::endl;
         Next(pass);
-        MESSAGE(pass);
-    }
-}
+        std::cout << "2015-11.2: " << pass << std::endl;
+    };
+};
+
+} //namespace;

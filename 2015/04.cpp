@@ -1,6 +1,6 @@
-#include <doctest/doctest.h>
 #include <string>
 #include <openssl/md5.h>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -29,17 +29,16 @@ uint64_t Mine(const std::string &key, Pred pred)
     }
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+    "2015-04"_test = [] {
+        expect(609043_u == Mine("abcdef", HasFiveZeros));
+        expect(1048970_u == Mine("pqrstuv", HasFiveZeros));
+
+        std::cout << "2015-04.1: " << Mine("bgvyzdsv", HasFiveZeros) << std::endl;
+        std::cout << "2015-04.2: " << Mine("bgvyzdsv", HasSixZeros) << std::endl;
+    };
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
-        REQUIRE(609043 == Mine("abcdef", HasFiveZeros));
-        REQUIRE(1048970 == Mine("pqrstuv", HasFiveZeros));
-    }
-
-    SUBCASE("task") {
-        MESSAGE(Mine("bgvyzdsv", HasFiveZeros));
-        MESSAGE(Mine("bgvyzdsv", HasSixZeros));
-    }
-}
