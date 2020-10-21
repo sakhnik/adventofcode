@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
+
 namespace {
 
 class Table
@@ -122,9 +124,9 @@ suite s = [] {
 
     "2015-13.task"_test = [] {
         Table t(std::ifstream{INPUT});
-        std::cout << "2015-13.1: " << t.Arrange() << std::endl;
+        Printer::Print(__FILE__, "1", t.Arrange());
         t.AddMyself();
-        std::cout << "2015-13.2: " << t.Arrange() << std::endl;
+        Printer::Print(__FILE__, "2", t.Arrange());
     };
 };
 

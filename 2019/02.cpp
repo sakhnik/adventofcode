@@ -1,7 +1,8 @@
 #include <fstream>
-#include <iostream>
 #include <boost/ut.hpp>
 #include "IntCode.h"
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -22,7 +23,7 @@ suite s = [] {
         };
 
         // Task 1
-        std::cout << "2019-02.1: " << runWithNounVerb(12, 12) << std::endl;
+        Printer::Print(__FILE__, "1", runWithNounVerb(12, 12));
 
         // Task 2
         for (int noun = 0; noun < 100; ++noun)
@@ -31,7 +32,7 @@ suite s = [] {
             {
                 if (19690720 == runWithNounVerb(noun, verb))
                 {
-                    std::cout << "2019-02.2: " << noun * 100 + verb << std::endl;
+                    Printer::Print(__FILE__, "2", noun * 100 + verb);
                     break;
                 }
             }

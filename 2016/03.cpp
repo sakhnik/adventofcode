@@ -1,8 +1,9 @@
-#include <iostream>
 #include <fstream>
 #include <vector>
 #include <cassert>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -67,8 +68,8 @@ using namespace boost::ut;
 
 suite s = [] {
 	"2016-03"_test = [] {
-		std::cout << "2016-03.1: " << Solve(std::ifstream{INPUT}) << std::endl;
-		std::cout << "2016-03.2: " << Solve2(std::ifstream{INPUT}) << std::endl;
+		Printer::Print(__FILE__, "1", Solve(std::ifstream{INPUT}));
+		Printer::Print(__FILE__, "2", Solve2(std::ifstream{INPUT}));
 	};
 };
 

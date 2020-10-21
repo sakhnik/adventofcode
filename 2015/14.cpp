@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
+
 namespace {
 
 class Race
@@ -99,8 +101,8 @@ suite s = [] {
 
     "2015-14.task"_test = [] {
         Race r(std::ifstream{INPUT});
-        std::cout << "2015-14.1: " << r.GetWinner(2503) << std::endl;
-        std::cout << "2015-14.2: " << r.GetWinner2(2503) << std::endl;
+        Printer::Print(__FILE__, "1", r.GetWinner(2503));
+        Printer::Print(__FILE__, "2", r.GetWinner2(2503));
     };
 };
 

@@ -1,4 +1,3 @@
-#include <iostream>
 #include <fstream>
 #include <unordered_set>
 #include <iterator>
@@ -6,6 +5,8 @@
 #include <vector>
 #include <sstream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -58,14 +59,14 @@ suite s = [] {
         expect(-6_i == Sum(GetSample("-1 -2 -3")));
 
         auto input = GetInput();
-        std::cout << "2018-01.1: " << Sum(input) << std::endl;
+        Printer::Print(__FILE__, "1", Sum(input));
 
         expect(0_i == Twice(GetSample("+1 -1")));
         expect(10_i == Twice(GetSample("+3 +3 +4 -2 -4")));
         expect(5_i == Twice(GetSample("-6 +3 +8 +5 -6")));
         expect(14_i == Twice(GetSample("+7 +7 -2 -7 -4")));
 
-        std::cout << "2018-01.2: " << Twice(input) << std::endl;
+        Printer::Print(__FILE__, "2", Twice(input));
     };
 };
 

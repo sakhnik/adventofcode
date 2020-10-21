@@ -1,6 +1,8 @@
 #include <vector>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
+
 namespace {
 
 size_t Find(size_t target, int mul, int max_repeat)
@@ -27,8 +29,8 @@ using namespace boost::ut;
 suite s = [] {
     "2015-20"_test = [] {
         const size_t target = 36000000;
-        std::cout << "2015-20.1: " << Find(target, 10, target) << std::endl;
-        std::cout << "2015-20.2: " << Find(target, 11, 50) << std::endl;
+        Printer::Print(__FILE__, "1", Find(target, 10, target));
+        Printer::Print(__FILE__, "2", Find(target, 11, 50));
     };
 };
 

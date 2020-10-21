@@ -1,6 +1,7 @@
 #include <map>
-#include <iostream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -105,8 +106,8 @@ suite s = [] {
 		expect(2_u == Find(NumberIs{23}));
 		expect(31_u == Find(NumberIs{1024}));
 
-		std::cout << "2017-03.1: " << Find(NumberIs{289326}) << std::endl;
-		std::cout << "2017-03.2: " << Find(CheckSumGreatherThan{289326}) << std::endl;
+		Printer::Print(__FILE__, "1", Find(NumberIs{289326}));
+		Printer::Print(__FILE__, "2", Find(CheckSumGreatherThan{289326}));
 	};
 };
 

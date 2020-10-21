@@ -1,8 +1,9 @@
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cassert>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -123,14 +124,14 @@ suite s = [] {
 		expect(!IsTls("aaaa[qwer]tyui"));
 		expect(IsTls("ioxxoj[asdfgh]zxcvbn"));
 
-		std::cout << "2016-07.1: " << Solve(std::ifstream{INPUT}, IsTls) << std::endl;
+		Printer::Print(__FILE__, "1", Solve(std::ifstream{INPUT}, IsTls));
 
 		expect(IsSsl("aba[bab]xyz"));
 		expect(!IsSsl("xyx[xyx]xyx"));
 		expect(IsSsl("aaa[kek]eke"));
 		expect(IsSsl("zazbz[bzb]cdb"));
 
-		std::cout << "2016-07.2: " << Solve(std::ifstream{INPUT}, IsSsl) << std::endl;
+		Printer::Print(__FILE__, "2", Solve(std::ifstream{INPUT}, IsSsl));
 	};
 };
 

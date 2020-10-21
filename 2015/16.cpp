@@ -3,6 +3,8 @@
 #include <regex>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
+
 namespace {
 
 class Ticket
@@ -75,8 +77,8 @@ using namespace boost::ut;
 suite s = [] {
     "2015-16"_test = [] {
         Ticket t;
-        std::cout << "2015-16.1: " << t.Match(t.GetTicket0(), std::ifstream{INPUT}) << std::endl;
-        std::cout << "2015-16.2: " << t.Match(t.GetTicket1(), std::ifstream{INPUT}) << std::endl;
+        Printer::Print(__FILE__, "1", t.Match(t.GetTicket0(), std::ifstream{INPUT}));
+        Printer::Print(__FILE__, "2", t.Match(t.GetTicket1(), std::ifstream{INPUT}));
     };
 };
 

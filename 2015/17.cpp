@@ -2,6 +2,8 @@
 #include <limits>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
+
 namespace {
 
 template <typename IterT>
@@ -69,8 +71,8 @@ suite s = [] {
             11, 30, 47, 31, 32, 36, 3, 1, 5, 3,
             32, 36, 15, 11, 46, 26, 28, 1, 19, 3
         };
-        std::cout << "2015-17.1: " << Count(150, std::begin(sizes), std::end(sizes)) << std::endl;
-        std::cout << "2015-17.2: " << Count2(150, std::begin(sizes), std::end(sizes)) << std::endl;
+        Printer::Print(__FILE__, "1", Count(150, std::begin(sizes), std::end(sizes)));
+        Printer::Print(__FILE__, "2", Count2(150, std::begin(sizes), std::end(sizes)));
     };
 };
 

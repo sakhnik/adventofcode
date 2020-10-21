@@ -1,10 +1,10 @@
-#include <iostream>
 #include <fstream>
 #include <vector>
 #include <algorithm>
 #include <cassert>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
 
 namespace {
 
@@ -118,11 +118,11 @@ suite s = [] {
 		expect(404_i == CheckIsReal("not-a-real-room-404[oarel]"));
 		expect(0_i == CheckIsReal("totally-real-room-200[decoy]"));
 
-		std::cout << "2016-04.1: " << Solve(std::ifstream{INPUT}) << std::endl;
+		Printer::Print(__FILE__, "1", Solve(std::ifstream{INPUT}));
 
 		expect(eq("very encrypted name"s, Decrypt("qzmt-zixmtkozy-ivhz-343")));
 
-		std::cout << "2016-04.2: " << Solve2(std::ifstream{INPUT}) << std::endl;
+		Printer::Print(__FILE__, "2", Solve2(std::ifstream{INPUT}));
 	};
 };
 

@@ -1,6 +1,7 @@
-#include <iostream>
 #include <fstream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -33,8 +34,8 @@ suite s = [] {
 
 		std::string input;
 		getline(std::ifstream(INPUT), input);
-		std::cout << "2017-01.1: " << Sum(input, 1) << std::endl;
-		std::cout << "2017-01.2: " << Sum(input, input.size() / 2) << std::endl;
+		Printer::Print(__FILE__, "1", Sum(input, 1));
+		Printer::Print(__FILE__, "2", Sum(input, input.size() / 2));
 	};
 };
 

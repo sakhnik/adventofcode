@@ -1,8 +1,9 @@
 #include <regex>
 #include <unordered_map>
 #include <fstream>
-#include <iostream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -176,10 +177,10 @@ suite s = [] {
         //Print(stats);
 
         auto champ = FindTheChampion(stats);
-        std::cout << "2018-04.1: " << champ * GuessTheHour(stats, champ) << std::endl;
+        Printer::Print(__FILE__, "1", champ * GuessTheHour(stats, champ));
 
         expect(4455_i == Strategy2(test_stats));
-        std::cout << "2018-04.2: " << Strategy2(stats) << std::endl;
+        Printer::Print(__FILE__, "2", Strategy2(stats));
     };
 };
 

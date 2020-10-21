@@ -2,8 +2,9 @@
 #include <sstream>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
-#include <iostream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -76,8 +77,8 @@ suite s = [] {
         expect(0_i == SumNums2(R"({"d":"red","e":[1,2,3,4],"f":5})"));
         expect(6_i == SumNums2(R"([1,"red",5])"));
 
-        std::cout << "2015-12.1: " << SumNums(std::ifstream{INPUT}, Anything) << std::endl;
-        std::cout << "2015-12.2: " << SumNums(std::ifstream{INPUT}, NoRed) << std::endl;
+        Printer::Print(__FILE__, "1", SumNums(std::ifstream{INPUT}, Anything));
+        Printer::Print(__FILE__, "2", SumNums(std::ifstream{INPUT}, NoRed));
     };
 };
 

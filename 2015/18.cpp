@@ -2,8 +2,9 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
-#include <iostream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -146,7 +147,7 @@ suite s = [] {
     "2015-18.task1"_test = [] {
         Life l(std::ifstream{INPUT});
         l.Animate(100);
-        std::cout << "2015-18.1: " << l.CountOn() << std::endl;
+        Printer::Print(__FILE__, "1", l.CountOn());
     };
 
     "2015-18.test2"_test = [] {
@@ -167,7 +168,7 @@ suite s = [] {
     "2015-18.task2"_test = [] {
         Life l(std::ifstream{INPUT}, true);
         l.Animate(100);
-        std::cout << "2015-18.2: " << l.CountOn() << std::endl;
+        Printer::Print(__FILE__, "2", l.CountOn());
     };
 };
 

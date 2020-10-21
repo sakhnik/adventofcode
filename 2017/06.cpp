@@ -1,7 +1,8 @@
-#include <iostream>
 #include <fstream>
 #include <boost/functional/hash.hpp>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -65,8 +66,8 @@ suite s = [] {
 			ifs >> i;
 
 		auto res = Count(banks);
-		std::cout << "2017-06.1: " << res.first << std::endl;
-		std::cout << "2017-06.2: " << res.second << std::endl;
+		Printer::Print(__FILE__, "1", res.first);
+		Printer::Print(__FILE__, "2", res.second);
 	};
 };
 

@@ -5,6 +5,8 @@
 #include <sstream>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
+
 namespace {
 
 class Map
@@ -96,7 +98,7 @@ K)L)");
 
         std::ifstream ifs(INPUT);
         Map map{ifs};
-        std::cout << "2019-06.1: " << map.CalcSumOfDepths() << std::endl;
+        Printer::Print(__FILE__, "1", map.CalcSumOfDepths());
 
         {
             std::istringstream iss(R"(COM)B
@@ -117,7 +119,7 @@ I)SAN)");
             expect(4_i == map.CalcDistance("YOU", "SAN"));
         }
 
-        std::cout << "2019-06.2: " << map.CalcDistance("YOU", "SAN") << std::endl;
+        Printer::Print(__FILE__, "2", map.CalcDistance("YOU", "SAN"));
     };
 };
 

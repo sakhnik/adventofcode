@@ -3,6 +3,8 @@
 #include <vector>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
+
 namespace {
 
 class Recipe
@@ -102,8 +104,8 @@ suite s = [] {
 
     "2015-15.task"_test = [] {
         Recipe r(std::ifstream{INPUT});
-        std::cout << "2015-15.1: " << r.FindMax() << std::endl;
-        std::cout << "2015-15.2: " << r.FindMax(500) << std::endl;
+        Printer::Print(__FILE__, "1", r.FindMax());
+        Printer::Print(__FILE__, "2", r.FindMax(500));
     };
 };
 

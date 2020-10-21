@@ -1,11 +1,12 @@
 #include <unordered_map>
 #include <algorithm>
 #include <numeric>
-#include <iostream>
 #include <fstream>
 #include <vector>
 #include <sstream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -127,14 +128,14 @@ cntj (57))";
 		std::ifstream ifs(INPUT);
 		auto tree = ParseInput(ifs);
 		auto root = FindRoot(tree);
-		std::cout << "2017-07.1: " << root << std::endl;
+		Printer::Print(__FILE__, "1", root);
 		try
 		{
 			CheckWeight(tree, root);
 		}
 		catch (unsigned res)
 		{
-			std::cout << "2017-07.2: " << res << std::endl;
+			Printer::Print(__FILE__, "2", res);
 		}
 	};
 };

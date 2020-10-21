@@ -3,8 +3,9 @@
 #include <numeric>
 #include <vector>
 #include <algorithm>
-#include <iostream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -187,10 +188,10 @@ suite s = [] {
         expect(17_i == FindSpot(test));
 
         auto input = GetInput(std::ifstream(INPUT));
-        std::cout << "2018-06.1: " << FindSpot(input) << std::endl;
+        Printer::Print(__FILE__, "1", FindSpot(input));
 
         expect(16_i == FindAreaWithin(test, 32));
-        std::cout << "2018-06.2: " << FindAreaWithin(input, 10000) << std::endl;
+        Printer::Print(__FILE__, "2", FindAreaWithin(input, 10000));
     };
 };
 

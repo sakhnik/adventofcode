@@ -1,10 +1,11 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <iostream>
 #include <unordered_set>
 #include <algorithm>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -100,8 +101,8 @@ suite s = [] {
 
     "2015-19.task"_test = [] {
         Chem c(std::ifstream{INPUT});
-        std::cout << "2015-19.1: " << c.Count() << std::endl;
-        std::cout << "2015-19.1: " << c.Count2() << std::endl;
+        Printer::Print(__FILE__, "1", c.Count());
+        Printer::Print(__FILE__, "2", c.Count2());
     };
 };
 

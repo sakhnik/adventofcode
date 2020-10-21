@@ -1,9 +1,10 @@
 #include <fstream>
 #include <sstream>
-#include <iostream>
 #include <numeric>
 #include <algorithm>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -99,8 +100,8 @@ suite s = [] {
     "2015-09.task"_test = [] {
         Tsp tsp(std::ifstream{INPUT});
         auto d = tsp.Find();
-        std::cout << "2015-09.1: " << d.first << std::endl;
-        std::cout << "2015-09.2: " << d.second << std::endl;
+        Printer::Print(__FILE__, "1", d.first);
+        Printer::Print(__FILE__, "2", d.second);
     };
 };
 

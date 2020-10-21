@@ -1,9 +1,10 @@
 #include <string>
 #include <fstream>
 #include <algorithm>
-#include <iostream>
 #include <fstream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -51,12 +52,12 @@ suite s = [] {
         std::ifstream ifs{INPUT};
         std::string input((std::istreambuf_iterator<char>(ifs)),
                           std::istreambuf_iterator<char>());
-        std::cout << "2015-01.1: " << Count(input) << std::endl;
+        Printer::Print(__FILE__, "1", Count(input));
 
         expect(1_i == Position(")"));
         expect(5_i == Position("()())"));
 
-        std::cout << "2015-01.2: " << Position(input) << std::endl;
+        Printer::Print(__FILE__, "2", Position(input));
     };
 };
 

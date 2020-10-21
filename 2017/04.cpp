@@ -1,9 +1,10 @@
 #include <unordered_set>
-#include <iostream>
 #include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -64,8 +65,8 @@ suite s = [] {
 		std::ifstream ifs(INPUT);
 		std::string input((std::istreambuf_iterator<char>(ifs)),
 						  std::istreambuf_iterator<char>());
-		std::cout << "2017-04.1: " << Count<ExactFilter>(input) << std::endl;
-		std::cout << "2017-04.2: " << Count<AnagramFilter>(input) << std::endl;
+		Printer::Print(__FILE__, "1", Count<ExactFilter>(input));
+		Printer::Print(__FILE__, "2", Count<AnagramFilter>(input));
 	};
 };
 

@@ -2,8 +2,9 @@
 #include <sstream>
 #include <unordered_map>
 #include <functional>
-#include <iostream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -143,9 +144,9 @@ suite s = [] {
     "2015-07.task"_test = [] {
         Calc c(std::ifstream{INPUT});
         auto val = c.Eval("a");
-        std::cout << "2015-07.1: " << val << std::endl;
+        Printer::Print(__FILE__, "1", val);
         c.Reset();
-        std::cout << "2015-07.2: " << c.Eval("a") << std::endl;
+        Printer::Print(__FILE__, "2", c.Eval("a"));
     };
 };
 

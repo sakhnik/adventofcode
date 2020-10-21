@@ -1,6 +1,8 @@
 #include <string>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
+
 namespace {
 
 void Increment(std::string &pass)
@@ -101,9 +103,9 @@ suite s = [] {
     "2015-11.task"_test = [] {
         std::string pass("vzbxkghb");
         Next(pass);
-        std::cout << "2015-11.1: " << pass << std::endl;
+        Printer::Print(__FILE__, "1", pass);
         Next(pass);
-        std::cout << "2015-11.2: " << pass << std::endl;
+        Printer::Print(__FILE__, "2", pass);
     };
 };
 

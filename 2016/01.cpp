@@ -1,10 +1,11 @@
-#include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
 #include <cassert>
 #include <set>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -92,7 +93,7 @@ suite s = [] {
 	"2016-01"_test = [] {
 		expect(4_i == walk(std::istringstream{"R8, R4, R4, R8"}));
 
-		std::cout << "2016-01: " << walk(std::ifstream{INPUT}) << std::endl;
+		Printer::Print(__FILE__, nullptr, walk(std::ifstream{INPUT}));
 	};
 };
 

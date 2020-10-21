@@ -1,8 +1,9 @@
 #include <fstream>
-#include <iostream>
 #include <vector>
 #include <limits>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -36,7 +37,7 @@ suite s = [] {
             }
         }
 
-        std::cout << "2019-08.1: " << counts[1] * counts[2] << std::endl;
+        Printer::Print(__FILE__, "1", counts[1] * counts[2]);
 
         // Merge the layers from bottom to top
         for (size_t i = 0; i + 1 < layer_count; ++i)
@@ -51,7 +52,8 @@ suite s = [] {
             }
         }
 
-        std::cout << "2019-08.2:\n";
+        std::ostringstream oss;
+        oss << "\n";
         // Display nicely
         for (size_t r{0}; r < HEIGHT; ++r)
         {
@@ -59,15 +61,16 @@ suite s = [] {
             {
                 if (pix[c] == '0')
                 {
-                    std::cout << ' ';
+                    oss << ' ';
                 }
                 else if (pix[c] == '1')
                 {
-                    std::cout << '#';
+                    oss << '#';
                 }
             }
-            std::cout << '\n';
+            oss << '\n';
         }
+        Printer::Print(__FILE__, "2", oss.str());
     };
 };
 

@@ -3,6 +3,8 @@
 #include <boost/range/irange.hpp>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
+
 namespace {
 
 template <typename PredT>
@@ -71,13 +73,13 @@ suite s = [] {
         expect(!IsPassword1(223450));
         expect(!IsPassword1(123789));
 
-        std::cout << "2019-04.1: " << CountPasswords(256310, 732736, IsPassword1) << std::endl;
+        Printer::Print(__FILE__, "1", CountPasswords(256310, 732736, IsPassword1));
 
         expect(IsPassword2(112233));
         expect(!IsPassword2(123444));
         expect(IsPassword2(111122));
 
-        std::cout << "2019-04.2: " << CountPasswords(256310, 732736, IsPassword2) << std::endl;
+        Printer::Print(__FILE__, "2", CountPasswords(256310, 732736, IsPassword2));
     };
 };
 

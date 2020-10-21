@@ -3,6 +3,7 @@
 #include <numeric>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
 
 namespace {
 
@@ -23,7 +24,7 @@ suite s = [] {
                                     [=](auto fuel, auto mass) {
                                         return fuel + div3sub2(mass);
                                     });
-        std::cout << "2019-01.1: " << fuel << std::endl;
+        Printer::Print(__FILE__, "1", fuel);
 
         // Calculate fuel necessary including the fuel itself
         auto add_fuel = [=](auto mass) {
@@ -49,7 +50,7 @@ suite s = [] {
                                           [=](auto fuel, auto mass) {
                                               return fuel + add_fuel(mass);
                                           });
-        std::cout << "2019-01.2: " << total_fuel << std::endl;
+        Printer::Print(__FILE__, "2", total_fuel);
     };
 };
 

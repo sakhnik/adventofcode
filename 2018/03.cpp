@@ -2,8 +2,9 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include <iostream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -103,8 +104,8 @@ suite s = [] {
         expect(3_i == test.second);
 
         auto res = CalcIntersection(1024, GetInput());
-        std::cout << "2018-03.1: " << res.first << std::endl;
-        std::cout << "2018-03.2: " << res.second << std::endl;
+        Printer::Print(__FILE__, "1", res.first);
+        Printer::Print(__FILE__, "2", res.second);
     };
 };
 

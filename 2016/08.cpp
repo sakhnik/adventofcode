@@ -1,10 +1,11 @@
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <cassert>
 #include <numeric>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -107,8 +108,8 @@ suite s = [] {
 		while (getline(ifs, line))
 			screen.Execute(line);
 
-		std::cout << "2016-08.1: " << screen.Count() << std::endl;
-		std::cout << "2016-08.2:\n" << screen.Dump() << std::endl;
+		Printer::Print(__FILE__, "1", screen.Count());
+		Printer::Print(__FILE__, "2", "\n" + screen.Dump());
 	};
 };
 

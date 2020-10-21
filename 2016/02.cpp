@@ -1,9 +1,10 @@
-#include <iostream>
 #include <sstream>
 #include <fstream>
 #include <string>
 #include <cassert>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -97,10 +98,10 @@ using namespace std::string_literals;
 suite s = [] {
 	"2016-02"_test = [] {
 		expect(eq("1985"s, Solve(std::istringstream{"UUL\nRRDDD\nLURDL\nUUUUD"})));
-		std::cout << "2016-02.1: " << Solve(std::ifstream{INPUT}) << std::endl;
+		Printer::Print(__FILE__, "1", Solve(std::ifstream{INPUT}));
 
 		expect(eq("5DB3"s, Solve2(std::istringstream{"UUL\nRRDDD\nLURDL\nUUUUD"})));
-		std::cout << "2016-02.2: " << Solve2(std::ifstream{INPUT}) << std::endl;
+		Printer::Print(__FILE__, "2", Solve2(std::ifstream{INPUT}));
 	};
 };
 

@@ -4,6 +4,8 @@
 #include <vector>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
+
 namespace {
 
 class Map
@@ -57,13 +59,13 @@ suite s = [] {
         expect(4_u == Map(1, std::istringstream{"^>v<"}).GetCount());
         expect(2_u == Map(1, std::istringstream{"^v^v^v^v^v"}).GetCount());
 
-        std::cout << "2015-03.1: " << Map(1, std::ifstream{INPUT}).GetCount() << std::endl;
+        Printer::Print(__FILE__, "1", Map(1, std::ifstream{INPUT}).GetCount());
 
         expect(3_u == Map(2, std::istringstream{"^v"}).GetCount());
         expect(3_u == Map(2, std::istringstream{"^>v<"}).GetCount());
         expect(11_u == Map(2, std::istringstream{"^v^v^v^v^v"}).GetCount());
 
-        std::cout << "2015-03.2: " << Map(2, std::ifstream{INPUT}).GetCount() << std::endl;
+        Printer::Print(__FILE__, "2", Map(2, std::ifstream{INPUT}).GetCount());
     };
 };
 

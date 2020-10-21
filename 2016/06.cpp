@@ -1,4 +1,3 @@
-#include <iostream>
 #include <sstream>
 #include <fstream>
 #include <vector>
@@ -6,6 +5,8 @@
 #include <algorithm>
 #include <cassert>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -59,10 +60,10 @@ dvrsen
 enarar)";
 		using namespace std::string_literals;
 		expect(eq("easter"s, Solve(std::istringstream{test_input}, true)));
-		std::cout << "2016-06.1: " << Solve(std::ifstream{INPUT}, true) << std::endl;
+		Printer::Print(__FILE__, "1", Solve(std::ifstream{INPUT}, true));
 
 		expect(eq("advent"s, Solve(std::istringstream{test_input}, false)));
-		std::cout << "2016-06.2: " << Solve(std::ifstream{INPUT}, false) << std::endl;
+		Printer::Print(__FILE__, "2", Solve(std::ifstream{INPUT}, false));
 	};
 };
 

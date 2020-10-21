@@ -1,9 +1,10 @@
 #include <unordered_map>
-#include <iostream>
 #include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -97,8 +98,8 @@ c inc -20 if c == 10)"));
 
         std::ifstream ifs(INPUT);
         auto res = Calculate(ifs);
-        std::cout << "2017-08.1: " << res.max << std::endl;
-        std::cout << "2017-08.2: " << res.max_ever << std::endl;
+        Printer::Print(__FILE__, "1", res.max);
+        Printer::Print(__FILE__, "2", res.max_ever);
     };
 };
 

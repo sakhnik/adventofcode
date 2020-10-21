@@ -3,6 +3,8 @@
 #include <iterator>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
+
 namespace {
 
 using LicenseT = std::vector<int>;
@@ -88,10 +90,10 @@ suite s = [] {
     "2018-08"_test = [] {
         expect(138_i == SumMeta({2, 3, 0, 3, 10, 11, 12, 1, 1, 0, 1, 99, 2, 1, 1, 2}));
         auto license = ReadLicense(std::ifstream{INPUT});
-        std::cout << "2018-08.1: " << SumMeta(license) << std::endl;
+        Printer::Print(__FILE__, "1", SumMeta(license));
 
         expect(66_i == SumValues({2, 3, 0, 3, 10, 11, 12, 1, 1, 0, 1, 99, 2, 1, 1, 2}));
-        std::cout << "2018-08.2: " << SumValues(license) << std::endl;
+        Printer::Print(__FILE__, "2", SumValues(license));
     };
 };
 

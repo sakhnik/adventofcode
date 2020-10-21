@@ -1,7 +1,8 @@
-#include <iostream>
 #include <fstream>
 #include <vector>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -48,8 +49,8 @@ suite s = [] {
 		while (ifs >> o)
 			offsets.emplace_back(o);
 
-		std::cout << "2017-05.1: " << CountJumps(offsets, IncreaseModifier) << std::endl;
-		std::cout << "2017-05.2: " << CountJumps(offsets, WeirdModifier) << std::endl;
+		Printer::Print(__FILE__, "1", CountJumps(offsets, IncreaseModifier));
+		Printer::Print(__FILE__, "2", CountJumps(offsets, WeirdModifier));
 	};
 };
 

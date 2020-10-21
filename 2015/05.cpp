@@ -3,6 +3,8 @@
 #include <regex>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
+
 namespace {
 
 bool IsNice(const std::string &s)
@@ -104,8 +106,8 @@ suite s = [] {
         expect(!IsNice2("uurcxstgmygtbstg"));
         expect(!IsNice2("ieodomkazucvgmuy"));
 
-        std::cout << "2015-05.1: " << CountNice(std::ifstream{INPUT}, IsNice) << std::endl;
-        std::cout << "2015-05.2: " << CountNice(std::ifstream{INPUT}, IsNice2) << std::endl;
+        Printer::Print(__FILE__, "1", CountNice(std::ifstream{INPUT}, IsNice));
+        Printer::Print(__FILE__, "2", CountNice(std::ifstream{INPUT}, IsNice2));
     };
 };
 

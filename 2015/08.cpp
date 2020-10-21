@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
+
 namespace {
 
 size_t CountEscape(std::istream &&is)
@@ -56,8 +58,8 @@ suite s = [] {
         expect(12_u == CountEscape(std::istringstream{TEST}));
         expect(19_u == CountEscape2(std::istringstream{TEST}));
 
-        std::cout << "2015-08.1: " << CountEscape(std::ifstream{INPUT}) << std::endl;
-        std::cout << "2015-08.2: " << CountEscape2(std::ifstream{INPUT}) << std::endl;
+        Printer::Print(__FILE__, "1", CountEscape(std::ifstream{INPUT}));
+        Printer::Print(__FILE__, "2", CountEscape2(std::ifstream{INPUT}));
     };
 };
 

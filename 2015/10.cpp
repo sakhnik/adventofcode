@@ -1,6 +1,8 @@
 #include <string>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
+
 namespace {
 
 void Rle(const std::string &src, std::string &dst)
@@ -56,8 +58,8 @@ suite s = [] {
         expect(eq("1211"s, Rle("21")));
         expect(eq("111221"s, Rle("1211")));
 
-        std::cout << "2015-10.1: " << Run(40, "3113322113").size() << std::endl;
-        std::cout << "2015-10.2: " << Run(50, "3113322113").size() << std::endl;
+        Printer::Print(__FILE__, "1", Run(40, "3113322113").size());
+        Printer::Print(__FILE__, "2", Run(50, "3113322113").size());
     };
 };
 

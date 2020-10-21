@@ -6,6 +6,7 @@
 #include <fstream>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
 
 namespace {
 
@@ -145,7 +146,7 @@ suite s = [] {
         auto p1 = ParseInput(s);
         std::getline(ifs, s);
         auto p2 = ParseInput(s);
-        std::cout << "2019-03.1: " << FindClosestIntersection(p1, p2, GetIntersection) << std::endl;
+        Printer::Print(__FILE__, "1", FindClosestIntersection(p1, p2, GetIntersection));
 
         expect(30_i == FindClosestIntersection(ParseInput("R8,U5,L5,D3"),
                                                ParseInput("U7,R6,D4,L4"),
@@ -156,7 +157,7 @@ suite s = [] {
         expect(410_i == FindClosestIntersection(ParseInput("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51"),
                                                 ParseInput("U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"),
                                                 GetIntersection2));
-        std::cout << "2019-03.2: " << FindClosestIntersection(p1, p2, GetIntersection2) << std::endl;
+        Printer::Print(__FILE__, "2", FindClosestIntersection(p1, p2, GetIntersection2));
     };
 };
 

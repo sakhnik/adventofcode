@@ -3,9 +3,9 @@
 #include <array>
 #include <vector>
 #include <algorithm>
-#include <iostream>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
 
 namespace {
 
@@ -54,12 +54,12 @@ suite s = [] {
         expect(58_i == CalcArea({2, 3, 4}));
         expect(43_i == CalcArea({1, 1, 10}));
 
-        std::cout << "2015-02.1: " << Accumulate(GetInput(), CalcArea) << std::endl;
+        Printer::Print(__FILE__, "1", Accumulate(GetInput(), CalcArea));
 
         expect(34_i == CalcRibbon({2, 3, 4}));
         expect(14_i == CalcRibbon({1, 1, 10}));
 
-        std::cout << "2015-02.2: " << Accumulate(GetInput(), CalcRibbon) << std::endl;
+        Printer::Print(__FILE__, "2", Accumulate(GetInput(), CalcRibbon));
     };
 };
 

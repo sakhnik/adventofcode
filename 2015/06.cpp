@@ -3,6 +3,8 @@
 #include <numeric>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
+
 namespace {
 
 using LightT = int;
@@ -80,8 +82,8 @@ using namespace boost::ut;
 
 suite s = [] {
     "2015-06"_test = [] {
-        std::cout << "2015-06.1: " << CountLit(std::ifstream{INPUT}, On, Off, Toggle) << std::endl;
-        std::cout << "2015-06.2: " << CountLit(std::ifstream{INPUT}, On2, Off2, Toggle2) << std::endl;
+        Printer::Print(__FILE__, "1", CountLit(std::ifstream{INPUT}, On, Off, Toggle));
+        Printer::Print(__FILE__, "2", CountLit(std::ifstream{INPUT}, On2, Off2, Toggle2));
     };
 };
 

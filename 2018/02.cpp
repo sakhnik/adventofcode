@@ -3,8 +3,9 @@
 #include <fstream>
 #include <unordered_map>
 #include <algorithm>
-#include <iostream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -91,12 +92,12 @@ suite s = [] {
         auto test_cs = Checksum({"abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab"});
         expect(12_i == test_cs);
 
-        std::cout << "2018-02.1: " << Checksum(GetInput()) << std::endl;
+        Printer::Print(__FILE__, "1", Checksum(GetInput()));
 
         auto test2 = FindCorrect({"abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz"});
         expect(eq("fgij"s, test2));
 
-        std::cout << "2018-02.2: " << FindCorrect(GetInput()) << std::endl;
+        Printer::Print(__FILE__, "2", FindCorrect(GetInput()));
     };
 };
 

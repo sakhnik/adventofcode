@@ -4,6 +4,7 @@
 #include <boost/ut.hpp>
 
 #include "IntCode.h"
+#include "../Printer.hpp"
 
 namespace {
 
@@ -41,7 +42,7 @@ suite s = [] {
         };
 
         // Task 1
-        std::cout << "2019-05.1: " << run(IntCode{master}, 1) << std::endl;
+        Printer::Print(__FILE__, "1", run(IntCode{master}, 1));
 
         // Tests
         IntCode test_eq8{std::istringstream{"3,9,8,9,10,9,4,9,99,-1,8"}};
@@ -70,7 +71,7 @@ suite s = [] {
         expect(eq("1"s, run(IntCode{test_eq0}, 123)));
 
         // Task 2
-        std::cout << "2019-05.2: " << run(IntCode{master}, 5) << std::endl;
+        Printer::Print(__FILE__, "2", run(IntCode{master}, 5));
     };
 };
 

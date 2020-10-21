@@ -1,7 +1,8 @@
 #include <fstream>
 #include <algorithm>
-#include <iostream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -63,10 +64,10 @@ suite s = [] {
         std::string input;
         getline(std::ifstream(INPUT), input);
 
-        std::cout << "2018-05.1: " << Reduce(input).size() << std::endl;
+        Printer::Print(__FILE__, "1", Reduce(input).size());
 
         expect(4_u == Search("dabAcCaCBAcCcaDA"));
-        std::cout << "2018-05.2: " << Search(input) << std::endl;
+        Printer::Print(__FILE__, "2", Search(input));
     };
 };
 

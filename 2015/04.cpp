@@ -2,6 +2,8 @@
 #include <openssl/md5.h>
 #include <boost/ut.hpp>
 
+#include "../Printer.hpp"
+
 namespace {
 
 bool HasFiveZeros(unsigned char *md5)
@@ -36,8 +38,8 @@ suite s = [] {
         expect(609043_u == Mine("abcdef", HasFiveZeros));
         expect(1048970_u == Mine("pqrstuv", HasFiveZeros));
 
-        std::cout << "2015-04.1: " << Mine("bgvyzdsv", HasFiveZeros) << std::endl;
-        std::cout << "2015-04.2: " << Mine("bgvyzdsv", HasSixZeros) << std::endl;
+        Printer::Print(__FILE__, "1", Mine("bgvyzdsv", HasFiveZeros));
+        Printer::Print(__FILE__, "2", Mine("bgvyzdsv", HasSixZeros));
     };
 };
 

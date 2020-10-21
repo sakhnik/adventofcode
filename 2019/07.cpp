@@ -3,8 +3,9 @@
 #include <numeric>
 #include <algorithm>
 #include <fstream>
-#include <iostream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -108,7 +109,7 @@ suite s = [] {
         }
 
         IntCode program{std::ifstream{INPUT}};
-        std::cout << "2019-07.1: " << FindMaxCombination(false, program) << std::endl;
+        Printer::Print(__FILE__, "1", FindMaxCombination(false, program));
 
         {
             IntCode p{std::istringstream{R"(3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,
@@ -125,7 +126,7 @@ suite s = [] {
             expect(18216_i == FindMaxCombination(true, p));
         }
 
-        std::cout << "2019-07.2: " << FindMaxCombination(true, program) << std::endl;
+        Printer::Print(__FILE__, "2", FindMaxCombination(true, program));
     };
 };
 

@@ -3,8 +3,9 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
-#include <iostream>
 #include <boost/ut.hpp>
+
+#include "../Printer.hpp"
 
 namespace {
 
@@ -186,10 +187,10 @@ Step F must be finished before step E can begin.)";
         expect(eq("CABDFE"s, SortSteps(test)));
 
         auto input = GetInput(std::ifstream(INPUT));
-        std::cout << "2018-07.1: " << SortSteps(input) << std::endl;
+        Printer::Print(__FILE__, "1", SortSteps(input));
 
         expect(15_i == Simulate(2, 0, test));
-        std::cout << "2018-07.2: " << Simulate(5, 60, input) << std::endl;
+        Printer::Print(__FILE__, "2", Simulate(5, 60, input));
     };
 };
 
