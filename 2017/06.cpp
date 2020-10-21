@@ -1,7 +1,9 @@
-#include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
 #include <boost/functional/hash.hpp>
+#include <boost/ut.hpp>
+
+namespace {
 
 template <typename T>
 struct MyHash
@@ -49,17 +51,23 @@ Count(T banks)
 	}
 }
 
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(Count(std::array<unsigned,4>({0, 2, 7, 0})).first == 5);
-	REQUIRE(Count(std::array<unsigned,4>({0, 2, 7, 0})).second == 4);
+using namespace boost::ut;
 
-	std::ifstream ifs(INPUT);
-	std::array<unsigned, 16> banks;
-	for (auto &i : banks)
-		ifs >> i;
+suite s = [] {
+	"2017-06"_test = [] {
+		auto c1 = Count(std::array<unsigned, 4>({0, 2, 7, 0}));
+		expect(5_u == c1.first);
+		expect(4_u == c1.second);
 
-	auto res = Count(banks);
-	MESSAGE(res.first);
-	MESSAGE(res.second);
-}
+		std::ifstream ifs(INPUT);
+		std::array<unsigned, 16> banks;
+		for (auto &i : banks)
+			ifs >> i;
+
+		auto res = Count(banks);
+		std::cout << "2017-06.1: " << res.first << std::endl;
+		std::cout << "2017-06.2: " << res.second << std::endl;
+	};
+};
+
+} //namespace;

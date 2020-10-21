@@ -1,10 +1,10 @@
-#include <doctest/doctest.h>
 #include <sstream>
 #include <fstream>
 #include <numeric>
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -177,18 +177,21 @@ int FindAreaWithin(const PointsT &points, int distance)
     return count;
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+    "2018-06"_test = [] {
+        auto test = GetInput(std::istringstream("1, 1\n1, 6\n8, 3\n3, 4\n5, 5\n8, 9"));
+        expect(6_u == test.size());
+        expect(Box{{1, 1}, {8, 9}} == GetBox(test));
+        expect(17_i == FindSpot(test));
+
+        auto input = GetInput(std::ifstream(INPUT));
+        std::cout << "2018-06.1: " << FindSpot(input) << std::endl;
+
+        expect(16_i == FindAreaWithin(test, 32));
+        std::cout << "2018-06.2: " << FindAreaWithin(input, 10000) << std::endl;
+    };
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    auto test = GetInput(std::istringstream("1, 1\n1, 6\n8, 3\n3, 4\n5, 5\n8, 9"));
-    REQUIRE(6 == test.size());
-    REQUIRE(Box{{1,1}, {8,9}} == GetBox(test));
-    REQUIRE(17 == FindSpot(test));
-
-    auto input = GetInput(std::ifstream(INPUT));
-    MESSAGE(FindSpot(input));
-
-    REQUIRE(FindAreaWithin(test, 32) == 16);
-    MESSAGE(FindAreaWithin(input, 10000));
-}

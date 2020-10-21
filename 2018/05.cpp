@@ -1,14 +1,9 @@
-#include <doctest/doctest.h>
 #include <fstream>
 #include <algorithm>
 #include <iostream>
+#include <boost/ut.hpp>
 
-std::string GetInput(std::istream &&is)
-{
-    std::string line;
-    getline(is, line);
-    return line;
-}
+namespace {
 
 std::string Reduce(const std::string &s)
 {
@@ -54,19 +49,25 @@ size_t Search(const std::string &s)
     return min_size;
 }
 
-TEST_CASE(TEST_NAME)
-{
-    REQUIRE("" == Reduce("aA"));
-    REQUIRE("" == Reduce("abBA"));
-    REQUIRE("abAB" == Reduce("abAB"));
-    REQUIRE("aabAAB" == Reduce("aabAAB"));
-    REQUIRE("dabCBAcaDA" == Reduce("dabAcCaCBAcCcaDA"));
+using namespace boost::ut;
+using namespace std::string_literals;
 
-    std::string input;
-    getline(std::ifstream(INPUT), input);
+suite s = [] {
+    "2018-05"_test = [] {
+        expect(eq(""s, Reduce("aA")));
+        expect(eq(""s, Reduce("abBA")));
+        expect(eq("abAB"s, Reduce("abAB")));
+        expect(eq("aabAAB"s, Reduce("aabAAB")));
+        expect(eq("dabCBAcaDA"s, Reduce("dabAcCaCBAcCcaDA")));
 
-    MESSAGE(Reduce(input).size());
+        std::string input;
+        getline(std::ifstream(INPUT), input);
 
-    REQUIRE(4 == Search("dabAcCaCBAcCcaDA"));
-    MESSAGE(Search(input));
-}
+        std::cout << "2018-05.1: " << Reduce(input).size() << std::endl;
+
+        expect(4_u == Search("dabAcCaCBAcCcaDA"));
+        std::cout << "2018-05.2: " << Search(input) << std::endl;
+    };
+};
+
+} //namespace;

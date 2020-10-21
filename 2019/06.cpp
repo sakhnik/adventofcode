@@ -1,10 +1,11 @@
-#include <doctest/doctest.h>
 #include <fstream>
 #include <cassert>
 #include <unordered_map>
 #include <numeric>
 #include <sstream>
+#include <boost/ut.hpp>
 
+namespace {
 
 class Map
 {
@@ -73,10 +74,12 @@ private:
     }
 };
 
-TEST_CASE(TEST_NAME)
-{
-    {
-        std::istringstream iss(R"(COM)B
+using namespace boost::ut;
+
+suite s = [] {
+    "2019-06"_test = [] {
+        {
+            std::istringstream iss(R"(COM)B
 B)C
 C)D
 D)E
@@ -88,15 +91,15 @@ E)J
 J)K
 K)L)");
 
-        REQUIRE(42 == Map{iss}.CalcSumOfDepths());
-    }
+            expect(42_i == Map{iss}.CalcSumOfDepths());
+        }
 
-    std::ifstream ifs(INPUT);
-    Map map{ifs};
-    MESSAGE(map.CalcSumOfDepths());
+        std::ifstream ifs(INPUT);
+        Map map{ifs};
+        std::cout << "2019-06.1: " << map.CalcSumOfDepths() << std::endl;
 
-    {
-        std::istringstream iss(R"(COM)B
+        {
+            std::istringstream iss(R"(COM)B
 B)C
 C)D
 D)E
@@ -109,10 +112,13 @@ J)K
 K)L
 K)YOU
 I)SAN)");
-        Map map(iss);
-        map.CalcSumOfDepths();
-        REQUIRE(4 == map.CalcDistance("YOU", "SAN"));
-    }
+            Map map(iss);
+            map.CalcSumOfDepths();
+            expect(4_i == map.CalcDistance("YOU", "SAN"));
+        }
 
-    MESSAGE(map.CalcDistance("YOU", "SAN"));
-}
+        std::cout << "2019-06.2: " << map.CalcDistance("YOU", "SAN") << std::endl;
+    };
+};
+
+} //namespace;

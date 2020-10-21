@@ -1,7 +1,9 @@
-#include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <boost/ut.hpp>
+
+namespace {
 
 template <typename ModifierT>
 unsigned CountJumps(std::vector<int> offsets, ModifierT modifier)
@@ -34,16 +36,21 @@ int WeirdModifier(int &offset)
 	return offset >= 3 ? offset-- : offset++;
 }
 
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(CountJumps({0, 3, 0, 1, -3}, IncreaseModifier) == 5);
+using namespace boost::ut;
 
-	std::ifstream ifs(INPUT);
-	std::vector<int> offsets;
-	int o{0};
-	while (ifs >> o)
-		offsets.emplace_back(o);
+suite s = [] {
+	"2017-05"_test = [] {
+		expect(5_u == CountJumps({0, 3, 0, 1, -3}, IncreaseModifier));
 
-	MESSAGE(CountJumps(offsets, IncreaseModifier));
-	MESSAGE(CountJumps(offsets, WeirdModifier));
-}
+		std::ifstream ifs(INPUT);
+		std::vector<int> offsets;
+		int o{0};
+		while (ifs >> o)
+			offsets.emplace_back(o);
+
+		std::cout << "2017-05.1: " << CountJumps(offsets, IncreaseModifier) << std::endl;
+		std::cout << "2017-05.2: " << CountJumps(offsets, WeirdModifier) << std::endl;
+	};
+};
+
+} //namespace;

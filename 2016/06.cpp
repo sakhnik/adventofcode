@@ -1,4 +1,3 @@
-#include <doctest/doctest.h>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -6,6 +5,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <cassert>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -36,12 +36,12 @@ std::string Solve(std::istream &&is, bool use_max)
 	return ret;
 }
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-	const char *const test_input =
-		R"(eedadn
+suite s = [] {
+	"2016-06"_test = [] {
+		const char *const test_input =
+			R"(eedadn
 drvtee
 eandsr
 raavrd
@@ -57,9 +57,13 @@ vntsnd
 vrdear
 dvrsen
 enarar)";
-	REQUIRE("easter" == Solve(std::istringstream{test_input}, true));
-	MESSAGE(Solve(std::ifstream{INPUT}, true));
+		using namespace std::string_literals;
+		expect(eq("easter"s, Solve(std::istringstream{test_input}, true)));
+		std::cout << "2016-06.1: " << Solve(std::ifstream{INPUT}, true) << std::endl;
 
-	REQUIRE("advent" == Solve(std::istringstream{test_input}, false));
-	MESSAGE(Solve(std::ifstream{INPUT}, false));
-}
+		expect(eq("advent"s, Solve(std::istringstream{test_input}, false)));
+		std::cout << "2016-06.2: " << Solve(std::ifstream{INPUT}, false) << std::endl;
+	};
+};
+
+} //namespace;
