@@ -1,10 +1,12 @@
-#include <doctest/doctest.h>
 #include <vector>
 #include <string>
 #include <fstream>
 #include <unordered_map>
 #include <algorithm>
 #include <iostream>
+#include <boost/ut.hpp>
+
+namespace {
 
 using BoxesT = std::vector<std::string>;
 
@@ -81,15 +83,21 @@ std::string FindCorrect(const BoxesT &boxes)
     return "";
 }
 
-TEST_CASE(TEST_NAME)
-{
-    auto test_cs = Checksum({"abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab"});
-    REQUIRE(12 == test_cs);
+using namespace boost::ut;
+using namespace std::string_literals;
 
-    MESSAGE(Checksum(GetInput()));
+suite s = [] {
+    "2018-02"_test = [] {
+        auto test_cs = Checksum({"abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab"});
+        expect(12_i == test_cs);
 
-    auto test2 = FindCorrect({"abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz"});
-    REQUIRE("fgij" == test2);
+        std::cout << "2018-02.1: " << Checksum(GetInput()) << std::endl;
 
-    MESSAGE(FindCorrect(GetInput()));
-}
+        auto test2 = FindCorrect({"abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz"});
+        expect(eq("fgij"s, test2));
+
+        std::cout << "2018-02.2: " << FindCorrect(GetInput()) << std::endl;
+    };
+};
+
+} //namespace;

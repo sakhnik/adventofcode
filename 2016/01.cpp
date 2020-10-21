@@ -1,10 +1,10 @@
-#include <boost/ut.hpp>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
 #include <cassert>
 #include <set>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -88,10 +88,12 @@ int walk(std::istream &&is)
 
 using namespace boost::ut;
 
-"2016/01"_test = [] {
-	expect(4_i == walk(std::istringstream{"R8, R4, R4, R8"}));
+suite s = [] {
+	"2016-01"_test = [] {
+		expect(4_i == walk(std::istringstream{"R8, R4, R4, R8"}));
 
-	std::cout << walk(std::ifstream{INPUT}) << std::endl;
+		std::cout << "2016-01: " << walk(std::ifstream{INPUT}) << std::endl;
+	};
 };
 
 } //namespace;

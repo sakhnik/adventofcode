@@ -1,4 +1,3 @@
-#include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
 #include <unordered_set>
@@ -6,6 +5,7 @@
 #include <numeric>
 #include <vector>
 #include <sstream>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -48,22 +48,25 @@ int Twice(const TuneT &tune)
     }
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+    "2018-01"_test = [] {
+        expect(3_i == Sum(GetSample("+1 -2 +3 +1")));
+        expect(3_i == Sum(GetSample("+1 +1 +1")));
+        expect(0_i == Sum(GetSample("+1 +1 -2")));
+        expect(-6_i == Sum(GetSample("-1 -2 -3")));
+
+        auto input = GetInput();
+        std::cout << "2018-01.1: " << Sum(input) << std::endl;
+
+        expect(0_i == Twice(GetSample("+1 -1")));
+        expect(10_i == Twice(GetSample("+3 +3 +4 -2 -4")));
+        expect(5_i == Twice(GetSample("-6 +3 +8 +5 -6")));
+        expect(14_i == Twice(GetSample("+7 +7 -2 -7 -4")));
+
+        std::cout << "2018-01.2: " << Twice(input) << std::endl;
+    };
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    REQUIRE(Sum(GetSample("+1 -2 +3 +1")) == 3);
-    REQUIRE(Sum(GetSample("+1 +1 +1")) == 3);
-    REQUIRE(Sum(GetSample("+1 +1 -2")) == 0);
-    REQUIRE(Sum(GetSample("-1 -2 -3")) == -6);
-
-    auto input = GetInput();
-    MESSAGE(Sum(input));
-
-    REQUIRE(Twice(GetSample("+1 -1")) == 0);
-    REQUIRE(Twice(GetSample("+3 +3 +4 -2 -4")) == 10);
-    REQUIRE(Twice(GetSample("-6 +3 +8 +5 -6")) == 5);
-    REQUIRE(Twice(GetSample("+7 +7 -2 -7 -4")) == 14);
-
-    MESSAGE(Twice(input));
-}

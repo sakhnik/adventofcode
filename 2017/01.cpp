@@ -1,6 +1,8 @@
-#include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
+#include <boost/ut.hpp>
+
+namespace {
 
 unsigned Sum(std::string_view s, unsigned dist)
 {
@@ -15,20 +17,25 @@ unsigned Sum(std::string_view s, unsigned dist)
 	return sum;
 }
 
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(Sum("1122", 1) == 3);
-	REQUIRE(Sum("1111", 1) == 4);
-	REQUIRE(Sum("1234", 1) == 0);
-	REQUIRE(Sum("91212129", 1) == 9);
-	REQUIRE(Sum("1212", 2) == 6);
-	REQUIRE(Sum("1221", 2) == 0);
-	REQUIRE(Sum("123425", 3) == 4);
-	REQUIRE(Sum("123123", 3) == 12);
-	REQUIRE(Sum("12131415", 4) == 4);
+using namespace boost::ut;
 
-	std::string input;
-	getline(std::ifstream(INPUT), input);
-	MESSAGE(Sum(input, 1));
-	MESSAGE(Sum(input, input.size() / 2));
-}
+suite s = [] {
+	"2017-01"_test = [] {
+		expect(3_u == Sum("1122", 1));
+		expect(4_u == Sum("1111", 1));
+		expect(0_u == Sum("1234", 1));
+		expect(9_u == Sum("91212129", 1));
+		expect(6_u == Sum("1212", 2));
+		expect(0_u == Sum("1221", 2));
+		expect(4_u == Sum("123425", 3));
+		expect(12_u == Sum("123123", 3));
+		expect(4_u == Sum("12131415", 4));
+
+		std::string input;
+		getline(std::ifstream(INPUT), input);
+		std::cout << "2017-01.1: " << Sum(input, 1) << std::endl;
+		std::cout << "2017-01.2: " << Sum(input, input.size() / 2) << std::endl;
+	};
+};
+
+} //namespace;

@@ -1,9 +1,9 @@
-#include <doctest/doctest.h>
 #include <iostream>
 #include <sstream>
 #include <fstream>
 #include <string>
 #include <cassert>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -91,13 +91,17 @@ std::string Solve2(std::istream &&is)
 	return code;
 }
 
+using namespace boost::ut;
+using namespace std::string_literals;
+
+suite s = [] {
+	"2016-02"_test = [] {
+		expect(eq("1985"s, Solve(std::istringstream{"UUL\nRRDDD\nLURDL\nUUUUD"})));
+		std::cout << "2016-02.1: " << Solve(std::ifstream{INPUT}) << std::endl;
+
+		expect(eq("5DB3"s, Solve2(std::istringstream{"UUL\nRRDDD\nLURDL\nUUUUD"})));
+		std::cout << "2016-02.2: " << Solve2(std::ifstream{INPUT}) << std::endl;
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE("1985" == Solve(std::istringstream{"UUL\nRRDDD\nLURDL\nUUUUD"}));
-	MESSAGE(Solve(std::ifstream{INPUT}));
-
-	REQUIRE("5DB3" == Solve2(std::istringstream{"UUL\nRRDDD\nLURDL\nUUUUD"}));
-	MESSAGE(Solve2(std::ifstream{INPUT}));
-}

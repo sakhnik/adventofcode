@@ -1,9 +1,9 @@
-#include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <limits>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -68,16 +68,19 @@ unsigned Checksum2(const std::string &input)
 	return cs;
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+	"2017-02"_test = [] {
+		expect(18_i == Checksum("5 1 9 5\n7 5 3\n2 4 6 8"));
+		expect(9_i == Checksum2("5 9 2 8\n9 4 7 3\n3 8 6 5"));
+
+		std::ifstream ifs(INPUT);
+		std::string str((std::istreambuf_iterator<char>(ifs)),
+						std::istreambuf_iterator<char>());
+		std::cout << "2017-02.1: " << Checksum(str) << std::endl;
+		std::cout << "2017-02.2: " << Checksum2(str) << std::endl;
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(Checksum("5 1 9 5\n7 5 3\n2 4 6 8") == 18);
-	REQUIRE(Checksum2("5 9 2 8\n9 4 7 3\n3 8 6 5") == 9);
-
-	std::ifstream ifs(INPUT);
-	std::string str((std::istreambuf_iterator<char>(ifs)),
-					std::istreambuf_iterator<char>());
-	MESSAGE(Checksum(str));
-	MESSAGE(Checksum2(str));
-}
