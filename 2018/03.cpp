@@ -1,10 +1,9 @@
-#include <doctest/doctest.h>
 #include <vector>
 #include <fstream>
 #include <sstream>
 #include <algorithm>
 #include <iostream>
-
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -30,7 +29,8 @@ BoxesT GetInput(std::istream &&is)
     while (is && (getline(is, line)))
     {
         Box box;
-        REQUIRE(5 == sscanf(line.c_str(), "#%d @ %d,%d: %dx%d", &box.id, &box.x, &box.y, &box.w, &box.h));
+        using namespace boost::ut;
+        expect(5_i == sscanf(line.c_str(), "#%d @ %d,%d: %dx%d", &box.id, &box.x, &box.y, &box.w, &box.h));
         boxes.emplace_back(box);
     }
 
@@ -94,15 +94,18 @@ std::pair<int,int> CalcIntersection(int length, const BoxesT &boxes)
     return {overlap, -1};
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+    "2018-03"_test = [] {
+        auto test = CalcIntersection(8, GetInput("#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2"));
+        expect(4_i == test.first);
+        expect(3_i == test.second);
+
+        auto res = CalcIntersection(1024, GetInput());
+        std::cout << "2018-03.1: " << res.first << std::endl;
+        std::cout << "2018-03.2: " << res.second << std::endl;
+    };
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    auto test = CalcIntersection(8, GetInput("#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2"));
-    REQUIRE(4 == test.first);
-    REQUIRE(3 == test.second);
-
-    auto res = CalcIntersection(1024, GetInput());
-    MESSAGE(res.first);
-    MESSAGE(res.second);
-}

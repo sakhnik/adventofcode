@@ -1,6 +1,8 @@
-#include <doctest/doctest.h>
 #include <map>
 #include <iostream>
+#include <boost/ut.hpp>
+
+namespace {
 
 // Walk the storage in increasing order while checking the predicate on each step.
 template <typename PredT>
@@ -91,16 +93,21 @@ private:
 	}
 };
 
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(Find(NumberIs{2}) == 1);
-	REQUIRE(Find(NumberIs{3}) == 2);
-	REQUIRE(Find(NumberIs{4}) == 1);
-	REQUIRE(Find(NumberIs{5}) == 2);
-	REQUIRE(Find(NumberIs{12}) == 3);
-	REQUIRE(Find(NumberIs{23}) == 2);
-	REQUIRE(Find(NumberIs{1024}) == 31);
+using namespace boost::ut;
 
-	MESSAGE(Find(NumberIs{289326}));
-	MESSAGE(Find(CheckSumGreatherThan{289326}));
-}
+suite s = [] {
+	"2017-03"_test = [] {
+		expect(1_u == Find(NumberIs{2}));
+		expect(2_u == Find(NumberIs{3}));
+		expect(1_u == Find(NumberIs{4}));
+		expect(2_u == Find(NumberIs{5}));
+		expect(3_u == Find(NumberIs{12}));
+		expect(2_u == Find(NumberIs{23}));
+		expect(31_u == Find(NumberIs{1024}));
+
+		std::cout << "2017-03.1: " << Find(NumberIs{289326}) << std::endl;
+		std::cout << "2017-03.2: " << Find(CheckSumGreatherThan{289326}) << std::endl;
+	};
+};
+
+} //namespace;

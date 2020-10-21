@@ -1,9 +1,9 @@
-#include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <algorithm>
 #include <cassert>
+#include <boost/ut.hpp>
 
 
 namespace {
@@ -108,18 +108,22 @@ int Solve2(std::istream &&is)
 	return 0;
 }
 
+using namespace boost::ut;
+using namespace std::string_literals;
+
+suite s = [] {
+	"2016-04"_test = [] {
+		expect(123_i == CheckIsReal("aaaaa-bbb-z-y-x-123[abxyz]"));
+		expect(987_i == CheckIsReal("a-b-c-d-e-f-g-h-987[abcde]"));
+		expect(404_i == CheckIsReal("not-a-real-room-404[oarel]"));
+		expect(0_i == CheckIsReal("totally-real-room-200[decoy]"));
+
+		std::cout << "2016-04.1: " << Solve(std::ifstream{INPUT}) << std::endl;
+
+		expect(eq("very encrypted name"s, Decrypt("qzmt-zixmtkozy-ivhz-343")));
+
+		std::cout << "2016-04.2: " << Solve2(std::ifstream{INPUT}) << std::endl;
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(123 == CheckIsReal("aaaaa-bbb-z-y-x-123[abxyz]"));
-	REQUIRE(987 == CheckIsReal("a-b-c-d-e-f-g-h-987[abcde]"));
-	REQUIRE(404 == CheckIsReal("not-a-real-room-404[oarel]"));
-	REQUIRE(0 == CheckIsReal("totally-real-room-200[decoy]"));
-
-	MESSAGE(Solve(std::ifstream{INPUT}));
-
-	REQUIRE("very encrypted name" == Decrypt("qzmt-zixmtkozy-ivhz-343"));
-
-	MESSAGE(Solve2(std::ifstream{INPUT}));
-}

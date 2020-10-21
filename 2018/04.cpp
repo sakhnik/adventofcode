@@ -1,8 +1,8 @@
-#include <doctest/doctest.h>
 #include <regex>
 #include <unordered_map>
 #include <fstream>
 #include <iostream>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -72,7 +72,7 @@ StatsT GetInput(std::istream &&is)
         }
         else
         {
-            REQUIRE(false);
+            boost::ut::expect(false);
         }
     }
 
@@ -145,11 +145,11 @@ int Strategy2(const StatsT &stats)
     return it->first * it->second.first;
 }
 
-} //namespace
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    const auto TEST_INPUT = R"([1518-11-01 00:00] Guard #10 begins shift
+suite s = [] {
+    "2018-04"_test = [] {
+        const auto TEST_INPUT = R"([1518-11-01 00:00] Guard #10 begins shift
 [1518-11-01 00:05] falls asleep
 [1518-11-01 00:25] wakes up
 [1518-11-01 00:30] falls asleep
@@ -166,19 +166,21 @@ TEST_CASE(TEST_NAME)
 [1518-11-05 00:03] Guard #99 begins shift
 [1518-11-05 00:45] falls asleep
 [1518-11-05 00:55] wakes up)";
-    auto test_stats = GetInput(std::istringstream(TEST_INPUT));
-    //Print(test_stats);
+        auto test_stats = GetInput(std::istringstream(TEST_INPUT));
+        //Print(test_stats);
 
-    REQUIRE(10 == FindTheChampion(test_stats));
-    REQUIRE(24 == GuessTheHour(test_stats, 10));
+        expect(10_i == FindTheChampion(test_stats));
+        expect(24_i == GuessTheHour(test_stats, 10));
 
-    auto stats = GetInput(std::ifstream(INPUT));
-    //Print(stats);
+        auto stats = GetInput(std::ifstream(INPUT));
+        //Print(stats);
 
-    auto champ = FindTheChampion(stats);
-    MESSAGE(champ * GuessTheHour(stats, champ));
+        auto champ = FindTheChampion(stats);
+        std::cout << "2018-04.1: " << champ * GuessTheHour(stats, champ) << std::endl;
 
-    REQUIRE(4455 == Strategy2(test_stats));
-    MESSAGE(Strategy2(stats));
+        expect(4455_i == Strategy2(test_stats));
+        std::cout << "2018-04.2: " << Strategy2(stats) << std::endl;
+    };
+};
 
-}
+} //namespace

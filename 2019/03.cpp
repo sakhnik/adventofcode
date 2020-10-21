@@ -1,11 +1,13 @@
-#include <doctest/doctest.h>
 #include <limits>
 #include <vector>
 #include <string>
 #include <sstream>
 #include <cassert>
 #include <fstream>
+#include <boost/ut.hpp>
 
+
+namespace {
 
 struct Segment
 {
@@ -123,35 +125,39 @@ int FindClosestIntersection(const PathT &p1, const PathT &p2, FuncT func)
     return dist;
 }
 
-TEST_CASE(TEST_NAME)
-{
-    REQUIRE(6 == FindClosestIntersection(ParseInput("R8,U5,L5,D3"),
-                                         ParseInput("U7,R6,D4,L4"),
-                                         GetIntersection));
-    REQUIRE(159 == FindClosestIntersection(ParseInput("R75,D30,R83,U83,L12,D49,R71,U7,L72"),
-                                           ParseInput("U62,R66,U55,R34,D71,R55,D58,R83"),
-                                           GetIntersection));
-    REQUIRE(135 == FindClosestIntersection(ParseInput("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51"),
-                                           ParseInput("U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"),
-                                           GetIntersection));
+using namespace boost::ut;
 
-    std::ifstream ifs(INPUT);
-    std::string s;
-    std::getline(ifs, s);
-    auto p1 = ParseInput(s);
-    std::getline(ifs, s);
-    auto p2 = ParseInput(s);
-    MESSAGE(FindClosestIntersection(p1, p2, GetIntersection));
+suite s = [] {
+    "2019-03"_test = [] {
+        expect(6_i == FindClosestIntersection(ParseInput("R8,U5,L5,D3"),
+                                              ParseInput("U7,R6,D4,L4"),
+                                              GetIntersection));
+        expect(159_i == FindClosestIntersection(ParseInput("R75,D30,R83,U83,L12,D49,R71,U7,L72"),
+                                                ParseInput("U62,R66,U55,R34,D71,R55,D58,R83"),
+                                                GetIntersection));
+        expect(135_i == FindClosestIntersection(ParseInput("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51"),
+                                                ParseInput("U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"),
+                                                GetIntersection));
 
+        std::ifstream ifs(INPUT);
+        std::string s;
+        std::getline(ifs, s);
+        auto p1 = ParseInput(s);
+        std::getline(ifs, s);
+        auto p2 = ParseInput(s);
+        std::cout << "2019-03.1: " << FindClosestIntersection(p1, p2, GetIntersection) << std::endl;
 
-    REQUIRE(30 == FindClosestIntersection(ParseInput("R8,U5,L5,D3"),
-                                          ParseInput("U7,R6,D4,L4"),
-                                          GetIntersection2));
-    REQUIRE(610 == FindClosestIntersection(ParseInput("R75,D30,R83,U83,L12,D49,R71,U7,L72"),
-                                           ParseInput("U62,R66,U55,R34,D71,R55,D58,R83"),
-                                           GetIntersection2));
-    REQUIRE(410 == FindClosestIntersection(ParseInput("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51"),
-                                           ParseInput("U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"),
-                                           GetIntersection2));
-    MESSAGE(FindClosestIntersection(p1, p2, GetIntersection2));
-}
+        expect(30_i == FindClosestIntersection(ParseInput("R8,U5,L5,D3"),
+                                               ParseInput("U7,R6,D4,L4"),
+                                               GetIntersection2));
+        expect(610_i == FindClosestIntersection(ParseInput("R75,D30,R83,U83,L12,D49,R71,U7,L72"),
+                                                ParseInput("U62,R66,U55,R34,D71,R55,D58,R83"),
+                                                GetIntersection2));
+        expect(410_i == FindClosestIntersection(ParseInput("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51"),
+                                                ParseInput("U98,R91,D20,R16,D67,R40,U7,R15,U6,R7"),
+                                                GetIntersection2));
+        std::cout << "2019-03.2: " << FindClosestIntersection(p1, p2, GetIntersection2) << std::endl;
+    };
+};
+
+} //namespace;

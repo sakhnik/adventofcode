@@ -1,8 +1,9 @@
-#include <doctest/doctest.h>
 #include <array>
 #include <algorithm>
 #include <boost/range/irange.hpp>
+#include <boost/ut.hpp>
 
+namespace {
 
 template <typename PredT>
 bool IsPassword(int p, PredT pred)
@@ -62,17 +63,22 @@ int CountPasswords(int begin, int end, PredT pred)
     return std::count_if(std::begin(r), std::end(r), pred);
 }
 
-TEST_CASE(TEST_NAME)
-{
-    REQUIRE(IsPassword1(111111));
-    REQUIRE(!IsPassword1(223450));
-    REQUIRE(!IsPassword1(123789));
+using namespace boost::ut;
 
-    MESSAGE(CountPasswords(256310, 732736, IsPassword1));
+suite s = [] {
+    "2019-04"_test = [] {
+        expect(IsPassword1(111111));
+        expect(!IsPassword1(223450));
+        expect(!IsPassword1(123789));
 
-    REQUIRE(IsPassword2(112233));
-    REQUIRE(!IsPassword2(123444));
-    REQUIRE(IsPassword2(111122));
+        std::cout << "2019-04.1: " << CountPasswords(256310, 732736, IsPassword1) << std::endl;
 
-    MESSAGE(CountPasswords(256310, 732736, IsPassword2));
-}
+        expect(IsPassword2(112233));
+        expect(!IsPassword2(123444));
+        expect(IsPassword2(111122));
+
+        std::cout << "2019-04.2: " << CountPasswords(256310, 732736, IsPassword2) << std::endl;
+    };
+};
+
+} //namespace;

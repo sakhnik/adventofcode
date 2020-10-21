@@ -1,9 +1,11 @@
-#include <doctest/doctest.h>
 #include <unordered_set>
 #include <iostream>
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <boost/ut.hpp>
+
+namespace {
 
 template <typename FilterT>
 unsigned Count(const std::string &input)
@@ -51,15 +53,20 @@ private:
 	std::unordered_set<std::string> _words;
 };
 
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(Count<ExactFilter>("aa bb cc dd ee") == 1);
-	REQUIRE(Count<ExactFilter>("aa bb cc dd aa") == 0);
-	REQUIRE(Count<ExactFilter>("aa bb cc dd aaa") == 1);
+using namespace boost::ut;
 
-	std::ifstream ifs(INPUT);
-	std::string input((std::istreambuf_iterator<char>(ifs)),
-					  std::istreambuf_iterator<char>());
-	MESSAGE(Count<ExactFilter>(input));
-	MESSAGE(Count<AnagramFilter>(input));
-}
+suite s = [] {
+	"2017-04"_test = [] {
+		expect(1_u == Count<ExactFilter>("aa bb cc dd ee"));
+		expect(0_u == Count<ExactFilter>("aa bb cc dd aa"));
+		expect(1_u == Count<ExactFilter>("aa bb cc dd aaa"));
+
+		std::ifstream ifs(INPUT);
+		std::string input((std::istreambuf_iterator<char>(ifs)),
+						  std::istreambuf_iterator<char>());
+		std::cout << "2017-04.1: " << Count<ExactFilter>(input) << std::endl;
+		std::cout << "2017-04.2: " << Count<AnagramFilter>(input) << std::endl;
+	};
+};
+
+} //namespace;
