@@ -1,4 +1,3 @@
-#include <doctest/doctest.h>
 #include <unordered_map>
 #include <algorithm>
 #include <numeric>
@@ -6,7 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
-
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -92,12 +91,12 @@ unsigned CheckWeight(const TreeT &tree, const std::string &node)
 	return it->second.weight + total;
 }
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-	const char *const test =
-		R"(pbga (66)
+suite s = [] {
+	"2017-07"_test = [] {
+		const char *const test =
+			R"(pbga (66)
 xhth (57)
 ebii (61)
 havc (66)
@@ -111,28 +110,33 @@ ugml (68) -> gyxo, ebii, jptl
 gyxo (61)
 cntj (57))";
 
-	auto testTree = ParseInput(std::istringstream(test));
-	REQUIRE(FindRoot(testTree) == "tknk");
-	try
-	{
-		CheckWeight(testTree, FindRoot(testTree));
-		REQUIRE(!"Should get here");
-	}
-	catch (unsigned res)
-	{
-		REQUIRE(res == 60);
-	}
+		using namespace std::string_literals;
 
-	std::ifstream ifs(INPUT);
-	auto tree = ParseInput(ifs);
-	auto root = FindRoot(tree);
-	MESSAGE(root);
-	try
-	{
-		CheckWeight(tree, root);
-	}
-	catch (unsigned res)
-	{
-		MESSAGE(res);
-	}
-}
+		auto testTree = ParseInput(std::istringstream(test));
+		expect(eq("tknk"s, FindRoot(testTree)));
+		try
+		{
+			CheckWeight(testTree, FindRoot(testTree));
+			expect(!"Should get here");
+		}
+		catch (unsigned res)
+		{
+			expect(60_u == res);
+		}
+
+		std::ifstream ifs(INPUT);
+		auto tree = ParseInput(ifs);
+		auto root = FindRoot(tree);
+		std::cout << "2017-07.1: " << root << std::endl;
+		try
+		{
+			CheckWeight(tree, root);
+		}
+		catch (unsigned res)
+		{
+			std::cout << "2017-07.2: " << res << std::endl;
+		}
+	};
+};
+
+} //namespace;

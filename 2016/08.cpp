@@ -1,10 +1,10 @@
-#include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <cassert>
 #include <numeric>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -85,27 +85,31 @@ private:
 	}
 };
 
+using namespace boost::ut;
+using namespace std::string_literals;
+
+suite s = [] {
+	"2016-08"_test = [] {
+		Screen test{7, 3};
+		expect(eq(test.Dump(), ".......\n.......\n.......\n"s));
+		test.Execute("rect 3x2");
+		expect(eq(test.Dump(), "###....\n###....\n.......\n"s));
+		test.Execute("rotate column x=1 by 1");
+		expect(eq(test.Dump(), "#.#....\n###....\n.#.....\n"s));
+		test.Execute("rotate row y=0 by 4");
+		expect(eq(test.Dump(), "....#.#\n###....\n.#.....\n"s));
+		test.Execute("rotate column x=1 by 1");
+		expect(eq(test.Dump(), ".#..#.#\n#.#....\n.#.....\n"s));
+
+		std::ifstream ifs(INPUT);
+		Screen screen{50, 6};
+		std::string line;
+		while (getline(ifs, line))
+			screen.Execute(line);
+
+		std::cout << "2016-08.1: " << screen.Count() << std::endl;
+		std::cout << "2016-08.2:\n" << screen.Dump() << std::endl;
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	Screen test{7, 3};
-	REQUIRE(test.Dump() == ".......\n.......\n.......\n");
-	test.Execute("rect 3x2");
-	REQUIRE(test.Dump() == "###....\n###....\n.......\n");
-	test.Execute("rotate column x=1 by 1");
-	REQUIRE(test.Dump() == "#.#....\n###....\n.#.....\n");
-	test.Execute("rotate row y=0 by 4");
-	REQUIRE(test.Dump() == "....#.#\n###....\n.#.....\n");
-	test.Execute("rotate column x=1 by 1");
-	REQUIRE(test.Dump() == ".#..#.#\n#.#....\n.#.....\n");
-
-	std::ifstream ifs(INPUT);
-	Screen screen{50, 6};
-	std::string line;
-	while (getline(ifs, line))
-		screen.Execute(line);
-
-	MESSAGE(screen.Count());
-	MESSAGE(screen.Dump());
-}

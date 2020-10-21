@@ -1,9 +1,13 @@
-#include <doctest/doctest.h>
 #include <unordered_map>
 #include <iostream>
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <boost/ut.hpp>
+
+namespace {
+
+using namespace boost::ut;
 
 struct Result
 {
@@ -54,7 +58,7 @@ Result Calculate(std::istream &is)
                 continue;
         }
         else
-            REQUIRE(!"Condition not implemented");
+            expect(!"Condition not implemented");
 
         if (op == "inc")
         {
@@ -65,7 +69,7 @@ Result Calculate(std::istream &is)
             registers[reg1] -= num;
         }
         else
-            REQUIRE(!"Operation not implemented");
+            expect(!"Operation not implemented");
 
         if (result.max_ever < registers[reg1])
             result.max_ever = registers[reg1];
@@ -82,17 +86,20 @@ Result Calculate(std::istream &&is)
     return Calculate(is);
 }
 
-TEST_CASE(TEST_NAME)
-{
-    auto test = Calculate(std::istringstream(R"(b inc 5 if a > 1
+suite s = [] {
+    "2017-08"_test = [] {
+        auto test = Calculate(std::istringstream(R"(b inc 5 if a > 1
 a inc 1 if b < 5
 c dec -10 if a >= 1
 c inc -20 if c == 10)"));
-    REQUIRE(test.max == 1);
-    REQUIRE(test.max_ever == 10);
+        expect(1_i == test.max);
+        expect(10_i == test.max_ever);
 
-    std::ifstream ifs(INPUT);
-    auto res = Calculate(ifs);
-    MESSAGE(res.max);
-    MESSAGE(res.max_ever);
-}
+        std::ifstream ifs(INPUT);
+        auto res = Calculate(ifs);
+        std::cout << "2017-08.1: " << res.max << std::endl;
+        std::cout << "2017-08.2: " << res.max_ever << std::endl;
+    };
+};
+
+} //namespace;

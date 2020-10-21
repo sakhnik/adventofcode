@@ -1,10 +1,10 @@
-#include <doctest/doctest.h>
 #include <sstream>
 #include <unordered_map>
 #include <fstream>
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -72,13 +72,15 @@ public:
 
     void StepDone(char s)
     {
+        using namespace boost::ut;
+
         auto it = std::find(begin(_todo) + _done, end(_todo), s);
-        REQUIRE(it - begin(_todo) <= _reported);
+        expect(it - begin(_todo) <= static_cast<ssize_t>(_reported));
 
         // The task is done, put it to the left.
         std::swap(_todo[_done], *it);
         ++_done;
-        REQUIRE(_done <= _reported);
+        expect(_done <= _reported);
 
         // Update the dependent steps and resort.
         for (auto d : _deps)
@@ -168,23 +170,27 @@ int Simulate(int concurrency, int time_add, const DepsT &deps)
     return time;
 }
 
-} //namespace;
+using namespace boost::ut;
+using namespace std::string_literals;
 
-TEST_CASE(TEST_NAME)
-{
-    const auto TEST = R"(Step C must be finished before step A can begin.
+suite s = [] {
+    "2018-07"_test = [] {
+        const auto TEST = R"(Step C must be finished before step A can begin.
 Step C must be finished before step F can begin.
 Step A must be finished before step B can begin.
 Step A must be finished before step D can begin.
 Step B must be finished before step E can begin.
 Step D must be finished before step E can begin.
 Step F must be finished before step E can begin.)";
-    auto test = GetInput(std::istringstream(TEST));
-    REQUIRE("CABDFE" == SortSteps(test));
+        auto test = GetInput(std::istringstream(TEST));
+        expect(eq("CABDFE"s, SortSteps(test)));
 
-    auto input = GetInput(std::ifstream(INPUT));
-    MESSAGE(SortSteps(input));
+        auto input = GetInput(std::ifstream(INPUT));
+        std::cout << "2018-07.1: " << SortSteps(input) << std::endl;
 
-    REQUIRE(15 == Simulate(2, 0, test));
-    MESSAGE(Simulate(5, 60, input));
-}
+        expect(15_i == Simulate(2, 0, test));
+        std::cout << "2018-07.2: " << Simulate(5, 60, input) << std::endl;
+    };
+};
+
+} //namespace;

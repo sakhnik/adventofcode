@@ -1,8 +1,8 @@
-#include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cassert>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -114,21 +114,24 @@ int Solve(std::istream &&is, FuncT func)
 	return count;
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+	"2016-07"_test = [] {
+		expect(IsTls("abba[mnop]qrst"));
+		expect(!IsTls("abcd[bddb]xyyx"));
+		expect(!IsTls("aaaa[qwer]tyui"));
+		expect(IsTls("ioxxoj[asdfgh]zxcvbn"));
+
+		std::cout << "2016-07.1: " << Solve(std::ifstream{INPUT}, IsTls) << std::endl;
+
+		expect(IsSsl("aba[bab]xyz"));
+		expect(!IsSsl("xyx[xyx]xyx"));
+		expect(IsSsl("aaa[kek]eke"));
+		expect(IsSsl("zazbz[bzb]cdb"));
+
+		std::cout << "2016-07.2: " << Solve(std::ifstream{INPUT}, IsSsl) << std::endl;
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(IsTls("abba[mnop]qrst"));
-	REQUIRE(!IsTls("abcd[bddb]xyyx"));
-	REQUIRE(!IsTls("aaaa[qwer]tyui"));
-	REQUIRE(IsTls("ioxxoj[asdfgh]zxcvbn"));
-
-	MESSAGE(Solve(std::ifstream{INPUT}, IsTls));
-
-	REQUIRE(IsSsl("aba[bab]xyz"));
-	REQUIRE(!IsSsl("xyx[xyx]xyx"));
-	REQUIRE(IsSsl("aaa[kek]eke"));
-	REQUIRE(IsSsl("zazbz[bzb]cdb"));
-
-	MESSAGE(Solve(std::ifstream{INPUT}, IsSsl));
-}

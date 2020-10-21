@@ -1,7 +1,7 @@
-#include <doctest/doctest.h>
 #include <vector>
 #include <fstream>
 #include <iterator>
+#include <boost/ut.hpp>
 
 namespace {
 
@@ -82,14 +82,17 @@ int SumValues(const LicenseT &lic)
     return ret;
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+    "2018-08"_test = [] {
+        expect(138_i == SumMeta({2, 3, 0, 3, 10, 11, 12, 1, 1, 0, 1, 99, 2, 1, 1, 2}));
+        auto license = ReadLicense(std::ifstream{INPUT});
+        std::cout << "2018-08.1: " << SumMeta(license) << std::endl;
+
+        expect(66_i == SumValues({2, 3, 0, 3, 10, 11, 12, 1, 1, 0, 1, 99, 2, 1, 1, 2}));
+        std::cout << "2018-08.2: " << SumValues(license) << std::endl;
+    };
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    REQUIRE(138 == SumMeta({2, 3, 0, 3, 10, 11, 12, 1, 1, 0, 1, 99, 2, 1, 1, 2}));
-    auto license = ReadLicense(std::ifstream{INPUT});
-    MESSAGE(SumMeta(license));
-
-    REQUIRE(66 == SumValues({2, 3, 0, 3, 10, 11, 12, 1, 1, 0, 1, 99, 2, 1, 1, 2}));
-    MESSAGE(SumValues(license));
-}
