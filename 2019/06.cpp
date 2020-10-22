@@ -23,7 +23,7 @@ public:
             auto parent = line.substr(0, sep);
             auto obj = line.substr(sep + 1);
             auto [it, inserted] = _map.emplace(obj, Data{parent});
-            assert(inserted);
+            boost::ut::expect(inserted);
         }
     }
 

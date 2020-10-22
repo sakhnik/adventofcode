@@ -10,18 +10,21 @@ FetchContent_MakeAvailable(ut)
 
 project(AdventOfCode)
 find_package(Threads)
+enable_testing()
 
 list(APPEND sources main.cpp)
 
 foreach(src RANGE 1 20)
     string(REGEX REPLACE "^(.)$" "0\\1" zero_src ${src})
     list(APPEND sources 2015/${zero_src}.cpp)
+    add_test(NAME 2015-${zero_src} COMMAND ${CMAKE_BUILD_DIRECTORY}/aoc "2015-${zero_src}*")
 endforeach()
 
 foreach(year RANGE 2016 2019)
     foreach(src RANGE 1 8)
         string(REGEX REPLACE "^(.)$" "0\\1" zero_src ${src})
         list(APPEND sources ${year}/${zero_src}.cpp)
+        add_test(NAME ${year}-${zero_src} COMMAND ${CMAKE_BUILD_DIRECTORY}/aoc "${year}-${zero_src}*")
     endforeach()
 endforeach()
 
