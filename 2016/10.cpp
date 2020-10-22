@@ -1,11 +1,11 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <regex>
 #include <cassert>
 #include <boost/lexical_cast.hpp>
+
+#include "../test.hpp"
 
 using boost::lexical_cast;
 
@@ -197,30 +197,33 @@ int Solve2(FactoryT &factory)
 	return outs[0] * outs[1] * outs[2];
 }
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-	const char *const test =
-R"(value 5 goes to bot 2
+suite s = [] {
+	"2016-10"_test = [] {
+		const char *const test =
+			R"(value 5 goes to bot 2
 bot 2 gives low to bot 1 and high to bot 0
 value 3 goes to bot 1
 bot 1 gives low to output 1 and high to bot 0
 bot 0 gives low to output 2 and high to output 0
 value 2 goes to bot 2)";
 
-	auto f = Parse(std::istringstream{test});
+		auto f = Parse(std::istringstream{test});
 
-	FactoryT fref = {
-		{ {}, {{Dest::OUTPUT, 2}, {Dest::OUTPUT, 0}} },
-		{ {3}, {{Dest::OUTPUT, 1}, {Dest::BOT, 0}} },
-		{ {5,2}, {{Dest::BOT, 1}, {Dest::BOT, 0}} },
+		FactoryT fref = {
+			{{}, {{Dest::OUTPUT, 2}, {Dest::OUTPUT, 0}}},
+			{{3}, {{Dest::OUTPUT, 1}, {Dest::BOT, 0}}},
+			{{5, 2}, {{Dest::BOT, 1}, {Dest::BOT, 0}}},
+		};
+		expect(eq(Dump(f), Dump(fref)));
+		expect(2_i == Solve1(f, 2, 5));
+
+		auto factory = Parse(std::ifstream{INPUT});
+		Printer::Print(__FILE__, "1", Solve1(factory, 17, 61));
+
+		Printer::Print(__FILE__, "2", Solve2(factory));
 	};
-	REQUIRE(Dump(f) == Dump(fref));
-	REQUIRE(Solve1(f, 2, 5) == 2);
+};
 
-	auto factory = Parse(std::ifstream{INPUT});
-	MESSAGE(Solve1(factory, 17, 61));
-
-	MESSAGE(Solve2(factory));
-}
+} //namespace;

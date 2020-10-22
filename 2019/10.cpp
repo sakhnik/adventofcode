@@ -1,14 +1,15 @@
-#include <doctest/doctest.h>
 #include <vector>
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <map>
-#include <iostream>
 #include <cmath>
 #include <algorithm>
 #include <list>
 
+#include "../test.hpp"
+
+namespace {
 
 const double EPS = 0.00001;
 
@@ -23,8 +24,6 @@ struct Pos
 };
 
 using MapT = std::vector<Pos>;
-
-namespace {
 
 MapT GetInput(std::istream &&is)
 {
@@ -117,45 +116,46 @@ int FindLocation(const MapT &map, Pos &pos)
     return max_count;
 }
 
-} //namespace;
+using namespace boost::ut;
+using namespace std::string_literals;
 
-TEST_CASE(TEST_NAME)
-{
-    {
-        auto b = CalcBearing({0, 0}, {0, -1});
-        REQUIRE(b == Bearing{0.});
-        b = CalcBearing({0, 0}, {1, -1});
-        REQUIRE(b == Bearing{45});
-        b = CalcBearing({0, 0}, {1, 0});
-        REQUIRE(b == Bearing{90});
-        b = CalcBearing({0, 0}, {1, 1});
-        REQUIRE(b == Bearing{135});
-        b = CalcBearing({0, 0}, {0, 1});
-        REQUIRE(b == Bearing{180});
-        b = CalcBearing({0, 0}, {-1, 1});
-        REQUIRE(b == Bearing{225});
-        b = CalcBearing({0, 0}, {-1, 0});
-        REQUIRE(b == Bearing{270});
-        b = CalcBearing({0, 0}, {-1, -1});
-        REQUIRE(b == Bearing{315});
-    }
+suite s = [] {
+    "2019-10"_test = [] {
+        {
+            auto b = CalcBearing({0, 0}, {0, -1});
+            expect(eq(b, Bearing{0.}));
+            b = CalcBearing({0, 0}, {1, -1});
+            expect(eq(b, Bearing{45}));
+            b = CalcBearing({0, 0}, {1, 0});
+            expect(eq(b, Bearing{90}));
+            b = CalcBearing({0, 0}, {1, 1});
+            expect(eq(b, Bearing{135}));
+            b = CalcBearing({0, 0}, {0, 1});
+            expect(eq(b, Bearing{180}));
+            b = CalcBearing({0, 0}, {-1, 1});
+            expect(eq(b, Bearing{225}));
+            b = CalcBearing({0, 0}, {-1, 0});
+            expect(eq(b, Bearing{270}));
+            b = CalcBearing({0, 0}, {-1, -1});
+            expect(eq(b, Bearing{315}));
+        }
 
-    {
-        const char *const s = R"(
+        {
+            const char *const s = R"(
 .#..#
 .....
 #####
 ....#
 ...##)";
-        auto map = GetInput(std::istringstream{s});
-        Pos pos;
-        REQUIRE(8 == FindLocation(map, pos));
-        REQUIRE(pos.x == 3);
-        REQUIRE(pos.y == 4);
-    }
+            auto map = GetInput(std::istringstream{s});
+            Pos pos;
+            expect(8_i == FindLocation(map, pos));
+            expect(3_i == pos.x);
+            expect(4_i == pos.y);
+        }
 
-    {
-        const char *const s = R"(
+        {
+            const char *const s = R"(
 ......#.#.
 #..#.#....
 ..#######.
@@ -166,15 +166,15 @@ TEST_CASE(TEST_NAME)
 .##.#..###
 ##...#..#.
 .#....####)";
-        auto map = GetInput(std::istringstream{s});
-        Pos pos;
-        REQUIRE(33 == FindLocation(map, pos));
-        REQUIRE(pos.x == 5);
-        REQUIRE(pos.y == 8);
-    }
+            auto map = GetInput(std::istringstream{s});
+            Pos pos;
+            expect(33_i == FindLocation(map, pos));
+            expect(5_i == pos.x);
+            expect(8_i == pos.y);
+        }
 
-    {
-        const char *const s = R"(
+        {
+            const char *const s = R"(
 #.#...#.#.
 .###....#.
 .#....#...
@@ -185,15 +185,15 @@ TEST_CASE(TEST_NAME)
 ..##....##
 ......#...
 .####.###.)";
-        auto map = GetInput(std::istringstream{s});
-        Pos pos;
-        REQUIRE(35 == FindLocation(map, pos));
-        REQUIRE(pos.x == 1);
-        REQUIRE(pos.y == 2);
-    }
+            auto map = GetInput(std::istringstream{s});
+            Pos pos;
+            expect(35_i == FindLocation(map, pos));
+            expect(1_i == pos.x);
+            expect(2_i == pos.y);
+        }
 
-    {
-        const char *const s = R"(
+        {
+            const char *const s = R"(
 .#..#..###
 ####.###.#
 ....###.#.
@@ -204,15 +204,15 @@ TEST_CASE(TEST_NAME)
 #..#.#.###
 .##...##.#
 .....#.#..)";
-        auto map = GetInput(std::istringstream{s});
-        Pos pos;
-        REQUIRE(41 == FindLocation(map, pos));
-        REQUIRE(pos.x == 6);
-        REQUIRE(pos.y == 3);
-    }
+            auto map = GetInput(std::istringstream{s});
+            Pos pos;
+            expect(41_i == FindLocation(map, pos));
+            expect(6_i == pos.x);
+            expect(3_i == pos.y);
+        }
 
-    {
-        const char *const s = R"(
+        {
+            const char *const s = R"(
 .#..##.###...#######
 ##.############..##.
 .#.######.########.#
@@ -233,78 +233,80 @@ TEST_CASE(TEST_NAME)
 .#.#.###########.###
 #.#.#.#####.####.###
 ###.##.####.##.#..##)";
-        auto map = GetInput(std::istringstream{s});
-        Pos pos;
-        REQUIRE(210 == FindLocation(map, pos));
-        REQUIRE(pos.x == 11);
-        REQUIRE(pos.y == 13);
-    }
-
-    // task 1
-    auto map = GetInput(std::ifstream{INPUT});
-    Pos pos;
-    MESSAGE(FindLocation(map, pos));
-
-    auto calcD = [](Pos a, Pos b) {
-        auto dx = b.x - a.x;
-        auto dy = b.y - a.y;
-        return dx * dx + dy * dy;
-    };
-
-    struct Info
-    {
-        Pos pos;
-        Bearing b;
-        int dist;
-    };
-
-    std::list<Info> queue;
-    for (Pos p : map)
-    {
-        if (p == pos)
-        {
-            continue;
+            auto map = GetInput(std::istringstream{s});
+            Pos pos;
+            expect(210_i == FindLocation(map, pos));
+            expect(11_i == pos.x);
+            expect(13_i == pos.y);
         }
-        queue.push_back({p, CalcBearing(pos, p), calcD(pos, p)});
-    }
 
-    queue.sort(
-        [&](Info &a, Info &b) {
-            if (a.b < b.b)
-            {
-                return true;
-            }
-            if (a.b == b.b)
-            {
-                return a.dist < b.dist;
-            }
-            return false;
-        });
+        // task 1
+        auto map = GetInput(std::ifstream{INPUT});
+        Pos pos;
+        Printer::Print(__FILE__, "1", FindLocation(map, pos));
 
-    int count{200};
-    while (count > 0)
-    {
-        Bearing last_b{-1};
-        for (auto it = queue.begin(); it != queue.end(); )
+        auto calcD = [](Pos a, Pos b) {
+            auto dx = b.x - a.x;
+            auto dy = b.y - a.y;
+            return dx * dx + dy * dy;
+        };
+
+        struct Info
         {
-            auto b = it->b;
-            if (b == last_b)
+            Pos pos;
+            Bearing b;
+            int dist;
+        };
+
+        std::list<Info> queue;
+        for (Pos p : map)
+        {
+            if (p == pos)
             {
-                // skip
-                ++it;
+                continue;
             }
-            else
-            {
-                if (--count <= 0)
+            queue.push_back({p, CalcBearing(pos, p), calcD(pos, p)});
+        }
+
+        queue.sort(
+            [&](Info &a, Info &b) {
+                if (a.b < b.b)
                 {
-                    MESSAGE(it->pos.x * 100 + it->pos.y);
-                    break;
+                    return true;
                 }
+                if (a.b == b.b)
+                {
+                    return a.dist < b.dist;
+                }
+                return false;
+            });
 
-                it = queue.erase(it);
-                last_b = b;
+        int count{200};
+        while (count > 0)
+        {
+            Bearing last_b{-1};
+            for (auto it = queue.begin(); it != queue.end();)
+            {
+                auto b = it->b;
+                if (b == last_b)
+                {
+                    // skip
+                    ++it;
+                }
+                else
+                {
+                    if (--count <= 0)
+                    {
+                        Printer::Print(__FILE__, "2", it->pos.x * 100 + it->pos.y);
+                        break;
+                    }
+
+                    it = queue.erase(it);
+                    last_b = b;
+                }
             }
         }
-    }
+    };
+};
 
-}
+} //namespace;

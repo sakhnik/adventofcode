@@ -1,7 +1,7 @@
-#include <doctest/doctest.h>
-#include <iostream>
-
+#include "../test.hpp"
 #include "KnotHash.h"
+
+namespace {
 
 unsigned Count(unsigned size, const std::vector<unsigned> &lengths)
 {
@@ -31,19 +31,25 @@ std::string Hash(const std::string &input)
 	return hash;
 }
 
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(Count(5, {3, 4, 1, 5}) == 12);
-	REQUIRE(Hash("") == "a2582a3a0e66e6e86e3812dcb672a272");
-	REQUIRE(Hash("AoC 2017") == "33efeb34ea91902bb2f59c9920caa6cd");
-	REQUIRE(Hash("1,2,3") == "3efbe78a8d82f29979031a4aa0b16a9d");
-	REQUIRE(Hash("1,2,4") == "63960835bcdc130f0b66d7ff4f6a5a8e");
+using namespace boost::ut;
+using namespace std::string_literals;
 
-	unsigned lengths[] = {
-		225,171,131,2,35,5,0,13,1,246,54,97,255,98,254,110
+suite s = [] {
+	"2017-10"_test = [] {
+		expect(12_u == Count(5, {3, 4, 1, 5}));
+		expect(eq(Hash(""), "a2582a3a0e66e6e86e3812dcb672a272"s));
+		expect(eq(Hash("AoC 2017"), "33efeb34ea91902bb2f59c9920caa6cd"s));
+		expect(eq(Hash("1,2,3"), "3efbe78a8d82f29979031a4aa0b16a9d"s));
+		expect(eq(Hash("1,2,4"), "63960835bcdc130f0b66d7ff4f6a5a8e"s));
+
+		unsigned lengths[] = {
+			225, 171, 131, 2, 35, 5, 0, 13, 1, 246, 54, 97, 255, 98, 254, 110
+		};
+
+		Printer::Print(__FILE__, "1", Count(256, {lengths, lengths + std::size(lengths)}));
+
+		Printer::Print(__FILE__, "2", Hash("225,171,131,2,35,5,0,13,1,246,54,97,255,98,254,110"));
 	};
+};
 
-	MESSAGE(Count(256, {lengths, lengths + std::size(lengths)}));
-
-	MESSAGE(Hash("225,171,131,2,35,5,0,13,1,246,54,97,255,98,254,110"));
-}
+} //namespace;

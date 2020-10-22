@@ -1,9 +1,10 @@
-#include <doctest/doctest.h>
 #include <vector>
 #include <sstream>
-#include <iostream>
 #include <fstream>
 #include <limits>
+#include <sstream>
+
+#include "../test.hpp"
 
 // The idea is to search for the configuration with the smallest
 // bounding box. This may fail if there is a rogue light, not participating
@@ -135,11 +136,12 @@ private:
     std::vector<Light> _lights;
 };
 
-} //namespace;
+using namespace boost::ut;
+using namespace std::string_literals;
 
-TEST_CASE(TEST_NAME)
-{
-    const auto TEST = R"(position=< 9,  1> velocity=< 0,  2>
+suite s = [] {
+    "2018-10"_test = [] {
+        const auto TEST = R"(position=< 9,  1> velocity=< 0,  2>
 position=< 7,  0> velocity=<-1,  0>
 position=< 3, -2> velocity=<-1,  1>
 position=< 6, 10> velocity=<-2, -1>
@@ -170,12 +172,12 @@ position=<-6,  0> velocity=< 2,  0>
 position=< 5,  9> velocity=< 1, -2>
 position=<14,  7> velocity=<-2,  0>
 position=<-3,  6> velocity=< 2, -1>)";
-    Sky test(std::istringstream{TEST});
+        Sky test(std::istringstream{TEST});
 
-    std::ostringstream oss;
-    REQUIRE(3 == test.SearchMin());
-    test.Print(oss);
-    REQUIRE(oss.str() == R"(#...#..###
+        std::ostringstream oss;
+        expect(3_i == test.SearchMin());
+        test.Print(oss);
+        expect(eq(oss.str(), R"(#...#..###
 #...#...#.
 #...#...#.
 #####...#.
@@ -183,9 +185,14 @@ position=<-3,  6> velocity=< 2, -1>)";
 #...#...#.
 #...#...#.
 #...#..###
-)");
+)"s));
 
-    Sky input(std::ifstream{INPUT});
-    MESSAGE(input.SearchMin());
-    input.Print(std::cout);
-}
+        Sky input(std::ifstream{INPUT});
+        Printer::Print(__FILE__, "1", input.SearchMin());
+        std::ostringstream oss2;
+        input.Print(oss2);
+        Printer::Print(__FILE__, "2", oss2.str());
+    };
+};
+
+} //namespace;
