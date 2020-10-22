@@ -1,9 +1,9 @@
-#include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
 #include <cassert>
 #include <algorithm>
 #include <cstring>
+#include "../test.hpp"
 
 namespace {
 
@@ -48,10 +48,11 @@ std::pair<size_t, const char *> CountPattern(const char *s)
 {
 	int span{0}, count{0};
 	int fields = sscanf(s, "(%dx%d)", &span, &count);
-	REQUIRE(fields == 2);
+	using namespace boost::ut;
+	expect(fields == 2_i);
 
 	const char *rbr = strchr(s, ')');
-	REQUIRE(rbr);
+	expect(rbr);
 	++rbr;
 
 	const char *send = rbr + span;
@@ -87,29 +88,32 @@ size_t Version2(const std::string &s)
 	return Count(s.data(), s.data() + s.size());
 }
 
+using namespace boost::ut;
+using namespace std::string_literals;
+
+suite s = [] {
+	"2016-09"_test = [] {
+		expect(eq(Decompress("ADVENT"), "ADVENT"s));
+		expect(eq(Decompress("A(1x5)BC"), "ABBBBBC"s));
+		expect(eq(Decompress("(3x3)XYZ"), "XYZXYZXYZ"s));
+		expect(eq(Decompress("A(2x2)BCD(2x2)EFG"), "ABCBCDEFEFG"s));
+		expect(eq(Decompress("(6x1)(1x3)A"), "(1x3)A"s));
+		expect(eq(Decompress("X(8x2)(3x3)ABCY"), "X(3x3)ABC(3x3)ABCY"s));
+
+		std::ifstream ifs(INPUT);
+		std::string s;
+		getline(ifs, s, char{-1});
+
+		auto d = Decompress(s);
+		Printer::Print(__FILE__, "1", std::count_if(begin(d), end(d), [](char c) { return !isspace(c); }));
+
+		expect(9_u == Version2("(3x3)XYZ"));
+		expect(20_u == Version2("X(8x2)(3x3)ABCY"));
+		expect(241920_u == Version2("(27x12)(20x12)(13x14)(7x10)(1x12)A"));
+		expect(445_u == Version2("(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN"));
+
+		Printer::Print(__FILE__, "2", Version2(s));
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(Decompress("ADVENT") == "ADVENT");
-	REQUIRE(Decompress("A(1x5)BC") == "ABBBBBC");
-	REQUIRE(Decompress("(3x3)XYZ") == "XYZXYZXYZ");
-	REQUIRE(Decompress("A(2x2)BCD(2x2)EFG") == "ABCBCDEFEFG");
-	REQUIRE(Decompress("(6x1)(1x3)A") == "(1x3)A");
-	REQUIRE(Decompress("X(8x2)(3x3)ABCY") == "X(3x3)ABC(3x3)ABCY");
-
-	std::ifstream ifs(INPUT);
-	std::string s;
-	getline(ifs, s, char{-1});
-
-	auto d = Decompress(s);
-	MESSAGE(std::count_if(begin(d), end(d), [](char c) { return !isspace(c); }));
-
-
-	REQUIRE(Version2("(3x3)XYZ") == 9);
-	REQUIRE(Version2("X(8x2)(3x3)ABCY") == 20);
-	REQUIRE(Version2("(27x12)(20x12)(13x14)(7x10)(1x12)A") == 241920);
-	REQUIRE(Version2("(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN") == 445);
-
-	MESSAGE(Version2(s));
-}

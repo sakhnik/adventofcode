@@ -1,6 +1,8 @@
-#include <doctest/doctest.h>
 #include <iostream>
 #include <fstream>
+#include "../test.hpp"
+
+namespace {
 
 struct Result
 {
@@ -18,6 +20,11 @@ struct Result
 	unsigned score;
 	unsigned garbage;
 };
+
+std::ostream& operator<<(std::ostream &os, const Result &r)
+{
+	return os << "(" << r.score << "," << r.garbage << ")";
+}
 
 Result Count(const char *s)
 {
@@ -49,20 +56,25 @@ Result Count(const char *s)
 	}
 }
 
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(Count("{}") == Result(1, 0));
-	REQUIRE(Count("{{{}}}") == Result(6, 0));
-	REQUIRE(Count("{{},{}}") == Result(5, 0));
-	REQUIRE(Count("{{{},{},{{}}}}") == Result(16, 0));
-	REQUIRE(Count("{<a>,<a>,<a>,<a>}") == Result(1, 4));
-	REQUIRE(Count("{{<ab>},{<ab>},{<ab>},{<ab>}}") == Result(9, 8));
-	REQUIRE(Count("{{<!!>},{<!!>},{<!!>},{<!!>}}") == Result(9, 0));
-	REQUIRE(Count("{{<a!>},{<a!>},{<a!>},{<ab>}}").score == 3);
+using namespace boost::ut;
 
-	std::ifstream ifs(INPUT);
-	std::string str((std::istreambuf_iterator<char>(ifs)),
-					std::istreambuf_iterator<char>());
-	MESSAGE(Count(str.c_str()).score);
-	MESSAGE(Count(str.c_str()).garbage);
-}
+suite s = [] {
+	"2017-09"_test = [] {
+		expect(eq(Count("{}"), Result(1, 0)));
+		expect(eq(Count("{{{}}}"), Result(6, 0)));
+		expect(eq(Count("{{},{}}"), Result(5, 0)));
+		expect(eq(Count("{{{},{},{{}}}}"), Result(16, 0)));
+		expect(eq(Count("{<a>,<a>,<a>,<a>}"), Result(1, 4)));
+		expect(eq(Count("{{<ab>},{<ab>},{<ab>},{<ab>}}"), Result(9, 8)));
+		expect(eq(Count("{{<!!>},{<!!>},{<!!>},{<!!>}}"), Result(9, 0)));
+		expect(Count("{{<a!>},{<a!>},{<a!>},{<ab>}}").score == 3_u);
+
+		std::ifstream ifs(INPUT);
+		std::string str((std::istreambuf_iterator<char>(ifs)),
+						std::istreambuf_iterator<char>());
+		Printer::Print(__FILE__, "1", Count(str.c_str()).score);
+		Printer::Print(__FILE__, "2", Count(str.c_str()).garbage);
+	};
+};
+
+} //namespace;
