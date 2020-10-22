@@ -2,10 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 // Return 0 if not real

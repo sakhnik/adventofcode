@@ -1,10 +1,7 @@
 #include <fstream>
 #include <sstream>
 #include <cassert>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 bool IsAbba(const char *s)

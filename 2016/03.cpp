@@ -1,10 +1,7 @@
 #include <fstream>
 #include <vector>
 #include <cassert>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 bool IsTriangle(int a, int b, int c)

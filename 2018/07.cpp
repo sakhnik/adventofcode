@@ -3,10 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 struct Dep

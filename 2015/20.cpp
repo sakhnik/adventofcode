@@ -1,8 +1,5 @@
 #include <vector>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 size_t Find(size_t target, int mul, int max_repeat)

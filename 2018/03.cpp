@@ -2,10 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 struct Point

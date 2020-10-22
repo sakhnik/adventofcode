@@ -2,10 +2,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 using namespace boost::ut;

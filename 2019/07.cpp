@@ -3,10 +3,7 @@
 #include <numeric>
 #include <algorithm>
 #include <fstream>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 using namespace boost::ut;

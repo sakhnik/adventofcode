@@ -4,10 +4,7 @@
 #include <sstream>
 #include <cassert>
 #include <fstream>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 struct Segment

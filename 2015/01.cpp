@@ -2,10 +2,7 @@
 #include <fstream>
 #include <algorithm>
 #include <fstream>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 int Count(const std::string_view &s)

@@ -1,9 +1,6 @@
 #include <string>
 #include <openssl/md5.h>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 bool HasFiveZeros(unsigned char *md5)

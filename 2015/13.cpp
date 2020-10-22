@@ -3,10 +3,7 @@
 #include <unordered_map>
 #include <numeric>
 #include <algorithm>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 class Table

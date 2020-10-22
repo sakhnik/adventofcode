@@ -1,10 +1,7 @@
 #include <sstream>
 #include <fstream>
 #include <algorithm>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 size_t CountEscape(std::istream &&is)

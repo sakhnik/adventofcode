@@ -1,10 +1,7 @@
 #include <fstream>
 #include <vector>
 #include <numeric>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 using LightT = int;

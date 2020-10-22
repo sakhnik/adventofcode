@@ -3,10 +3,7 @@
 #include <vector>
 #include <cassert>
 #include <numeric>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 class Screen

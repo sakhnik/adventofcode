@@ -1,10 +1,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 class Recipe

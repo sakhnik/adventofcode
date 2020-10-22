@@ -1,10 +1,7 @@
 #include <vector>
 #include <fstream>
 #include <iterator>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 using LicenseT = std::vector<int>;

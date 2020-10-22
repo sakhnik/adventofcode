@@ -4,10 +4,7 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 struct Data

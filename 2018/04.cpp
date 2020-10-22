@@ -1,10 +1,7 @@
 #include <regex>
 #include <unordered_map>
 #include <fstream>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 struct Guard

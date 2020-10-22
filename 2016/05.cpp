@@ -2,10 +2,7 @@
 #include <cstring>
 #include <cassert>
 #include <openssl/md5.h>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 std::string Solve(const char *prefix)

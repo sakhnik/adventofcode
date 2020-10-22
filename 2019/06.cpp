@@ -3,10 +3,7 @@
 #include <unordered_map>
 #include <numeric>
 #include <sstream>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 class Map

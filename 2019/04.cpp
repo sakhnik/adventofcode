@@ -1,10 +1,7 @@
 #include <array>
 #include <algorithm>
 #include <boost/range/irange.hpp>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 template <typename PredT>

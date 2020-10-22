@@ -1,8 +1,5 @@
 #include <fstream>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 unsigned Sum(std::string_view s, unsigned dist)

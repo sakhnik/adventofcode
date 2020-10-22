@@ -3,10 +3,7 @@
 #include <sstream>
 #include <cassert>
 #include <set>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 int walk(std::istream &&is)

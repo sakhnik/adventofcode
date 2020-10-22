@@ -1,8 +1,5 @@
 #include <string>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 void Rle(const std::string &src, std::string &dst)

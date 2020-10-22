@@ -4,10 +4,7 @@
 #include <numeric>
 #include <vector>
 #include <sstream>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 using TuneT = std::vector<int>;

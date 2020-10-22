@@ -2,10 +2,7 @@
 #include <fstream>
 #include <string>
 #include <cassert>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 std::string Solve(std::istream &&is)

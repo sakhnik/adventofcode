@@ -3,10 +3,7 @@
 #include <fstream>
 #include <unordered_map>
 #include <algorithm>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 using BoxesT = std::vector<std::string>;

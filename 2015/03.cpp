@@ -2,10 +2,7 @@
 #include <fstream>
 #include <unordered_set>
 #include <vector>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 class Map

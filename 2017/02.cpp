@@ -2,10 +2,7 @@
 #include <sstream>
 #include <vector>
 #include <limits>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 unsigned Checksum(const std::string &input)

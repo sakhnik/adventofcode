@@ -1,8 +1,5 @@
 #include <map>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 // Walk the storage in increasing order while checking the predicate on each step.

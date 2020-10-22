@@ -3,10 +3,7 @@
 #include <vector>
 #include <unordered_set>
 #include <algorithm>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 class Chem

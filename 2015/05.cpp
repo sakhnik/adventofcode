@@ -1,10 +1,7 @@
 #include <fstream>
 #include <algorithm>
 #include <regex>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 bool IsNice(const std::string &s)

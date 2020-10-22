@@ -1,9 +1,6 @@
 #include <fstream>
 #include <algorithm>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 std::string Reduce(const std::string &s)

@@ -1,9 +1,6 @@
 #include <fstream>
 #include <boost/functional/hash.hpp>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 template <typename T>

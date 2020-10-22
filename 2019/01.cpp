@@ -1,10 +1,7 @@
 #include <fstream>
 #include <iterator>
 #include <numeric>
-#include <boost/ut.hpp>
-
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 using namespace boost::ut;

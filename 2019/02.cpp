@@ -2,8 +2,7 @@
 #include <boost/ut.hpp>
 #include "IntCode.h"
 
-#include "../Printer.hpp"
-
+#include "../test.hpp"
 namespace {
 
 using namespace boost::ut;
