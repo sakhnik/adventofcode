@@ -1,6 +1,5 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <fstream>
+#include "../test.hpp"
 
 namespace {
 
@@ -68,21 +67,24 @@ std::pair<unsigned, unsigned> Count(const char *path)
 	return { calc_dist(), max_dist };
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+	"2017-11"_test = [] {
+		expect(3_u == Count("ne,ne,ne,").first);
+		expect(0_u == Count("ne,ne,sw,sw,").first);
+		expect(2_u == Count("ne,ne,s,s,").first);
+		expect(3_u == Count("se,sw,se,sw,sw,").first);
+
+		std::ifstream ifs(INPUT);
+		std::string input;
+		std::getline(ifs, input);
+		input.push_back(',');
+
+		auto res = Count(input.c_str());
+		Printer::Print(__FILE__, "1", res.first);
+		Printer::Print(__FILE__, "2", res.second);
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(Count("ne,ne,ne,").first == 3);
-	REQUIRE(Count("ne,ne,sw,sw,").first == 0);
-	REQUIRE(Count("ne,ne,s,s,").first == 2);
-	REQUIRE(Count("se,sw,se,sw,sw,").first == 3);
-
-	std::ifstream ifs(INPUT);
-	std::string input;
-	std::getline(ifs, input);
-	input.push_back(',');
-
-	auto res = Count(input.c_str());
-	MESSAGE(res.first);
-	MESSAGE(res.second);
-}

@@ -1,8 +1,11 @@
-#include <doctest/doctest.h>
 #include "IntCode.h"
 #include <fstream>
 #include <set>
+#include "../test.hpp"
 
+namespace {
+
+using namespace boost::ut;
 
 struct Pos
 {
@@ -42,12 +45,12 @@ public:
             {
                 break;
             }
-            REQUIRE(_prog.GetState() == _prog.S_INPUT);
+            expect(_prog.GetState() == _prog.S_INPUT);
             auto it = _whites.find({x, y});
             is_white = it != _whites.end();
 
             auto r = _prog.Advance(is_white);
-            REQUIRE(_prog.GetState() == _prog.S_OUTPUT);
+            expect(_prog.GetState() == _prog.S_OUTPUT);
             if (r != is_white)
             {
                 // Need to repaint
@@ -63,7 +66,7 @@ public:
             }
 
             r = _prog.Advance(0);
-            REQUIRE(_prog.GetState() == _prog.S_OUTPUT);
+            expect(_prog.GetState() == _prog.S_OUTPUT);
 
             if (r)
             {
@@ -112,19 +115,21 @@ private:
     std::set<Pos> _whites;
 };
 
+suite s = [] {
+    "2019-11"_test = [] {
+        std::ifstream ifs{INPUT};
+        IntCodeB prog{ifs};
 
-TEST_CASE(TEST_NAME)
-{
-    std::ifstream ifs{INPUT};
-    IntCodeB prog{ifs};
+        Bot b1{prog};
+        b1.Paint(false);
 
-    Bot b1{prog};
-    b1.Paint(false);
+        Printer::Print(__FILE__, "1", b1.CountRepaints());
 
-    MESSAGE(b1.CountRepaints());
+        Bot b2{prog};
+        b2.Paint(true);
 
-    Bot b2{prog};
-    b2.Paint(true);
+        Printer::Print(__FILE__, "2", "\n" + b2.Print());
+    };
+};
 
-    MESSAGE("\n" << b2.Print());
-}
+} //namespace;

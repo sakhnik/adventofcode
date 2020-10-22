@@ -1,5 +1,3 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <array>
@@ -8,7 +6,7 @@
 #include <cassert>
 #include <queue>
 #include <algorithm>
-
+#include "../test.hpp"
 
 namespace {
 
@@ -221,33 +219,36 @@ int Solve(const std::vector<int> &configuration,
 	return -1;
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+	"2016-11"_test = [] {
+		// The first floor contains a hydrogen-compatible microchip and a lithium-compatible microchip.
+		// The second floor contains a hydrogen generator.
+		// The third floor contains a lithium generator.
+		// The fourth floor contains nothing relevant.
+
+		// 0: hydorgen
+		// 1: lithium
+		expect(11_i == Solve<4>({1, 0, 2, 0}, {"HG", "HM", "LG", "LM"}));
+
+		// The first floor contains a thulium generator, a thulium-compatible microchip, a plutonium generator, and a strontium generator.
+		// The second floor contains a plutonium-compatible microchip and a strontium-compatible microchip.
+		// The third floor contains a promethium generator, a promethium-compatible microchip, a ruthenium generator, and a ruthenium-compatible microchip.
+		// The fourth floor contains nothing relevant.
+
+		// 0: thulium
+		// 1: plutonium
+		// 2: strotium
+		// 3: promethium
+		// 4: ruthenium
+		Printer::Print(__FILE__, "1", Solve<10>({0, 0, 0, 1, 0, 1, 2, 2, 2, 2}, {}));
+
+		// <...>
+		// 5: elerium
+		// 6: dilithium
+		Printer::Print(__FILE__, "2", Solve<14>({0, 0, 0, 1, 0, 1, 2, 2, 2, 2, 0, 0, 0, 0}, {}));
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	// The first floor contains a hydrogen-compatible microchip and a lithium-compatible microchip.
-	// The second floor contains a hydrogen generator.
-	// The third floor contains a lithium generator.
-	// The fourth floor contains nothing relevant.
-
-	// 0: hydorgen
-	// 1: lithium
-	REQUIRE(11 == Solve<4>({1, 0, 2, 0}, {"HG", "HM", "LG", "LM"}));
-
-	// The first floor contains a thulium generator, a thulium-compatible microchip, a plutonium generator, and a strontium generator.
-	// The second floor contains a plutonium-compatible microchip and a strontium-compatible microchip.
-	// The third floor contains a promethium generator, a promethium-compatible microchip, a ruthenium generator, and a ruthenium-compatible microchip.
-	// The fourth floor contains nothing relevant.
-
-	// 0: thulium
-	// 1: plutonium
-	// 2: strotium
-	// 3: promethium
-	// 4: ruthenium
-	MESSAGE(Solve<10>({0, 0, 0, 1, 0, 1, 2, 2, 2, 2}, {}));
-
-	// <...>
-	// 5: elerium
-	// 6: dilithium
-	MESSAGE(Solve<14>({0, 0, 0, 1, 0, 1, 2, 2, 2, 2, 0, 0, 0, 0}, {}));
-}

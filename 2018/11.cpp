@@ -1,8 +1,7 @@
-#include <doctest/doctest.h>
 #include <limits>
 #include <sstream>
-#include <iostream>
 #include <vector>
+#include "../test.hpp"
 
 namespace {
 
@@ -125,31 +124,28 @@ private:
     }
 };
 
+using namespace boost::ut;
+using namespace std::string_literals;
+
+suite s = [] {
+    "2018-11"_test = [] {
+        // level
+        expect(-5_i == Grid::CalcLevel(122, 79, 57));
+        expect(0_i == Grid::CalcLevel(217, 196, 39));
+        expect(4_i == Grid::CalcLevel(101, 153, 71));
+
+        // search
+        expect(eq("33,45"s, Grid{18}.FindMaxPower3()));
+        expect(eq("21,61"s, Grid{42}.FindMaxPower3()));
+
+        Printer::Print(__FILE__, "1", Grid{1723}.FindMaxPower3());
+
+        // size
+        expect(eq("90,269,16"s, Grid{18}.FindMaxPower()));
+        expect(eq("232,251,12"s, Grid{42}.FindMaxPower()));
+
+        Printer::Print(__FILE__, "2", Grid{1723}.FindMaxPower());
+    };
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("level") {
-        REQUIRE(-5 == Grid::CalcLevel(122, 79, 57));
-        REQUIRE(0 == Grid::CalcLevel(217, 196, 39));
-        REQUIRE(4 == Grid::CalcLevel(101, 153, 71));
-    }
-
-    SUBCASE("search") {
-        REQUIRE("33,45" == Grid{18}.FindMaxPower3());
-        REQUIRE("21,61" == Grid{42}.FindMaxPower3());
-    }
-
-    SUBCASE("task1") {
-        MESSAGE(Grid{1723}.FindMaxPower3());
-    }
-
-    SUBCASE("size") {
-        REQUIRE("90,269,16" == Grid{18}.FindMaxPower());
-        REQUIRE("232,251,12" == Grid{42}.FindMaxPower());
-    }
-
-    SUBCASE("task2") {
-        MESSAGE(Grid{1723}.FindMaxPower());
-    }
-}
