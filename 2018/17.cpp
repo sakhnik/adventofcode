@@ -1,11 +1,12 @@
-#include <doctest/doctest.h>
 #include <sstream>
 #include <fstream>
 #include <unordered_map>
 #include <regex>
-#include <iostream>
+#include "../test.hpp"
 
 namespace {
+
+using namespace boost::ut;
 
 class Map
 {
@@ -19,8 +20,8 @@ public:
 
             static const std::regex r{R"(([xy])=(\d+), ([xy])=(\d+)\.\.(\d+))"};
             std::smatch m;
-            REQUIRE(std::regex_search(line, m, r));
-            REQUIRE(m.size() == 6);
+            expect(std::regex_search(line, m, r));
+            expect(m.size() == 6_u);
 
             auto &x = m[1] == 'x' ? pos.col : pos.row;
             auto &y = m[3] == 'y' ? pos.row : pos.col;
@@ -155,13 +156,11 @@ private:
     }
 };
 
-} //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
-        const char *const TEST =
-R"(x=495, y=2..7
+suite s = [] {
+    "2018-17"_test = [] {
+        {
+            const char *const TEST =
+                R"(x=495, y=2..7
 y=7, x=495..501
 x=501, y=3..7
 x=498, y=2..4
@@ -170,18 +169,21 @@ x=498, y=10..13
 x=504, y=10..13
 y=13, x=498..504
 )";
-        Map m(std::istringstream{TEST});
-        m.Pour();
-        m.Print();
-        REQUIRE(57 == m.CountWater());
-        REQUIRE(29 == m.CountRemainingWater());
-    }
+            Map m(std::istringstream{TEST});
+            m.Pour();
+            m.Print();
+            expect(57_i == m.CountWater());
+            expect(29_i == m.CountRemainingWater());
+        }
 
-    SUBCASE("task") {
-        Map m(std::ifstream{INPUT});
-        m.Pour();
-        //m.Print();
-        MESSAGE(m.CountWater());
-        MESSAGE(m.CountRemainingWater());
-    }
-}
+        {
+            Map m(std::ifstream{INPUT});
+            m.Pour();
+            //m.Print();
+            Printer::Print(__FILE__, "1", m.CountWater());
+            Printer::Print(__FILE__, "2", m.CountRemainingWater());
+        }
+    };
+};
+
+} //namespace;

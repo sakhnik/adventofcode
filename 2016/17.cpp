@@ -1,9 +1,8 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <openssl/md5.h>
 #include <cassert>
 #include <string>
 #include <limits>
+#include "../test.hpp"
 
 namespace {
 
@@ -155,23 +154,27 @@ int Solve2(std::string prefix)
 	return SearchMax(1, 1, 0, prefix);
 }
 
+using namespace boost::ut;
+using namespace std::string_literals;
+
+suite s = [] {
+	"2016-17"_test = [] {
+		expect(eq((UP | DOWN | LEFT), GetDoors("hijkl")));
+		expect(eq((UP | LEFT | RIGHT), GetDoors("hijklD")));
+		expect(eq(RIGHT, GetDoors("hijklDU")));
+
+		expect(eq("DDRRRD"s, Solve("ihgpwlah")));
+		expect(eq("DDUDRLRRUDRD"s, Solve("kglvqrro")));
+		expect(eq("DRURDRUDDLLDLUURRDULRLDUUDDDRR"s, Solve("ulqzkmiv")));
+
+		Printer::Print(__FILE__, "1", Solve("gdjjyniy"));
+
+		expect(370_i == Solve2("ihgpwlah"));
+		expect(492_i == Solve2("kglvqrro"));
+		expect(830_i == Solve2("ulqzkmiv"));
+
+		Printer::Print(__FILE__, "2", Solve2("gdjjyniy"));
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE((UP | DOWN | LEFT) == GetDoors("hijkl"));
-	REQUIRE((UP | LEFT | RIGHT) == GetDoors("hijklD"));
-	REQUIRE(RIGHT == GetDoors("hijklDU"));
-
-	REQUIRE("DDRRRD" == Solve("ihgpwlah"));
-	REQUIRE("DDUDRLRRUDRD" == Solve("kglvqrro"));
-	REQUIRE("DRURDRUDDLLDLUURRDULRLDUUDDDRR" == Solve("ulqzkmiv"));
-
-	MESSAGE(Solve("gdjjyniy"));
-
-	REQUIRE(370 == Solve2("ihgpwlah"));
-	REQUIRE(492 == Solve2("kglvqrro"));
-	REQUIRE(830 == Solve2("ulqzkmiv"));
-
-	MESSAGE(Solve2("gdjjyniy"));
-}

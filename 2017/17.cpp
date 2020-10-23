@@ -1,6 +1,7 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <vector>
+#include "../test.hpp"
+
+namespace {
 
 unsigned SpinLock(unsigned step)
 {
@@ -42,18 +43,23 @@ unsigned SpinLock2(unsigned step, unsigned iterations)
 	return next_to_zero;
 }
 
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(SpinLock(3) == 638);
-	REQUIRE(SpinLock2(3, 0) == 0);
-	REQUIRE(SpinLock2(3, 1) == 1);
-	REQUIRE(SpinLock2(3, 2) == 2);
-	REQUIRE(SpinLock2(3, 3) == 2);
-	REQUIRE(SpinLock2(3, 4) == 2);
-	REQUIRE(SpinLock2(3, 5) == 5);
-	REQUIRE(SpinLock2(3, 8) == 5);
-	REQUIRE(SpinLock2(3, 9) == 9);
+using namespace boost::ut;
 
-	MESSAGE(SpinLock(371));
-	MESSAGE(SpinLock2(371, 50000000));
-}
+suite s = [] {
+	"2017-17"_test = [] {
+		expect(SpinLock(3) == 638_u);
+		expect(SpinLock2(3, 0) == 0_u);
+		expect(SpinLock2(3, 1) == 1_u);
+		expect(SpinLock2(3, 2) == 2_u);
+		expect(SpinLock2(3, 3) == 2_u);
+		expect(SpinLock2(3, 4) == 2_u);
+		expect(SpinLock2(3, 5) == 5_u);
+		expect(SpinLock2(3, 8) == 5_u);
+		expect(SpinLock2(3, 9) == 9_u);
+
+		Printer::Print(__FILE__, "1", SpinLock(371));
+		Printer::Print(__FILE__, "2", SpinLock2(371, 50000000));
+	};
+};
+
+} //namespace;
