@@ -1,8 +1,9 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include "../test.hpp"
+
+namespace {
 
 typedef std::vector<unsigned> ConfigT;
 
@@ -60,21 +61,26 @@ bool IsCaught(unsigned delay, const ConfigT &config)
 	return false;
 }
 
-TEST_CASE(TEST_NAME)
-{
-	auto test_config = ReadConfig(std::istringstream{"0: 3\n1: 2\n4: 4\n6: 4"});
-	REQUIRE(CalcSeverity(0, test_config) == 24);
+using namespace boost::ut;
 
-	std::ifstream ifs(INPUT);
-	auto config = ReadConfig(ifs);
-	MESSAGE(CalcSeverity(0, config));
+suite s = [] {
+	"2017-13"_test = [] {
+		auto test_config = ReadConfig(std::istringstream{"0: 3\n1: 2\n4: 4\n6: 4"});
+		expect(24_u == CalcSeverity(0, test_config));
 
-	for (int delay = 0; ; ++delay)
-	{
-		if (!IsCaught(delay, config))
+		std::ifstream ifs(INPUT);
+		auto config = ReadConfig(ifs);
+		Printer::Print(__FILE__, "1", CalcSeverity(0, config));
+
+		for (int delay = 0;; ++delay)
 		{
-			MESSAGE(delay);
-			break;
+			if (!IsCaught(delay, config))
+			{
+				Printer::Print(__FILE__, "2", delay);
+				break;
+			}
 		}
-	}
-}
+	};
+};
+
+} //namespace;

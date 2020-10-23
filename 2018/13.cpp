@@ -1,4 +1,3 @@
-#include <doctest/doctest.h>
 #include <sstream>
 #include <vector>
 #include <algorithm>
@@ -6,6 +5,7 @@
 #include <functional>
 #include <list>
 #include <cassert>
+#include "../test.hpp"
 
 namespace {
 
@@ -58,8 +58,7 @@ public:
                     _carts.push_back({row, col, ch});
                     break;
                 default:
-                    INFO(ch);
-                    assert(!"Incorrect char");
+                    boost::ut::expect(false) << "Incorrect char: " << ch;
                 }
             }
             ++row;
@@ -100,7 +99,7 @@ public:
             return false;
         };
         _Simulate(ignore);
-        REQUIRE(size(_carts) > 0);
+        boost::ut::expect(size(_carts) > 0);
         const auto cart = _carts.front();
         return {cart.row, cart.col};
     }
@@ -237,57 +236,71 @@ private:
     }
 };
 
+using namespace boost::ut;
+using namespace std::string_literals;
+
+suite s = [] {
+    "2018-13"_test = [] {
+        {
+            Map m(std::istringstream{
+                "|\n"
+                "v\n"
+                "|\n"
+                "|\n"
+                "|\n"
+                "^\n"
+                "|\n"});
+            expect(2_u == m.GetCartCount());
+            expect(eq("0,3"s, m.RunUntilFirstCollision().Dump()));
+        }
+
+        {
+            Map m(std::istringstream{
+                R"(/->-\        )"
+                "\n"
+                R"(|   |  /----\)"
+                "\n"
+                R"(| /-+--+-\  |)"
+                "\n"
+                R"(| | |  | v  |)"
+                "\n"
+                R"(\-+-/  \-+--/)"
+                "\n"
+                R"(  \------/   )"
+                "\n"});
+            expect(2_u == m.GetCartCount());
+            expect(eq("7,3"s, m.RunUntilFirstCollision().Dump()));
+        }
+
+        {
+            Map m(std::ifstream(INPUT));
+            Printer::Print(__FILE__, "1", m.RunUntilFirstCollision().Dump());
+        }
+
+        {
+            Map m(std::istringstream{
+                R"(/>-<\  )"
+                "\n"
+                R"(|   |  )"
+                "\n"
+                R"(| /<+-\)"
+                "\n"
+                R"(| | | v)"
+                "\n"
+                R"(\>+</ |)"
+                "\n"
+                R"(  |   ^)"
+                "\n"
+                R"(  \<->/)"
+                "\n"});
+            expect(eq("6,4"s, m.RunUntilLastCollision().Dump()));
+        }
+
+        {
+            Map m(std::ifstream(INPUT));
+            Printer::Print(__FILE__, "2", m.RunUntilLastCollision().Dump());
+        }
+    };
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test1") {
-        Map m(std::istringstream{
-              "|\n"
-              "v\n"
-              "|\n"
-              "|\n"
-              "|\n"
-              "^\n"
-              "|\n"
-              });
-        REQUIRE(2 == m.GetCartCount());
-        REQUIRE("0,3" == m.RunUntilFirstCollision().Dump());
-    }
-
-    SUBCASE("test2") {
-        Map m(std::istringstream{
-              R"(/->-\        )" "\n"
-              R"(|   |  /----\)" "\n"
-              R"(| /-+--+-\  |)" "\n"
-              R"(| | |  | v  |)" "\n"
-              R"(\-+-/  \-+--/)" "\n"
-              R"(  \------/   )" "\n"
-              });
-        REQUIRE(2 == m.GetCartCount());
-        REQUIRE("7,3" == m.RunUntilFirstCollision().Dump());
-    }
-
-    SUBCASE("task1") {
-        Map m(std::ifstream(INPUT));
-        MESSAGE(m.RunUntilFirstCollision().Dump());
-    }
-
-    SUBCASE("test3") {
-        Map m(std::istringstream{
-              R"(/>-<\  )" "\n"
-              R"(|   |  )" "\n"
-              R"(| /<+-\)" "\n"
-              R"(| | | v)" "\n"
-              R"(\>+</ |)" "\n"
-              R"(  |   ^)" "\n"
-              R"(  \<->/)" "\n"
-              });
-        REQUIRE("6,4" == m.RunUntilLastCollision().Dump());
-    }
-
-    SUBCASE("task2") {
-        Map m(std::ifstream(INPUT));
-        MESSAGE(m.RunUntilLastCollision().Dump());
-    }
-}

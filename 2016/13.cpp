@@ -1,11 +1,12 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <bitset>
 #include <unordered_map>
 #include <queue>
 #include <cassert>
+#include "../test.hpp"
 
 namespace {
+
+using namespace boost::ut;
 
 bool IsOpen(int x, int y, int number)
 {
@@ -54,7 +55,7 @@ int Solve(int start_x, int start_y, int target_x, int target_y, int number)
 			if (dist == 51 && !report2)
 			{
 				// report second result
-				MESSAGE(distance.size());
+				Printer::Print(__FILE__, "2", distance.size());
 				report2 = true;
 			}
 
@@ -78,11 +79,11 @@ int Solve(int start_x, int start_y, int target_x, int target_y, int number)
 	return -1;
 }
 
+suite s = [] {
+	"2016-13"_test = [] {
+		expect(11_i == Solve(1, 1, 7, 4, 10));
+		Printer::Print(__FILE__, "1", Solve(1, 1, 31, 39, 1350));
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(11 == Solve(1, 1, 7, 4, 10));
-
-	MESSAGE(Solve(1, 1, 31, 39, 1350));
-}
