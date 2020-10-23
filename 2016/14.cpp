@@ -1,11 +1,9 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <openssl/md5.h>
 #include <vector>
 #include <cassert>
 #include <algorithm>
 #include <boost/circular_buffer.hpp>
-
+#include "../test.hpp"
 
 namespace {
 
@@ -113,13 +111,16 @@ int Solve(const char *salt, int hash_count)
 	}
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+	"2016-14"_test = [] {
+		expect(22728_i == Solve("abc", 1));
+		Printer::Print(__FILE__, "1", Solve("cuanljph", 1));
+
+		expect(22551_i == Solve("abc", 2017));
+		Printer::Print(__FILE__, "2", Solve("cuanljph", 2017));
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(22728 == Solve("abc", 1));
-	MESSAGE(Solve("cuanljph", 1));
-
-	REQUIRE(22551 == Solve("abc", 2017));
-	MESSAGE(Solve("cuanljph", 2017));
-}

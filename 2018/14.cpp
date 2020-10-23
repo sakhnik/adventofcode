@@ -1,5 +1,5 @@
-#include <doctest/doctest.h>
 #include <string>
+#include "../test.hpp"
 
 namespace {
 
@@ -72,37 +72,33 @@ private:
     size_t _pos2{1};
 };
 
+using namespace boost::ut;
+using namespace std::string_literals;
+
+suite s = [] {
+    "2018-14"_test = [] {
+        {
+            Recipes r;
+            expect(eq("37"s, r.GetSeq()));
+            expect(eq("3710"s, r.Step()));
+            expect(eq("371010"s, r.Step()));
+            expect(eq("3710101"s, r.Step()));
+        }
+
+        expect(eq("5158916779"s, Recipes{}.Get10After(9)));
+        expect(eq("0124515891"s, Recipes{}.Get10After(5)));
+        expect(eq("9251071085"s, Recipes{}.Get10After(18)));
+        expect(eq("5941429882"s, Recipes{}.Get10After(2018)));
+
+        Printer::Print(__FILE__, "1", Recipes{}.Get10After(323081));
+
+        expect(9_u == Recipes{}.RunUntil("51589"));
+        expect(5_u == Recipes{}.RunUntil("01245"));
+        expect(18_u == Recipes{}.RunUntil("92510"));
+        expect(2018_u == Recipes{}.RunUntil("59414"));
+
+        Printer::Print(__FILE__, "2", Recipes{}.RunUntil("323081"));
+    };
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test1") {
-        Recipes r;
-        REQUIRE("37" == r.GetSeq());
-        REQUIRE("3710" == r.Step());
-        REQUIRE("371010" == r.Step());
-        REQUIRE("3710101" == r.Step());
-    }
-
-    SUBCASE("test2") {
-        REQUIRE("5158916779" == Recipes{}.Get10After(9));
-        REQUIRE("0124515891" == Recipes{}.Get10After(5));
-        REQUIRE("9251071085" == Recipes{}.Get10After(18));
-        REQUIRE("5941429882" == Recipes{}.Get10After(2018));
-    }
-
-    SUBCASE("task1") {
-        MESSAGE(Recipes{}.Get10After(323081));
-    }
-
-    SUBCASE("test3") {
-        REQUIRE(9 == Recipes{}.RunUntil("51589"));
-        REQUIRE(5 == Recipes{}.RunUntil("01245"));
-        REQUIRE(18 == Recipes{}.RunUntil("92510"));
-        REQUIRE(2018 == Recipes{}.RunUntil("59414"));
-    }
-
-    SUBCASE("task2") {
-        MESSAGE(Recipes{}.RunUntil("323081"));
-    }
-}

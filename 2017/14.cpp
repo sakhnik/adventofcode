@@ -1,9 +1,10 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <bitset>
 #include <queue>
 #include <algorithm>
 #include "KnotHash.h"
+#include "../test.hpp"
+
+namespace {
 
 unsigned CountBits(const std::string &key)
 {
@@ -81,13 +82,19 @@ unsigned CountRegions(const std::string &key)
     return count;
 }
 
-TEST_CASE(TEST_NAME)
-{
-    REQUIRE(HexToBin(0xa0) == "10100000");
+using namespace boost::ut;
+using namespace std::string_literals;
 
-    REQUIRE(CountBits("flqrgnkx") == 8108);
-    REQUIRE(CountRegions("flqrgnkx") == 1242);
+suite s = [] {
+    "2017-14"_test = [] {
+        expect(eq(HexToBin(0xa0), "10100000"s));
 
-    MESSAGE(CountBits("ffayrhll"));
-    MESSAGE(CountRegions("ffayrhll"));
-}
+        expect(8108_u == CountBits("flqrgnkx"));
+        expect(1242_u == CountRegions("flqrgnkx"));
+
+        Printer::Print(__FILE__, "1", CountBits("ffayrhll"));
+        Printer::Print(__FILE__, "2", CountRegions("ffayrhll"));
+    };
+};
+
+} //namespace;
