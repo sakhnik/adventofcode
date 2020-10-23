@@ -1,11 +1,10 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <cassert>
 #include <fstream>
 #include <algorithm>
 #include <numeric>
 #include <vector>
 #include <sstream>
+#include "../test.hpp"
 
 namespace {
 
@@ -93,38 +92,42 @@ std::string& Dance(std::string &row, const ProgramT &program)
     return row;
 }
 
-} //namespace;
+using namespace boost::ut;
+using namespace std::string_literals;
 
-TEST_CASE(TEST_NAME)
-{
-    auto test_program = Parse(std::istringstream("s1,x3/4,pe/b"));
-    std::string test_row = "abcde";
-    REQUIRE(Dance(test_row, test_program) == "baedc");
+suite s = [] {
+    "2017-16"_test = [] {
+        auto test_program = Parse(std::istringstream("s1,x3/4,pe/b"));
+        std::string test_row = "abcde";
+        expect(eq(Dance(test_row, test_program), "baedc"s));
 
-    std::string row;
-    for (int i = 0; i < 16; ++i)
-        row.push_back('a' + i);
+        std::string row;
+        for (int i = 0; i < 16; ++i)
+            row.push_back('a' + i);
 
-    // Apparently, the transformations are cyclic.
-    // So let's detect the start and period of the loop.
-    std::vector<std::string> variations;
-    variations.push_back(row);
-
-    size_t loop{0};
-    auto program = Parse(std::ifstream(INPUT));
-    while (true)
-    {
-        Dance(row, program);
-        auto it = std::find(variations.begin(), variations.end(), row);
-        if (it != variations.end())
-        {
-            loop = it - variations.begin();
-            break;
-        }
+        // Apparently, the transformations are cyclic.
+        // So let's detect the start and period of the loop.
+        std::vector<std::string> variations;
         variations.push_back(row);
-    }
 
-    MESSAGE(variations[1]);
-    auto period = variations.size() - loop;
-    MESSAGE(variations[loop + ((1000000000 - loop) % period)]);
-}
+        size_t loop{0};
+        auto program = Parse(std::ifstream(INPUT));
+        while (true)
+        {
+            Dance(row, program);
+            auto it = std::find(variations.begin(), variations.end(), row);
+            if (it != variations.end())
+            {
+                loop = it - variations.begin();
+                break;
+            }
+            variations.push_back(row);
+        }
+
+        Printer::Print(__FILE__, "1", variations[1]);
+        auto period = variations.size() - loop;
+        Printer::Print(__FILE__, "2", variations[loop + ((1000000000 - loop) % period)]);
+    };
+};
+
+} //namespace;

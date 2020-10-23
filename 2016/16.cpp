@@ -1,7 +1,6 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <cassert>
 #include <boost/range/adaptor/reversed.hpp>
+#include "../test.hpp"
 
 namespace {
 
@@ -34,17 +33,21 @@ std::string Solve(unsigned size, const std::string &init)
 	return Checksum(data);
 }
 
+using namespace boost::ut;
+using namespace std::string_literals;
+
+suite s = [] {
+	"2016-16"_test = [] {
+		expect(eq("100"s, Checksum("110010110100")));
+		expect(eq("100"s, Generate("1", 3)));
+		expect(eq("001"s, Generate("0", 3)));
+		expect(eq("11111000000"s, Generate("11111", 11)));
+		expect(eq("1111000010100101011110000"s, Generate("111100001010", 25)));
+		expect(eq("01100"s, Solve(20, "10000")));
+
+		Printer::Print(__FILE__, "1", Solve(272, "10011111011011001"));
+		Printer::Print(__FILE__, "2", Solve(35651584, "10011111011011001"));
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE("100" == Checksum("110010110100"));
-	REQUIRE("100" == Generate("1", 3));
-	REQUIRE("001" == Generate("0", 3));
-	REQUIRE("11111000000" == Generate("11111", 11));
-	REQUIRE("1111000010100101011110000" == Generate("111100001010", 25));
-	REQUIRE("01100" == Solve(20, "10000"));
-
-	MESSAGE(Solve(272, "10011111011011001"));
-	MESSAGE(Solve(35651584, "10011111011011001"));
-}

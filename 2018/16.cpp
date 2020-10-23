@@ -1,10 +1,9 @@
-#include <doctest/doctest.h>
 #include <array>
 #include <sstream>
 #include <fstream>
 #include <bitset>
-#include <iostream>
 #include <algorithm>
+#include "../test.hpp"
 
 namespace {
 
@@ -120,11 +119,14 @@ Result Count(std::istream &&is)
     return {count, regs[0]};
 }
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    auto result = Count(std::ifstream{INPUT});
-    MESSAGE(result.task1);
-    MESSAGE(result.task2);
-}
+suite s = [] {
+    "2018-16"_test = [] {
+        auto result = Count(std::ifstream{INPUT});
+        Printer::Print(__FILE__, "1", result.task1);
+        Printer::Print(__FILE__, "2", result.task2);
+    };
+};
+
+} //namespace;
