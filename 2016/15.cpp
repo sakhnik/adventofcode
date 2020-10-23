@@ -1,7 +1,6 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <cassert>
 #include <vector>
+#include "../test.hpp"
 
 namespace {
 
@@ -30,21 +29,23 @@ int Solve(const std::vector<Disk> &disks)
 	}
 }
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(5 == Solve({{5, 4}, {2, 1}}));
-	std::vector<Disk> disks = {
-		{ 13, 1 },
-		{ 19, 10 },
-		{ 3, 2 },
-		{ 7, 1 },
-		{ 5, 3 },
-		{ 17, 5 }
+suite s = [] {
+	"2016-15"_test = [] {
+		expect(5_i == Solve({{5, 4}, {2, 1}}));
+		std::vector<Disk> disks = {
+			{13, 1},
+			{19, 10},
+			{3, 2},
+			{7, 1},
+			{5, 3},
+			{17, 5}};
+		Printer::Print(__FILE__, "1", Solve(disks));
+
+		disks.push_back({11, 0});
+		Printer::Print(__FILE__, "2", Solve(disks));
 	};
-	MESSAGE(Solve(disks));
+};
 
-	disks.push_back({11, 0});
-	MESSAGE(Solve(disks));
-}
+} //namespace;

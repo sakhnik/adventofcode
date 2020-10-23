@@ -1,5 +1,6 @@
-#include <doctest/doctest.h>
-#include <iostream>
+#include "../test.hpp"
+
+namespace {
 
 unsigned Count(uint64_t a, uint64_t b)
 {
@@ -41,11 +42,16 @@ unsigned Count2(uint64_t a, uint64_t b)
 	return judge;
 }
 
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(Count(65, 8921) == 588);
-	REQUIRE(Count2(65, 8921) == 309);
+using namespace boost::ut;
 
-	MESSAGE(Count(289, 629));
-	MESSAGE(Count2(289, 629));
-}
+suite s = [] {
+	"2017-15"_test = [] {
+		expect(588_u == Count(65, 8921));
+		expect(309_u == Count2(65, 8921));
+
+		Printer::Print(__FILE__, "1", Count(289, 629));
+		Printer::Print(__FILE__, "2", Count2(289, 629));
+	};
+};
+
+} //namespace;

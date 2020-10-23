@@ -1,17 +1,13 @@
-#include <doctest/doctest.h>
 #include <sstream>
 #include <fstream>
 #include <vector>
 #include <queue>
-#include <iostream>
 #include <algorithm>
 #include <cassert>
 #include <list>
 #include <unordered_map>
 #include <numeric>
-#include <thread>
-#include <chrono>
-
+#include "../test.hpp"
 
 namespace {
 
@@ -112,7 +108,6 @@ public:
                 ::system("clear");
                 std::cout << "Round " << _round << "\n";
                 std::cout << Dump() << std::endl;
-                //std::this_thread::sleep_for(std::chrono::milliseconds(200));
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             }
 
@@ -338,275 +333,273 @@ private:
     }
 };
 
+using namespace boost::ut;
+using namespace std::string_literals;
+
+suite s = [] {
+    "2018-15"_test = [] {
+        {
+            Battle b{std::istringstream{
+                "#######\n"
+                "#.G...#\n"
+                "#...EG#\n"
+                "#.#.#G#\n"
+                "#..G#E#\n"
+                "#.....#\n"
+                "#######\n"}};
+
+            std::string exp =
+                "#######   \n"
+                "#.G...#   G(200)\n"
+                "#...EG#   E(200), G(200)\n"
+                "#.#.#G#   G(200)\n"
+                "#..G#E#   G(200), E(200)\n"
+                "#.....#   \n"
+                "#######   \n";
+            expect(eq(exp, b.Dump()));
+
+            auto runUntil = [&](int target) {
+                while (b.GetRound() < target)
+                {
+                    b.Round();
+                }
+            };
+
+            runUntil(1);
+            exp =
+                "#######   \n"
+                "#..G..#   G(200)\n"
+                "#...EG#   E(197), G(197)\n"
+                "#.#G#G#   G(200), G(197)\n"
+                "#...#E#   E(197)\n"
+                "#.....#   \n"
+                "#######   \n";
+            expect(eq(exp, b.Dump()));
+
+            runUntil(2);
+            exp =
+                "#######   \n"
+                "#...G.#   G(200)\n"
+                "#..GEG#   G(200), E(188), G(194)\n"
+                "#.#.#G#   G(194)\n"
+                "#...#E#   E(194)\n"
+                "#.....#   \n"
+                "#######   \n";
+            expect(eq(exp, b.Dump()));
+
+            runUntil(23);
+            exp =
+                "#######   \n"
+                "#...G.#   G(200)\n"
+                "#..G.G#   G(200), G(131)\n"
+                "#.#.#G#   G(131)\n"
+                "#...#E#   E(131)\n"
+                "#.....#   \n"
+                "#######   \n";
+            expect(eq(exp, b.Dump()));
+
+            runUntil(24);
+            exp =
+                "#######   \n"
+                "#..G..#   G(200)\n"
+                "#...G.#   G(131)\n"
+                "#.#G#G#   G(200), G(128)\n"
+                "#...#E#   E(128)\n"
+                "#.....#   \n"
+                "#######   \n";
+            expect(eq(exp, b.Dump()));
+
+            runUntil(25);
+            exp =
+                "#######   \n"
+                "#.G...#   G(200)\n"
+                "#..G..#   G(131)\n"
+                "#.#.#G#   G(125)\n"
+                "#..G#E#   G(200), E(125)\n"
+                "#.....#   \n"
+                "#######   \n";
+            expect(eq(exp, b.Dump()));
+
+            runUntil(28);
+            exp =
+                "#######   \n"
+                "#G....#   G(200)\n"
+                "#.G...#   G(131)\n"
+                "#.#.#G#   G(116)\n"
+                "#...#E#   E(113)\n"
+                "#....G#   G(200)\n"
+                "#######   \n";
+            expect(eq(exp, b.Dump()));
+
+            expect(0_i == b.GetScore());
+            runUntil(47);
+            exp =
+                "#######   \n"
+                "#G....#   G(200)\n"
+                "#.G...#   G(131)\n"
+                "#.#.#G#   G(59)\n"
+                "#...#.#   \n"
+                "#....G#   G(200)\n"
+                "#######   \n";
+            expect(eq(exp, b.Dump()));
+
+            expect(590_i == b.GetScore());
+            expect(27730_i == b.GetOutcome());
+        }
+
+        {
+            Battle b(std::istringstream{
+                "#######\n"
+                "#G..#E#\n"
+                "#E#E.E#\n"
+                "#G.##.#\n"
+                "#...#E#\n"
+                "#...E.#\n"
+                "#######\n"});
+
+            expect(eq('E', b.RunUntilFinish(false)));
+            expect(37_i == b.GetRound());
+            expect(982_i == b.GetScore());
+            expect(36334_i == b.GetOutcome());
+
+            std::string exp =
+                "#######   \n"
+                "#...#E#   E(200)\n"
+                "#E#...#   E(197)\n"
+                "#.E##.#   E(185)\n"
+                "#E..#E#   E(200), E(200)\n"
+                "#.....#   \n"
+                "#######   \n";
+            expect(eq(exp, b.Dump()));
+        }
+
+        {
+            Battle b(std::istringstream{
+                "#######\n"
+                "#E..EG#\n"
+                "#.#G.E#\n"
+                "#E.##E#\n"
+                "#G..#.#\n"
+                "#..E#.#\n"
+                "#######\n"});
+
+            expect(eq('E', b.RunUntilFinish(false)));
+            expect(46_i == b.GetRound());
+            expect(859_i == b.GetScore());
+            expect(39514_i == b.GetOutcome());
+        }
+
+        {
+            Battle b(std::istringstream{
+                "#######\n"
+                "#E.G#.#\n"
+                "#.#G..#\n"
+                "#G.#.G#\n"
+                "#G..#.#\n"
+                "#...E.#\n"
+                "#######\n"});
+
+            expect(eq('G', b.RunUntilFinish(false)));
+            expect(35_i == b.GetRound());
+            expect(793_i == b.GetScore());
+            expect(27755_i == b.GetOutcome());
+
+            std::string exp =
+                "#######   \n"
+                "#G.G#.#   G(200), G(98)\n"
+                "#.#G..#   G(200)\n"
+                "#..#..#   \n"
+                "#...#G#   G(95)\n"
+                "#...G.#   G(200)\n"
+                "#######   \n";
+            expect(eq(exp, b.Dump()));
+        }
+
+        {
+            Battle b(std::istringstream{
+                "#######\n"
+                "#.E...#\n"
+                "#.#..G#\n"
+                "#.###.#\n"
+                "#E#G#G#\n"
+                "#...#G#\n"
+                "#######\n"});
+
+            expect(eq('G', b.RunUntilFinish(false)));
+            expect(54_i == b.GetRound());
+            expect(536_i == b.GetScore());
+            expect(28944_i == b.GetOutcome());
+
+            std::string exp =
+                "#######   \n"
+                "#.....#   \n"
+                "#.#G..#   G(200)\n"
+                "#.###.#   \n"
+                "#.#.#.#   \n"
+                "#G.G#G#   G(98), G(38), G(200)\n"
+                "#######   \n";
+            expect(eq(exp, b.Dump()));
+        }
+
+        {
+            Battle b(std::istringstream{
+                "#########\n"
+                "#G......#\n"
+                "#.E.#...#\n"
+                "#..##..G#\n"
+                "#...##..#\n"
+                "#...#...#\n"
+                "#.G...G.#\n"
+                "#.....G.#\n"
+                "#########\n"});
+
+            expect(eq('G', b.RunUntilFinish(false)));
+            expect(20_i == b.GetRound());
+            expect(937_i == b.GetScore());
+            expect(18740_i == b.GetOutcome());
+
+            std::string exp =
+                "#########   \n"
+                "#.G.....#   G(137)\n"
+                "#G.G#...#   G(200), G(200)\n"
+                "#.G##...#   G(200)\n"
+                "#...##..#   \n"
+                "#.G.#...#   G(200)\n"
+                "#.......#   \n"
+                "#.......#   \n"
+                "#########   \n";
+            expect(eq(exp, b.Dump()));
+        }
+
+        {
+            Battle b(std::ifstream(INPUT));
+            std::ostringstream oss;
+            oss << b.RunUntilFinish(false) << " " << b.GetOutcome();
+            Printer::Print(__FILE__, "1", oss.str());
+        }
+
+        {
+            std::istringstream iss{
+                "#######\n"
+                "#.G...#\n"
+                "#...EG#\n"
+                "#.#.#G#\n"
+                "#..G#E#\n"
+                "#.....#\n"
+                "#######\n"};
+
+            auto b = Battle::Task2(iss);
+            expect(15_i == b.GetElfAttack());
+            expect(29_i == b.GetRound());
+            expect(172_i == b.GetScore());
+        }
+
+        {
+            std::ifstream ifs{INPUT};
+            auto battle = Battle::Task2(ifs);
+            Printer::Print(__FILE__, "2", battle.GetOutcome());
+        }
+    };
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test1") {
-        Battle b{std::istringstream{
-            "#######\n"
-            "#.G...#\n"
-            "#...EG#\n"
-            "#.#.#G#\n"
-            "#..G#E#\n"
-            "#.....#\n"
-            "#######\n"
-        }};
-
-        std::string exp =
-            "#######   \n"
-            "#.G...#   G(200)\n"
-            "#...EG#   E(200), G(200)\n"
-            "#.#.#G#   G(200)\n"
-            "#..G#E#   G(200), E(200)\n"
-            "#.....#   \n"
-            "#######   \n";
-        REQUIRE(exp == b.Dump());
-
-        auto runUntil = [&](int target) {
-            while (b.GetRound() < target)
-            {
-                b.Round();
-            }
-        };
-
-        runUntil(1);
-        exp =
-            "#######   \n"
-            "#..G..#   G(200)\n"
-            "#...EG#   E(197), G(197)\n"
-            "#.#G#G#   G(200), G(197)\n"
-            "#...#E#   E(197)\n"
-            "#.....#   \n"
-            "#######   \n";
-        REQUIRE(exp == b.Dump());
-
-        runUntil(2);
-        exp =
-            "#######   \n"
-            "#...G.#   G(200)\n"
-            "#..GEG#   G(200), E(188), G(194)\n"
-            "#.#.#G#   G(194)\n"
-            "#...#E#   E(194)\n"
-            "#.....#   \n"
-            "#######   \n";
-        REQUIRE(exp == b.Dump());
-
-        runUntil(23);
-        exp =
-            "#######   \n"
-            "#...G.#   G(200)\n"
-            "#..G.G#   G(200), G(131)\n"
-            "#.#.#G#   G(131)\n"
-            "#...#E#   E(131)\n"
-            "#.....#   \n"
-            "#######   \n";
-        REQUIRE(exp == b.Dump());
-
-        runUntil(24);
-        exp =
-            "#######   \n"
-            "#..G..#   G(200)\n"
-            "#...G.#   G(131)\n"
-            "#.#G#G#   G(200), G(128)\n"
-            "#...#E#   E(128)\n"
-            "#.....#   \n"
-            "#######   \n";
-        REQUIRE(exp == b.Dump());
-
-        runUntil(25);
-        exp =
-            "#######   \n"
-            "#.G...#   G(200)\n"
-            "#..G..#   G(131)\n"
-            "#.#.#G#   G(125)\n"
-            "#..G#E#   G(200), E(125)\n"
-            "#.....#   \n"
-            "#######   \n";
-        REQUIRE(exp == b.Dump());
-
-        runUntil(28);
-        exp =
-            "#######   \n"
-            "#G....#   G(200)\n"
-            "#.G...#   G(131)\n"
-            "#.#.#G#   G(116)\n"
-            "#...#E#   E(113)\n"
-            "#....G#   G(200)\n"
-            "#######   \n";
-        REQUIRE(exp == b.Dump());
-
-        REQUIRE(0 == b.GetScore());
-        runUntil(47);
-        exp =
-            "#######   \n"
-            "#G....#   G(200)\n"
-            "#.G...#   G(131)\n"
-            "#.#.#G#   G(59)\n"
-            "#...#.#   \n"
-            "#....G#   G(200)\n"
-            "#######   \n";
-        REQUIRE(exp == b.Dump());
-
-        REQUIRE(590 == b.GetScore());
-        REQUIRE(27730 == b.GetOutcome());
-    }
-
-    SUBCASE("test2") {
-        Battle b(std::istringstream{
-            "#######\n"
-            "#G..#E#\n"
-            "#E#E.E#\n"
-            "#G.##.#\n"
-            "#...#E#\n"
-            "#...E.#\n"
-            "#######\n"
-            });
-
-        REQUIRE('E' == b.RunUntilFinish(false));
-        CHECK(37 == b.GetRound());
-        CHECK(982 == b.GetScore());
-        CHECK(36334 == b.GetOutcome());
-
-        std::string exp =
-            "#######   \n"
-            "#...#E#   E(200)\n"
-            "#E#...#   E(197)\n"
-            "#.E##.#   E(185)\n"
-            "#E..#E#   E(200), E(200)\n"
-            "#.....#   \n"
-            "#######   \n";
-        REQUIRE(exp == b.Dump());
-    }
-
-    SUBCASE("test3") {
-        Battle b(std::istringstream{
-            "#######\n"
-            "#E..EG#\n"
-            "#.#G.E#\n"
-            "#E.##E#\n"
-            "#G..#.#\n"
-            "#..E#.#\n"
-            "#######\n"
-            });
-
-        REQUIRE('E' == b.RunUntilFinish(false));
-        CHECK(46 == b.GetRound());
-        CHECK(859 == b.GetScore());
-        CHECK(39514 == b.GetOutcome());
-    }
-
-    SUBCASE("test4") {
-        Battle b(std::istringstream{
-            "#######\n"
-            "#E.G#.#\n"
-            "#.#G..#\n"
-            "#G.#.G#\n"
-            "#G..#.#\n"
-            "#...E.#\n"
-            "#######\n"
-            });
-
-        REQUIRE('G' == b.RunUntilFinish(false));
-        CHECK(35 == b.GetRound());
-        CHECK(793 == b.GetScore());
-        CHECK(27755 == b.GetOutcome());
-
-        std::string exp =
-            "#######   \n"
-            "#G.G#.#   G(200), G(98)\n"
-            "#.#G..#   G(200)\n"
-            "#..#..#   \n"
-            "#...#G#   G(95)\n"
-            "#...G.#   G(200)\n"
-            "#######   \n";
-        REQUIRE(exp == b.Dump());
-
-    }
-
-    SUBCASE("test5") {
-        Battle b(std::istringstream{
-            "#######\n"
-            "#.E...#\n"
-            "#.#..G#\n"
-            "#.###.#\n"
-            "#E#G#G#\n"
-            "#...#G#\n"
-            "#######\n"
-            });
-
-        CHECK('G' == b.RunUntilFinish(false));
-        CHECK(54 == b.GetRound());
-        CHECK(536 == b.GetScore());
-        CHECK(28944 == b.GetOutcome());
-
-        std::string exp =
-            "#######   \n"
-            "#.....#   \n"
-            "#.#G..#   G(200)\n"
-            "#.###.#   \n"
-            "#.#.#.#   \n"
-            "#G.G#G#   G(98), G(38), G(200)\n"
-            "#######   \n";
-        REQUIRE(exp == b.Dump());
-    }
-
-    SUBCASE("test6") {
-        Battle b(std::istringstream{
-            "#########\n"
-            "#G......#\n"
-            "#.E.#...#\n"
-            "#..##..G#\n"
-            "#...##..#\n"
-            "#...#...#\n"
-            "#.G...G.#\n"
-            "#.....G.#\n"
-            "#########\n"
-            });
-
-        REQUIRE('G' == b.RunUntilFinish(false));
-        CHECK(20 == b.GetRound());
-        CHECK(937 == b.GetScore());
-        CHECK(18740 == b.GetOutcome());
-
-        std::string exp =
-            "#########   \n"
-            "#.G.....#   G(137)\n"
-            "#G.G#...#   G(200), G(200)\n"
-            "#.G##...#   G(200)\n"
-            "#...##..#   \n"
-            "#.G.#...#   G(200)\n"
-            "#.......#   \n"
-            "#.......#   \n"
-            "#########   \n";
-        REQUIRE(exp == b.Dump());
-    }
-
-    SUBCASE("task1") {
-        Battle b(std::ifstream(INPUT));
-        MESSAGE(b.RunUntilFinish(false) << " " << b.GetOutcome());
-    }
-
-    SUBCASE("test7") {
-        std::istringstream iss{
-            "#######\n"
-            "#.G...#\n"
-            "#...EG#\n"
-            "#.#.#G#\n"
-            "#..G#E#\n"
-            "#.....#\n"
-            "#######\n"
-        };
-
-        auto b = Battle::Task2(iss);
-        REQUIRE(15 == b.GetElfAttack());
-        CHECK(29 == b.GetRound());
-        CHECK(172 == b.GetScore());
-    }
-
-    SUBCASE("task2") {
-        std::ifstream ifs{INPUT};
-        auto battle = Battle::Task2(ifs);
-        MESSAGE(battle.GetOutcome());
-    }
-}
