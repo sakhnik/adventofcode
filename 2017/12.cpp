@@ -1,9 +1,10 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <fstream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/connected_components.hpp>
+#include "../test.hpp"
+
+namespace {
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> GraphT;
 
@@ -62,21 +63,26 @@ unsigned Count(const GraphT &graph)
     return count;
 }
 
-TEST_CASE(TEST_NAME)
-{
-    auto test_graph = ReadGraph(std::istringstream(R"(0 <-> 2
+using namespace boost::ut;
+
+suite s = [] {
+    "2017-12"_test = [] {
+        auto test_graph = ReadGraph(std::istringstream(R"(0 <-> 2
 1 <-> 1
 2 <-> 0, 3, 4
 3 <-> 2, 4
 4 <-> 2, 3, 6
 5 <-> 6
 6 <-> 4, 5)"));
-    REQUIRE(Count(test_graph) == 6);
+        expect(6_u == Count(test_graph));
 
-    std::ifstream ifs(INPUT);
-    auto graph = ReadGraph(ifs);
-    MESSAGE(Count(graph));
+        std::ifstream ifs(INPUT);
+        auto graph = ReadGraph(ifs);
+        Printer::Print(__FILE__, "1", Count(graph));
 
-    std::vector<int> component(num_vertices(graph));
-    MESSAGE(connected_components(graph, &component[0]));
-}
+        std::vector<int> component(num_vertices(graph));
+        Printer::Print(__FILE__, "2", connected_components(graph, &component[0]));
+    };
+};
+
+} //namespace;

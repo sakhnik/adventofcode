@@ -1,11 +1,9 @@
-#include <doctest/doctest.h>
 #include <vector>
 #include <sstream>
-#include <iostream>
 #include <array>
 #include <cmath>
 #include <numeric>
-
+#include "../test.hpp"
 
 namespace {
 
@@ -118,20 +116,23 @@ private:
     }
 };
 
+using namespace boost::ut;
+
+suite s = [] {
+    "2019-12"_test = [] {
+        {
+            Moons test1({{-1, 0, 2}, {2, -10, -7}, {4, -8, 8}, {3, 5, -1}});
+            test1.Simulate(10);
+            expect(179_i == test1.CalcTotalEnergy());
+        }
+
+        Moons::MoonsT init{{-16, 15, -9}, {-14, 5, 4}, {2, 0, 6}, {-3, 18, 9}};
+
+        Moons task{init};
+        task.Simulate(1000);
+        Printer::Print(__FILE__, "1", task.CalcTotalEnergy());
+        Printer::Print(__FILE__, "2", task.FindPeriod());
+    };
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    {
-        Moons test1({{-1, 0, 2}, {2, -10, -7}, {4, -8, 8}, {3, 5, -1}});
-        test1.Simulate(10);
-        REQUIRE(179 == test1.CalcTotalEnergy());
-    }
-
-    Moons::MoonsT init{{-16, 15, -9}, {-14, 5, 4}, {2, 0, 6}, {-3, 18, 9}};
-
-    Moons task{init};
-    task.Simulate(1000);
-    MESSAGE(task.CalcTotalEnergy());
-    MESSAGE(task.FindPeriod());
-}

@@ -1,10 +1,9 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <sstream>
 #include <fstream>
 #include <vector>
 #include <cassert>
 #include <array>
+#include "../test.hpp"
 
 namespace {
 
@@ -98,19 +97,22 @@ int Solve(std::istream &&is, std::initializer_list<int> init)
 	return regs[0];
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+	"2016-12"_test = [] {
+		const char *const test =
+			"cpy 41 a\n"
+			"inc a\n"
+			"inc a\n"
+			"dec a\n"
+			"jnz a 2\n"
+			"dec a\n";
+		expect(42_i == Solve(std::istringstream{test}, {0, 0, 0, 0}));
+
+		Printer::Print(__FILE__, "1", Solve(std::ifstream{INPUT}, {0, 0, 0, 0}));
+		Printer::Print(__FILE__, "2", Solve(std::ifstream{INPUT}, {0, 0, 1, 0}));
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	const char *const test =
-		"cpy 41 a\n"
-		"inc a\n"
-		"inc a\n"
-		"dec a\n"
-		"jnz a 2\n"
-		"dec a\n";
-	REQUIRE(42 == Solve(std::istringstream{test}, {0,0,0,0}));
-
-	MESSAGE(Solve(std::ifstream{INPUT}, {0,0,0,0}));
-	MESSAGE(Solve(std::ifstream{INPUT}, {0,0,1,0}));
-}

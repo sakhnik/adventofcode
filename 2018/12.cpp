@@ -1,8 +1,7 @@
-#include <doctest/doctest.h>
 #include <sstream>
 #include <fstream>
 #include <algorithm>
-#include <iostream>
+#include "../test.hpp"
 
 namespace {
 
@@ -141,11 +140,11 @@ private:
     }
 };
 
-} //namespace;
+using namespace boost::ut;
+using namespace std::string_literals;
 
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
+suite s = [] {
+    "2018-12"_test = [] {
         const auto TEST_INPUT = R"(initial state: #..#.#..##......###...###
 
 ...## => #
@@ -162,25 +161,27 @@ TEST_CASE(TEST_NAME)
 ###.. => #
 ###.# => #
 ####. => #)";
-        Plants plants(std::istringstream{TEST_INPUT});
-        REQUIRE("#..#.#..##......###...###" == plants.GetPots());
-        plants.Evolve(1);
-        REQUIRE("#...#....#.....#..#..#..#" == plants.GetPots());
-        plants.Evolve(1);
-        REQUIRE("##..##...##....#..#..#..##" == plants.GetPots());
-        plants.Evolve(1);
-        REQUIRE("#.#...#..#.#....#..#..#...#" == plants.GetPots());
-        plants.Evolve(17);
-        REQUIRE("#....##....#####...#######....#.#..##" == plants.GetPots());
-        REQUIRE(-2 == plants.GetInitialNum());
-        REQUIRE(325 == plants.CalcPositionsSum());
-    }
+        {
+            Plants plants(std::istringstream{TEST_INPUT});
+            expect(eq("#..#.#..##......###...###"s, plants.GetPots()));
+            plants.Evolve(1);
+            expect(eq("#...#....#.....#..#..#..#"s, plants.GetPots()));
+            plants.Evolve(1);
+            expect(eq("##..##...##....#..#..#..##"s, plants.GetPots()));
+            plants.Evolve(1);
+            expect(eq("#.#...#..#.#....#..#..#...#"s, plants.GetPots()));
+            plants.Evolve(17);
+            expect(eq("#....##....#####...#######....#.#..##"s, plants.GetPots()));
+            expect(-2_i == plants.GetInitialNum());
+            expect(325_i == plants.CalcPositionsSum());
+        }
 
-    SUBCASE("tasks") {
         Plants plants(std::ifstream{INPUT});
         plants.Evolve(20);
-        MESSAGE(plants.CalcPositionsSum());
+        Printer::Print(__FILE__, "1", plants.CalcPositionsSum());
         plants.Evolve(50000000000 - 20);
-        MESSAGE(plants.CalcPositionsSum());
-    }
-}
+        Printer::Print(__FILE__, "2", plants.CalcPositionsSum());
+    };
+};
+
+} //namespace;
