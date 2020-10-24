@@ -1,16 +1,16 @@
-#include <doctest/doctest.h>
 #include "Cpu.h"
 #include <fstream>
 #include <memory>
+#include "../test.hpp"
 
 namespace {
-} //namespace;
 
-TEST_CASE(TEST_NAME)
-{
-    using namespace aoc2018;
+using namespace boost::ut;
 
-    SUBCASE("task") {
+suite s = [] {
+    "2018-21"_test = [] {
+        using namespace aoc2018;
+
         Cpu cpu(std::ifstream{INPUT});
         //cpu.Print();
 
@@ -48,7 +48,7 @@ TEST_CASE(TEST_NAME)
 
         // Apparently, we can break the program the first time the line 28 is hit
         // for the task1 => the fewest instructions.
- 
+
         {
             std::ofstream ofs("/tmp/test.cpp");
             cpu.Transcode(ofs,
@@ -73,12 +73,14 @@ TEST_CASE(TEST_NAME)
                           )"}});
         }
 
-        REQUIRE(0 == ::system("cd /tmp; g++ -std=c++17 -O2 test.cpp"));
-        std::unique_ptr<FILE, int(*)(FILE*)> f(::popen("/tmp/a.out", "r"), &fclose);
+        expect(0 == ::system("cd /tmp; g++ -std=c++17 -O2 test.cpp"));
+        std::unique_ptr<FILE, int (*)(FILE *)> f(::popen("/tmp/a.out", "r"), &fclose);
         int res{};
         fscanf(f.get(), "%d", &res);
-        MESSAGE(res);
+        Printer::Print(__FILE__, "1", res);
         fscanf(f.get(), "%d", &res);
-        MESSAGE(res);
-    }
-}
+        Printer::Print(__FILE__, "2", res);
+    };
+};
+
+} //namespace;

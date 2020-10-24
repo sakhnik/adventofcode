@@ -1,13 +1,14 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <fstream>
 #include <unordered_map>
 #include <algorithm>
 #include <set>
 #include <sstream>
 #include <vector>
+#include "../test.hpp"
 
 namespace {
+
+using namespace boost::ut; 
 
 typedef std::unordered_map<std::string, std::string> PatternsT;
 
@@ -24,7 +25,7 @@ std::set<std::string> GetVariations(std::string pattern)
     else if (pattern.size() == 9)
         size = 3;
     else
-        REQUIRE(false);
+        expect(false);
 
     auto get_symmetric = [=](const std::string &p) {
         auto ret(p);
@@ -119,7 +120,7 @@ GridT Transform(const GridT &grid, const PatternsT &patterns)
             if (it == patterns.end())
             {
                 std::cerr << "Unknown pattern " << block << std::endl;
-                REQUIRE(false);
+                expect(false);
             }
             WriteBlock(it->second, row, col, block_size + 1, new_grid);
         }
@@ -151,45 +152,44 @@ unsigned Solve(unsigned iterations, const PatternsT &patterns)
     return count;
 }
 
+suite s = [] {
+    "2017-21"_test = [] {
+        {
+            auto v = GetVariations("####");
+            expect(v.size() == 1_u);
+            expect(v.count("####") == 1_u);
+
+            v = GetVariations("#...");
+            expect(v.size() == 4_u);
+            expect(v.count("#...") == 1_u);
+            expect(v.count(".#..") == 1_u);
+            expect(v.count("..#.") == 1_u);
+            expect(v.count("...#") == 1_u);
+
+            v = GetVariations("##..");
+            expect(v.size() == 4_u);
+            expect(v.count("##..") == 1_u);
+            expect(v.count("..##") == 1_u);
+            expect(v.count("#.#.") == 1_u);
+            expect(v.count(".#.#") == 1_u);
+        }
+
+        {
+            std::istringstream iss("../.# => ##./#../...\n.#./..#/### => #..#/..../..../#..#");
+            auto patterns = Parse(iss);
+            GridT grid = {".#.", "..#", "###"};
+            Print(grid);
+            grid = Transform(grid, patterns);
+            Print(grid);
+            grid = Transform(grid, patterns);
+            Print(grid);
+        }
+
+        std::ifstream ifs(INPUT);
+        auto patterns = Parse(ifs);
+        Printer::Print(__FILE__, "1", Solve(5, patterns));
+        Printer::Print(__FILE__, "2", Solve(18, patterns));
+    };
+};
+
 } //namespace;
-
-TEST_CASE("GetVariations2")
-{
-    auto v = GetVariations("####");
-    CHECK(v.size() == 1);
-    CHECK(v.count("####") == 1);
-
-    v = GetVariations("#...");
-    CHECK(v.size() == 4);
-    CHECK(v.count("#...") == 1);
-    CHECK(v.count(".#..") == 1);
-    CHECK(v.count("..#.") == 1);
-    CHECK(v.count("...#") == 1);
-
-    v = GetVariations("##..");
-    CHECK(v.size() == 4);
-    CHECK(v.count("##..") == 1);
-    CHECK(v.count("..##") == 1);
-    CHECK(v.count("#.#.") == 1);
-    CHECK(v.count(".#.#") == 1);
-}
-
-TEST_CASE("1")
-{
-    std::istringstream iss("../.# => ##./#../...\n.#./..#/### => #..#/..../..../#..#");
-    auto patterns = Parse(iss);
-    GridT grid = { ".#.", "..#", "###" };
-    Print(grid);
-    grid = Transform(grid, patterns);
-    Print(grid);
-    grid = Transform(grid, patterns);
-    Print(grid);
-}
-
-TEST_CASE(TEST_NAME)
-{
-    std::ifstream ifs(INPUT);
-    auto patterns = Parse(ifs);
-    MESSAGE(Solve(5, patterns));
-    MESSAGE(Solve(18, patterns));
-}

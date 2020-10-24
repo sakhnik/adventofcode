@@ -1,10 +1,9 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <sstream>
 #include <fstream>
 #include <cassert>
 #include <algorithm>
 #include <vector>
+#include "../test.hpp"
 
 namespace {
 
@@ -134,31 +133,35 @@ std::string Unscramble(std::istream &&is, std::string s)
 	return s;
 }
 
+using namespace boost::ut;
+using namespace std::string_literals;
+
+suite s = [] {
+	"2016-21"_test = [] {
+		expect(eq("ebcda"s, Scramble(std::istringstream{"swap position 4 with position 0"}, "abcde")));
+		expect(eq("edcba"s, Scramble(std::istringstream{"swap letter d with letter b"}, "ebcda")));
+		expect(eq("dabc"s, Scramble(std::istringstream{"rotate right 1 steps"}, "abcd")));
+		expect(eq("bcdea"s, Scramble(std::istringstream{"rotate left 1 steps"}, "abcde")));
+		expect(eq("ecabd"s, Scramble(std::istringstream{"rotate based on position of letter b"}, "abdec")));
+		expect(eq("decab"s, Scramble(std::istringstream{"rotate based on position of letter d"}, "ecabd")));
+		expect(eq("abcde"s, Scramble(std::istringstream{"reverse positions 0 through 4"}, "edcba")));
+		expect(eq("bdeac"s, Scramble(std::istringstream{"move position 1 to position 4"}, "bcdea")));
+		expect(eq("abdec"s, Scramble(std::istringstream{"move position 3 to position 0"}, "bdeac")));
+
+		Printer::Print(__FILE__, "1", Scramble(std::ifstream{INPUT}, "abcdefgh"));
+
+		expect(eq("abcde"s, Unscramble(std::istringstream{"swap position 4 with position 0"}, "ebcda")));
+		expect(eq("ebcda"s, Unscramble(std::istringstream{"swap letter d with letter b"}, "edcba")));
+		expect(eq("abcd"s, Unscramble(std::istringstream{"rotate right 1 steps"}, "dabc")));
+		expect(eq("abcde"s, Unscramble(std::istringstream{"rotate left 1 steps"}, "bcdea")));
+		expect(eq("abdec"s, Unscramble(std::istringstream{"rotate based on position of letter b"}, "ecabd")));
+		expect(eq("ecabd"s, Unscramble(std::istringstream{"rotate based on position of letter d"}, "decab")));
+		expect(eq("edcba"s, Unscramble(std::istringstream{"reverse positions 0 through 4"}, "abcde")));
+		expect(eq("bcdea"s, Unscramble(std::istringstream{"move position 1 to position 4"}, "bdeac")));
+		expect(eq("bdeac"s, Unscramble(std::istringstream{"move position 3 to position 0"}, "abdec")));
+
+		Printer::Print(__FILE__, "2", Unscramble(std::ifstream{INPUT}, "fbgdceah"));
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE("ebcda" == Scramble(std::istringstream{"swap position 4 with position 0"}, "abcde"));
-	REQUIRE("edcba" == Scramble(std::istringstream{"swap letter d with letter b"}, "ebcda"));
-	REQUIRE("dabc" == Scramble(std::istringstream{"rotate right 1 steps"}, "abcd"));
-	REQUIRE("bcdea" == Scramble(std::istringstream{"rotate left 1 steps"}, "abcde"));
-	REQUIRE("ecabd" == Scramble(std::istringstream{"rotate based on position of letter b"}, "abdec"));
-	REQUIRE("decab" == Scramble(std::istringstream{"rotate based on position of letter d"}, "ecabd"));
-	REQUIRE("abcde" == Scramble(std::istringstream{"reverse positions 0 through 4"}, "edcba"));
-	REQUIRE("bdeac" == Scramble(std::istringstream{"move position 1 to position 4"}, "bcdea"));
-	REQUIRE("abdec" == Scramble(std::istringstream{"move position 3 to position 0"}, "bdeac"));
-
-	MESSAGE(Scramble(std::ifstream{INPUT}, "abcdefgh"));
-
-	REQUIRE("abcde" == Unscramble(std::istringstream{"swap position 4 with position 0"}, "ebcda"));
-	REQUIRE("ebcda" == Unscramble(std::istringstream{"swap letter d with letter b"}, "edcba"));
-	REQUIRE("abcd" == Unscramble(std::istringstream{"rotate right 1 steps"}, "dabc"));
-	REQUIRE("abcde" == Unscramble(std::istringstream{"rotate left 1 steps"}, "bcdea"));
-	REQUIRE("abdec" == Unscramble(std::istringstream{"rotate based on position of letter b"}, "ecabd"));
-	REQUIRE("ecabd" == Unscramble(std::istringstream{"rotate based on position of letter d"}, "decab"));
-	REQUIRE("edcba" == Unscramble(std::istringstream{"reverse positions 0 through 4"}, "abcde"));
-	REQUIRE("bcdea" == Unscramble(std::istringstream{"move position 1 to position 4"}, "bdeac"));
-	REQUIRE("bdeac" == Unscramble(std::istringstream{"move position 3 to position 0"}, "abdec"));
-
-	MESSAGE(Unscramble(std::ifstream{INPUT}, "fbgdceah"));
-}
