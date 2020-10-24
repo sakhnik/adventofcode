@@ -1,7 +1,5 @@
 #include "Asm.h"
 
-#include <doctest/doctest.h>
-#include <iostream>
 #include <unordered_map>
 #include <fstream>
 #include <queue>
@@ -9,6 +7,8 @@
 #include <condition_variable>
 #include <thread>
 #include <atomic>
+
+#include "../test.hpp"
 
 namespace {
 
@@ -192,11 +192,12 @@ int64_t Task2(const ProgramT &program)
     return q1.GetSends();
 }
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE("1")
-{
-    const char *const program = R"(set a 1
+suite s = [] {
+    "2017-18"_test = [] {
+        {
+            const char *const program = R"(set a 1
 add a 2
 mul a a
 mod a 5
@@ -206,26 +207,26 @@ rcv a
 jgz a -1
 set a 1
 jgz a -2)";
-    auto test = Parse(std::istringstream(program));
-    REQUIRE(Task1(test) == 4);
-}
+            auto test = Parse(std::istringstream(program));
+            expect(Task1(test) == 4_i);
+        }
 
-TEST_CASE("2")
-{
-    const char *const program = R"(snd 1
+        {
+            const char *const program = R"(snd 1
 snd 2
 snd p
 rcv a
 rcv b
 rcv c
 rcv d)";
-    auto test = Parse(std::istringstream(program));
-    REQUIRE(Task2(test) == 3);
-}
+            auto test = Parse(std::istringstream(program));
+            expect(Task2(test) == 3_i);
+        }
 
-TEST_CASE(TEST_NAME)
-{
-    auto program = Parse(std::ifstream(INPUT));
-    MESSAGE(Task1(program));
-    //MESSAGE(Task2(program));
-}
+        auto program = Parse(std::ifstream(INPUT));
+        Printer::Print(__FILE__, "1", Task1(program));
+        Printer::Print(__FILE__, "2", Task2(program));
+    };
+};
+
+} //namespace;

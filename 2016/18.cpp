@@ -1,8 +1,7 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <fstream>
 #include <algorithm>
 #include <cassert>
+#include "../test.hpp"
 
 namespace {
 
@@ -50,13 +49,16 @@ int Solve(unsigned rows, std::string row)
 	return safe_cells;
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+	"2016-18"_test = [] {
+		expect(38_i == Solve(10, ".^^.^.^^^^"));
+
+		const char *PUZZLE = ".^^^.^.^^^^^..^^^..^..^..^^..^.^.^.^^.^^....^.^...^.^^.^^.^^..^^..^.^..^^^.^^...^...^^....^^.^^^^^^^";
+		Printer::Print(__FILE__, "1", Solve(40, PUZZLE));
+		Printer::Print(__FILE__, "2", Solve(400000, PUZZLE));
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(38 == Solve(10, ".^^.^.^^^^"));
-
-	const char *PUZZLE = ".^^^.^.^^^^^..^^^..^..^..^^..^.^.^.^^.^^....^.^...^.^^.^^.^^..^^..^.^..^^^.^^...^...^^....^^.^^^^^^^";
-	MESSAGE(Solve(40, PUZZLE));
-	MESSAGE(Solve(400000, PUZZLE));
-}

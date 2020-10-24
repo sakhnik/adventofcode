@@ -1,15 +1,17 @@
-#include <doctest/doctest.h>
 #include <fstream>
 #include <iterator>
 #include <queue>
-#include <iostream>
 #include <algorithm>
 #include <bitset>
 #include <numeric>
 #include <unordered_map>
 #include <boost/functional/hash.hpp>
 #include <boost/scope_exit.hpp>
+#include "../test.hpp"
 
+namespace {
+
+using namespace boost::ut;
 
 const int MAX_DIST = std::numeric_limits<int>::max();
 
@@ -187,12 +189,12 @@ int SearchMin(std::string &map)
 
     using PositionT = std::array<int,N>;
     PositionT position;
-    int p{0};
+    size_t p{0};
 
     for (int i = 0; i < N; ++i, ++p)
     {
         p = map.find("@", p);
-        REQUIRE(p != map.npos);
+        expect(p != map.npos);
         position[i] = p;
     }
 
@@ -200,81 +202,84 @@ int SearchMin(std::string &map)
     return SearchImpl(position, map, width, keysLeft, knownPaths);
 }
 
-TEST_CASE(TEST_NAME)
-{
-    {
-        std::string m =
-            "#########\n"
-            "#b.A.@.a#\n"
-            "#########";
-        REQUIRE(8 == SearchMin<1>(m));
-    }
+suite s = [] {
+    "2019-18"_test = [] {
+        {
+            std::string m =
+                "#########\n"
+                "#b.A.@.a#\n"
+                "#########";
+            expect(8_i == SearchMin<1>(m));
+        }
 
-    {
-        std::string m =
-            "########################\n"
-            "#f.D.E.e.C.b.A.@.a.B.c.#\n"
-            "######################.#\n"
-            "#d.....................#\n"
-            "########################";
-        REQUIRE(86 == SearchMin<1>(m));
-    }
+        {
+            std::string m =
+                "########################\n"
+                "#f.D.E.e.C.b.A.@.a.B.c.#\n"
+                "######################.#\n"
+                "#d.....................#\n"
+                "########################";
+            expect(86_i == SearchMin<1>(m));
+        }
 
-    {
-        std::string m =
-            "########################\n"
-            "#...............b.C.D.f#\n"
-            "#.######################\n"
-            "#.....@.a.B.c.d.A.e.F.g#\n"
-            "########################";
-        REQUIRE(132 == SearchMin<1>(m));
-    }
+        {
+            std::string m =
+                "########################\n"
+                "#...............b.C.D.f#\n"
+                "#.######################\n"
+                "#.....@.a.B.c.d.A.e.F.g#\n"
+                "########################";
+            expect(132_i == SearchMin<1>(m));
+        }
 
-    {
-        std::string m =
-            "#################\n"
-            "#i.G..c...e..H.p#\n"
-            "########.########\n"
-            "#j.A..b...f..D.o#\n"
-            "########@########\n"
-            "#k.E..a...g..B.n#\n"
-            "########.########\n"
-            "#l.F..d...h..C.m#\n"
-            "#################";
-        REQUIRE(136 == SearchMin<1>(m));
-    }
+        {
+            std::string m =
+                "#################\n"
+                "#i.G..c...e..H.p#\n"
+                "########.########\n"
+                "#j.A..b...f..D.o#\n"
+                "########@########\n"
+                "#k.E..a...g..B.n#\n"
+                "########.########\n"
+                "#l.F..d...h..C.m#\n"
+                "#################";
+            expect(136_i == SearchMin<1>(m));
+        }
 
-    {
-        std::string m =
-            "########################\n"
-            "#@..............ac.GI.b#\n"
-            "###d#e#f################\n"
-            "###A#B#C################\n"
-            "###g#h#i################\n"
-            "########################";
-        REQUIRE(81 == SearchMin<1>(m));
-    }
+        {
+            std::string m =
+                "########################\n"
+                "#@..............ac.GI.b#\n"
+                "###d#e#f################\n"
+                "###A#B#C################\n"
+                "###g#h#i################\n"
+                "########################";
+            expect(81_i == SearchMin<1>(m));
+        }
 
-    {
-        std::ifstream ifs{INPUT};
-        std::string map(std::istreambuf_iterator<char>{ifs},
-                        std::istreambuf_iterator<char>{});
+        {
+            std::ifstream ifs{INPUT};
+            std::string map(std::istreambuf_iterator<char>{ifs},
+                            std::istreambuf_iterator<char>{});
 
-        MESSAGE(SearchMin<1>(map));
+            Printer::Print(__FILE__, "1", SearchMin<1>(map));
 
-        auto width = map.find("\n") + 1;
-        auto pos = map.find("@");
+            auto width = map.find("\n") + 1;
+            auto pos = map.find("@");
 
-        map[pos-1-width] = '@';
-        map[pos-width] = '#';
-        map[pos-width+1] = '@';
-        map[pos-1] = '#';
-        map[pos] = '#';
-        map[pos+1] = '#';
-        map[pos+width-1] = '@';
-        map[pos+width] = '#';
-        map[pos+width+1] = '@';
+            map[pos - 1 - width] = '@';
+            map[pos - width] = '#';
+            map[pos - width + 1] = '@';
+            map[pos - 1] = '#';
+            map[pos] = '#';
+            map[pos + 1] = '#';
+            map[pos + width - 1] = '@';
+            map[pos + width] = '#';
+            map[pos + width + 1] = '@';
 
-        MESSAGE(SearchMin<4>(map));
-    }
-}
+            Printer::Print(__FILE__, "2", SearchMin<4>(map));
+        }
+    };
+};
+
+} //namespace;
