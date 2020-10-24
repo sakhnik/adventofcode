@@ -1,11 +1,9 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cassert>
 #include <algorithm>
 #include <boost/icl/interval_set.hpp>
-
+#include "../test.hpp"
 
 namespace {
 
@@ -54,13 +52,16 @@ int Solve2(std::istream &&is, uint32_t max)
 	return sum;
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+	"2016-20"_test = [] {
+		expect(3_i == Solve(std::istringstream{"5-8\n0-2\n4-7"}));
+		Printer::Print(__FILE__, "1", Solve(std::ifstream{INPUT}));
+
+		expect(2_i == Solve2(std::istringstream{"5-8\n0-2\n4-7"}, 9));
+		Printer::Print(__FILE__, "2", Solve2(std::ifstream{INPUT}, std::numeric_limits<uint32_t>::max()));
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(3 == Solve(std::istringstream{"5-8\n0-2\n4-7"}));
-	MESSAGE(Solve(std::ifstream{INPUT}));
-
-	REQUIRE(2 == Solve2(std::istringstream{"5-8\n0-2\n4-7"}, 9));
-	MESSAGE(Solve2(std::ifstream{INPUT}, std::numeric_limits<uint32_t>::max()));
-}

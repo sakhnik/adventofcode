@@ -1,9 +1,9 @@
-#include <doctest/doctest.h>
 #include <sstream>
 #include <fstream>
 #include <unordered_map>
 #include <algorithm>
 #include <cassert>
+#include "../test.hpp"
 
 namespace {
 
@@ -90,18 +90,21 @@ private:
     }
 };
 
+using namespace boost::ut;
+
+suite s = [] {
+    "2018-20"_test = [] {
+        {
+            Map m(std::istringstream{"^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$"});
+            expect(23_i == m.GetFartherst());
+        }
+
+        {
+            Map m(std::ifstream{INPUT});
+            Printer::Print(__FILE__, "1", m.GetFartherst());
+            Printer::Print(__FILE__, "2", m.CountRooms1000DoorsAway());
+        }
+    };
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
-        Map m(std::istringstream{"^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$"});
-        REQUIRE(23 == m.GetFartherst());
-    }
-
-    SUBCASE("task") {
-        Map m(std::ifstream{INPUT});
-        MESSAGE(m.GetFartherst());
-        MESSAGE(m.CountRooms1000DoorsAway());
-    }
-}

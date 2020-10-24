@@ -1,8 +1,7 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <fstream>
 #include <algorithm>
 #include <vector>
+#include "../test.hpp"
 
 namespace {
 
@@ -132,12 +131,15 @@ unsigned SimulateCollisions(SwarmT swarm)
     return swarm.size();
 }
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    std::ifstream ifs(INPUT);
-    auto swarm = Parse(ifs);
-    MESSAGE(FindClosest(FilterLowestAcceleration(swarm)));
-    MESSAGE(SimulateCollisions(swarm));
-}
+suite s = [] {
+    "2017-20"_test = [] {
+        std::ifstream ifs(INPUT);
+        auto swarm = Parse(ifs);
+        Printer::Print(__FILE__, "1", FindClosest(FilterLowestAcceleration(swarm)));
+        Printer::Print(__FILE__, "2", SimulateCollisions(swarm));
+    };
+};
+
+} //namespace;
