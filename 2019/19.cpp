@@ -1,18 +1,21 @@
-#include <doctest/doctest.h>
 #include "IntCode.h"
 #include <fstream>
+#include "../test.hpp"
 
+namespace {
+
+using namespace boost::ut;
 
 bool TestLocation(int x, int y, IntCode prog)
 {
     auto r = prog.Advance(0);
-    REQUIRE(prog.GetState() == prog.S_INPUT);
+    expect(prog.GetState() == prog.S_INPUT);
     r = prog.Advance(x);
-    REQUIRE(prog.GetState() == prog.S_INPUT);
+    expect(prog.GetState() == prog.S_INPUT);
     r = prog.Advance(y);
-    REQUIRE(prog.GetState() == prog.S_OUTPUT);
+    expect(prog.GetState() == prog.S_OUTPUT);
     prog.Advance(0);
-    REQUIRE(prog.GetState() == prog.S_HALT);
+    expect(prog.GetState() == prog.S_HALT);
     return r == 1;
 }
 
@@ -92,20 +95,23 @@ int FindFit(int x0, int y0, int size, const IntCode &prog)
     }
 }
 
-TEST_CASE(TEST_NAME)
-{
-    std::ifstream ifs{INPUT};
-    IntCode prog{ifs};
+suite s = [] {
+    "2019-19"_test = [] {
+        std::ifstream ifs{INPUT};
+        IntCode prog{ifs};
 
-    for (int y = 0; y < 20; ++y)
-    {
-        for (int x = 0; x < 20; ++x)
+        for (int y = 0; y < 20; ++y)
         {
-            std::cout << TestLocation(x, y, prog);
+            for (int x = 0; x < 20; ++x)
+            {
+                std::cout << TestLocation(x, y, prog);
+            }
+            std::cout << std::endl;
         }
-        std::cout << std::endl;
-    }
 
-    MESSAGE(CountArea(3, 4, 50, 50, prog));
-    MESSAGE(FindFit(3, 4, 100, prog));
-}
+        Printer::Print(__FILE__, "1", CountArea(3, 4, 50, 50, prog));
+        Printer::Print(__FILE__, "2", FindFit(3, 4, 100, prog));
+    };
+};
+
+} //namespace;

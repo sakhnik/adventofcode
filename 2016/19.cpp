@@ -1,8 +1,7 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <vector>
 #include <cassert>
 #include <list>
+#include "../test.hpp"
 
 namespace {
 
@@ -58,13 +57,16 @@ int Solve2(int count)
 	return circle.front();
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+	"2016-19"_test = [] {
+		expect(3_i == Solve(5));
+		Printer::Print(__FILE__, "1", Solve(3004953));
+
+		expect(2_i == Solve2(5));
+		Printer::Print(__FILE__, "2", Solve2(3004953));
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	REQUIRE(3 == Solve(5));
-	MESSAGE(Solve(3004953));
-
-	REQUIRE(2 == Solve2(5));
-	MESSAGE(Solve2(3004953));
-}

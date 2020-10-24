@@ -1,10 +1,14 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include "../test.hpp"
 
-typedef std::vector<std::string> RouteT;
+namespace {
+
+using namespace boost::ut;
+using namespace std::string_literals;
+
+using RouteT = std::vector<std::string>;
 
 RouteT Parse(std::istream &is)
 {
@@ -64,7 +68,7 @@ Result Trace(const RouteT &route)
                     dy = 0;
                 }
                 else
-                    REQUIRE(!"Not implemented");
+                    expect(false) << "Not implemented";
                 break;
             }
         case 'A'...'Z':
@@ -82,26 +86,27 @@ Result Trace(const RouteT &route)
     return {trace, steps};
 }
 
-TEST_CASE("test")
-{
-    const char *const test =
-"     |          \n"
-"     |  +--+    \n"
-"     A  |  C    \n"
-" F---|----E|--+ \n"
-"     |  |  |  D \n"
-"     +B-+  +--+ \n"
-    ;
-    auto route = Parse(std::istringstream(test));
-    auto result = Trace(route);
-    REQUIRE(result.trace == "ABCDEF");
-    REQUIRE(result.steps == 38);
-}
+suite s = [] {
+    "2017-19"_test = [] {
+        {
+            const char *const test =
+                "     |          \n"
+                "     |  +--+    \n"
+                "     A  |  C    \n"
+                " F---|----E|--+ \n"
+                "     |  |  |  D \n"
+                "     +B-+  +--+ \n";
+            auto route = Parse(std::istringstream(test));
+            auto result = Trace(route);
+            expect(eq(result.trace, "ABCDEF"s));
+            expect(result.steps == 38_u);
+        }
 
-TEST_CASE(TEST_NAME)
-{
-    auto route = Parse(std::ifstream(INPUT));
-    auto result = Trace(route);
-    MESSAGE(result.trace);
-    MESSAGE(result.steps);
-}
+        auto route = Parse(std::ifstream(INPUT));
+        auto result = Trace(route);
+        Printer::Print(__FILE__, "1", result.trace);
+        Printer::Print(__FILE__, "2", result.steps);
+    };
+};
+
+} //namespace;
