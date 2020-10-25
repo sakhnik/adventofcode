@@ -1,73 +1,75 @@
-#include <doctest/doctest.h>
 #include "IntCode.h"
 #include <fstream>
 #include <deque>
-#include <iostream>
+#include "../test.hpp"
 
+namespace {
 
-TEST_CASE(TEST_NAME)
-{
-    std::ifstream ifs{INPUT};
-    IntCodeB prog{ifs};
+using namespace boost::ut;
 
-    struct Node
-    {
-        IntCodeB prog;
-        std::deque<BigIntT> input;
-    };
+suite s = [] {
+    "2019-23"_test = [] {
+        std::ifstream ifs{INPUT};
+        IntCodeB prog{ifs};
 
-    size_t queue_size{};
-    std::vector<Node> nodes(50, {prog});
-    for (size_t i = 0; i < nodes.size(); ++i)
-    {
-        nodes[i].input.push_front(0);
-        nodes[i].input.push_back(i);
-        queue_size += 2;
-    }
+        struct Node
+        {
+            IntCodeB prog;
+            std::deque<BigIntT> input;
+        };
 
-    bool firstReported{false};
-    BigIntT nat_y_prev{-1};
-    BigIntT nat_x{}, nat_y{};
-
-    bool exit{false};
-    while (!exit)
-    {
+        size_t queue_size{};
+        std::vector<Node> nodes(50, {prog});
         for (size_t i = 0; i < nodes.size(); ++i)
         {
-            auto &n = nodes[i];
+            nodes[i].input.push_front(0);
+            nodes[i].input.push_back(i);
+            queue_size += 2;
+        }
 
-            BigIntT v = -1;
-            if (!n.input.empty())
+        bool firstReported{false};
+        BigIntT nat_y_prev{-1};
+        BigIntT nat_x{}, nat_y{};
+
+        bool exit{false};
+        while (!exit)
+        {
+            for (size_t i = 0; i < nodes.size(); ++i)
             {
-                v = n.input.front();
-                n.input.pop_front();
-                --queue_size;
-            }
+                auto &n = nodes[i];
 
-            auto r = n.prog.Advance(v);
+                BigIntT v = -1;
+                if (!n.input.empty())
+                {
+                    v = n.input.front();
+                    n.input.pop_front();
+                    --queue_size;
+                }
 
-            switch (n.prog.GetState())
-            {
-            case IntCodeB::S_RUN:
-                break;
-            case IntCodeB::S_HALT:
-                exit = true;
-                break;
-            case IntCodeB::S_INPUT:
-                break;
-            case IntCodeB::S_OUTPUT:
+                auto r = n.prog.Advance(v);
+
+                switch (n.prog.GetState())
+                {
+                case IntCodeB::S_RUN:
+                    break;
+                case IntCodeB::S_HALT:
+                    exit = true;
+                    break;
+                case IntCodeB::S_INPUT:
+                    break;
+                case IntCodeB::S_OUTPUT:
                 {
                     auto x = n.prog.Advance(0);
-                    REQUIRE(n.prog.GetState() == IntCode::S_OUTPUT);
+                    assert(n.prog.GetState() == IntCode::S_OUTPUT);
                     auto y = n.prog.Advance(0);
-                    REQUIRE(n.prog.GetState() == IntCode::S_OUTPUT);
+                    assert(n.prog.GetState() == IntCode::S_OUTPUT);
                     n.input.push_front(0);
                     ++queue_size;
                     if (r == 255)
                     {
                         if (!firstReported)
                         {
-                            MESSAGE(y);
+                            Printer::Print(__FILE__, "1", y.convert_to<std::string>());
                             firstReported = true;
                         }
                         nat_x = x;
@@ -82,21 +84,24 @@ TEST_CASE(TEST_NAME)
                     }
                 }
                 break;
+                }
             }
-        }
 
-        if (!queue_size)
-        {
-            if (nat_y_prev == nat_y)
+            if (!queue_size)
             {
-                MESSAGE(nat_y);
-                exit = true;
-                break;
+                if (nat_y_prev == nat_y)
+                {
+                    Printer::Print(__FILE__, "2", nat_y.convert_to<std::string>());
+                    exit = true;
+                    break;
+                }
+                nodes[0].input.push_back(nat_x);
+                nodes[0].input.push_back(nat_y);
+                queue_size += 2;
+                nat_y_prev = nat_y;
             }
-            nodes[0].input.push_back(nat_x);
-            nodes[0].input.push_back(nat_y);
-            queue_size += 2;
-            nat_y_prev = nat_y;
         }
-    }
-}
+    };
+};
+
+} //namespace;

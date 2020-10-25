@@ -1,9 +1,8 @@
-#include <doctest/doctest.h>
 #include <sstream>
 #include <fstream>
 #include <vector>
 #include <regex>
-#include <iostream>
+#include "../test.hpp"
 
 namespace {
 
@@ -134,28 +133,29 @@ private:
     }
 };
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
-        const char *const TEST =
-            "pos=<0,0,0>, r=4\n"
-            "pos=<1,0,0>, r=1\n"
-            "pos=<4,0,0>, r=3\n"
-            "pos=<0,2,0>, r=1\n"
-            "pos=<0,5,0>, r=3\n"
-            "pos=<0,0,3>, r=1\n"
-            "pos=<1,1,1>, r=1\n"
-            "pos=<1,1,2>, r=1\n"
-            "pos=<1,3,1>, r=1\n";
-        Bots b(std::istringstream{TEST});
-        REQUIRE(7 == b.CountInRange());
-    }
+suite s = [] {
+    "2018-23"_test = [] {
+        {
+            const char *const TEST =
+                "pos=<0,0,0>, r=4\n"
+                "pos=<1,0,0>, r=1\n"
+                "pos=<4,0,0>, r=3\n"
+                "pos=<0,2,0>, r=1\n"
+                "pos=<0,5,0>, r=3\n"
+                "pos=<0,0,3>, r=1\n"
+                "pos=<1,1,1>, r=1\n"
+                "pos=<1,1,2>, r=1\n"
+                "pos=<1,3,1>, r=1\n";
+            Bots b(std::istringstream{TEST});
+            expect(7_u == b.CountInRange());
+        }
 
-    SUBCASE("task") {
         Bots b(std::ifstream{INPUT});
-        MESSAGE(b.CountInRange());
-        MESSAGE(b.Find());
-    }
-}
+        Printer::Print(__FILE__, "1", b.CountInRange());
+        Printer::Print(__FILE__, "2", b.Find());
+    };
+};
+
+} //namespace;

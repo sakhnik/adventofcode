@@ -1,9 +1,8 @@
 #include "Asm.h"
 
-#include <doctest/doctest.h>
-#include <iostream>
 #include <fstream>
 #include <cmath>
+#include "../test.hpp"
 
 namespace {
 
@@ -54,32 +53,35 @@ unsigned CountMuls(const ProgramT &program)
     return count;
 }
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    std::ifstream ifs(INPUT);
-    auto program = Parse(ifs);
+suite s = [] {
+    "2017-23"_test = [] {
+        std::ifstream ifs(INPUT);
+        auto program = Parse(ifs);
 
-    MESSAGE(CountMuls(program));
+        Printer::Print(__FILE__, "1", CountMuls(program));
 
-    // Disassembler: looks like counting nonprimes from 106700 +17000 step 17
-    uint32_t h{0};
+        // Disassembler: looks like counting nonprimes from 106700 +17000 step 17
+        uint32_t h{0};
 
-    for (uint32_t b = 67*100 + 100000, c = b + 17000;
-         b <= c;
-         b += 17)
-    {
-        uint32_t max_divider = static_cast<uint32_t>(std::sqrt(b));
-        for (uint32_t d = 2; d <= max_divider; ++d)
+        for (uint32_t b = 67 * 100 + 100000, c = b + 17000;
+             b <= c;
+             b += 17)
         {
-            if (b % d == 0)
+            uint32_t max_divider = static_cast<uint32_t>(std::sqrt(b));
+            for (uint32_t d = 2; d <= max_divider; ++d)
             {
-                ++h;
-                break;
+                if (b % d == 0)
+                {
+                    ++h;
+                    break;
+                }
             }
         }
-    }
 
-    MESSAGE(h);
-}
+        Printer::Print(__FILE__, "2", h);
+    };
+};
+
+} //namespace;

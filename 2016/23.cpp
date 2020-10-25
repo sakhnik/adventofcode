@@ -1,13 +1,13 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <sstream>
 #include <fstream>
 #include <vector>
 #include <cassert>
 #include <array>
-
+#include "../test.hpp"
 
 namespace {
+
+using namespace boost::ut;
 
 int Solve(std::istream &&is, std::initializer_list<int> init)
 {
@@ -54,7 +54,7 @@ int Solve(std::istream &&is, std::initializer_list<int> init)
 			program.push_back({Op::TGL, true, r1 - 'a', false, 0});
 		else
 		{
-			FAIL(line);
+			expect(false >> fatal) << line;
 		}
 	}
 
@@ -103,29 +103,30 @@ int Solve(std::istream &&is, std::initializer_list<int> init)
 	return regs[0];
 }
 
+suite s = [] {
+	"2016-23"_test = [] {
+		const char *const test1 =
+			"cpy 41 a\n"
+			"inc a\n"
+			"inc a\n"
+			"dec a\n"
+			"jnz a 2\n"
+			"dec a\n";
+		expect(42_i == Solve(std::istringstream{test1}, {0, 0, 0, 0}));
+
+		const char *const test2 =
+			"cpy 2 a\n"
+			"tgl a\n"
+			"tgl a\n"
+			"tgl a\n"
+			"cpy 1 a\n"
+			"dec a\n"
+			"dec a\n";
+		expect(3_i == Solve(std::istringstream{test2}, {0, 0, 0, 0}));
+
+		Printer::Print(__FILE__, "1", Solve(std::ifstream{INPUT}, {7, 0, 0, 0}));
+		Printer::Print(__FILE__, "2", Solve(std::ifstream{INPUT}, {12, 0, 0, 0}));
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	const char *const test1 =
-		"cpy 41 a\n"
-		"inc a\n"
-		"inc a\n"
-		"dec a\n"
-		"jnz a 2\n"
-		"dec a\n";
-	REQUIRE(42 == Solve(std::istringstream{test1}, {0,0,0,0}));
-
-	const char *const test2 =
-		"cpy 2 a\n"
-		"tgl a\n"
-		"tgl a\n"
-		"tgl a\n"
-		"cpy 1 a\n"
-		"dec a\n"
-		"dec a\n";
-	REQUIRE(3 == Solve(std::istringstream{test2}, {0,0,0,0}));
-
-	MESSAGE(Solve(std::ifstream{INPUT}, {7,0,0,0}));
-	MESSAGE(Solve(std::ifstream{INPUT}, {12,0,0,0}));
-}
