@@ -1,13 +1,13 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <fstream>
 #include <regex>
 #include <vector>
 #include <cassert>
 #include <queue>
-
+#include "../test.hpp"
 
 namespace {
+
+using namespace boost::ut;
 
 void Solve(std::istream &&is)
 {
@@ -46,7 +46,7 @@ void Solve(std::istream &&is)
 			if (i != j && lines[i].used && lines[i].used <= lines[j].avail)
 				++count;
 
-	MESSAGE(count);
+	Printer::Print(__FILE__, "1", count);
 
 	///////////////////////////////// Part 2 //////////////////////
 
@@ -120,12 +120,13 @@ void Solve(std::istream &&is)
 	auto distance = lines[idx(Gx, Gy)].distance;
 	assert(distance != -1);
 	distance += 5 * (width - 2);
-	MESSAGE(distance);
+	Printer::Print(__FILE__, "2", distance);
 }
+
+suite s = [] {
+	"2016-22"_test = [] {
+		Solve(std::ifstream{INPUT});
+	};
+};
 
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	Solve(std::ifstream{INPUT});
-}

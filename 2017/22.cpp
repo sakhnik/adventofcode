@@ -1,10 +1,11 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <unordered_map>
 #include <fstream>
 #include <boost/functional/hash.hpp>
+#include "../test.hpp"
 
 namespace {
+
+using namespace boost::ut;
 
 typedef std::pair<int, int> CoordT;
 
@@ -95,7 +96,7 @@ void Move(Direction dir, CoordT &pos)
         --pos.first;
         break;
     default:
-        REQUIRE(false);
+        expect(false);
     }
 }
 
@@ -166,34 +167,33 @@ unsigned Count2(unsigned iterations, GridT grid)
     return count;
 }
 
+suite s = [] {
+    "2017-22"_test = [] {
+        {
+            std::istringstream iss("..#\n#..\n...");
+            auto grid = Parse(iss);
+            expect(grid.size() == 9_u);
+            expect(grid[CoordT(-1, 0)] == INFECTED);
+            expect(grid[CoordT(1, -1)] == INFECTED);
+
+            expect(Count(7, grid) == 5_u);
+            expect(Count(70, grid) == 41_u);
+            expect(Count(10000, grid) == 5587_u);
+        }
+
+        {
+            std::istringstream iss("..#\n#..\n...");
+            auto grid = Parse(iss);
+
+            expect(Count2(100, grid) == 26_u);
+            expect(Count2(10000000, grid) == 2511944_u);
+        }
+
+        std::ifstream ifs(INPUT);
+        auto grid = Parse(ifs);
+        Printer::Print(__FILE__, "1", Count(10000, grid));
+        Printer::Print(__FILE__, "2", Count2(10000000, grid));
+    };
+};
+
 } //namespace;
-
-TEST_CASE("1")
-{
-    std::istringstream iss("..#\n#..\n...");
-    auto grid = Parse(iss);
-    REQUIRE(grid.size() == 9);
-    REQUIRE(grid[CoordT(-1,0)] == INFECTED);
-    REQUIRE(grid[CoordT(1,-1)] == INFECTED);
-
-    CHECK(Count(7, grid) == 5);
-    CHECK(Count(70, grid) == 41);
-    CHECK(Count(10000, grid) == 5587);
-}
-
-TEST_CASE("2")
-{
-    std::istringstream iss("..#\n#..\n...");
-    auto grid = Parse(iss);
-
-    CHECK(Count2(100, grid) == 26);
-    CHECK(Count2(10000000, grid) == 2511944);
-}
-
-TEST_CASE(TEST_NAME)
-{
-    std::ifstream ifs(INPUT);
-    auto grid = Parse(ifs);
-    MESSAGE(Count(10000, grid));
-    MESSAGE(Count2(10000000, grid));
-}

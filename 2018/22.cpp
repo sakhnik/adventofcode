@@ -1,9 +1,8 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <vector>
 #include <numeric>
 #include <unordered_map>
 #include <queue>
+#include "../test.hpp"
 
 namespace {
 
@@ -162,19 +161,20 @@ private:
     }
 };
 
-} //namespace;
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
-        Cave c{510, 10, 10};
-        REQUIRE(114 == c.CalcRisk());
-        REQUIRE(45 == c.FindPath());
-    }
+suite s = [] {
+    "2018-22"_test = [] {
+        {
+            Cave c{510, 10, 10};
+            expect(114_i == c.CalcRisk());
+            expect(45_i == c.FindPath());
+        }
 
-    SUBCASE("task") {
         Cave c{10689, 11, 722};
-        MESSAGE(c.CalcRisk());
-        MESSAGE(c.FindPath());
-    }
-}
+        Printer::Print(__FILE__, "1", c.CalcRisk());
+        Printer::Print(__FILE__, "2", c.FindPath());
+    };
+};
+
+} //namespace;
