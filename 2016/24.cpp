@@ -1,5 +1,3 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <vector>
 #include <sstream>
 #include <fstream>
@@ -8,7 +6,7 @@
 #include <algorithm>
 #include <numeric>
 #include <cassert>
-
+#include "../test.hpp"
 
 namespace {
 
@@ -165,18 +163,21 @@ int Solve2(std::istream &&is)
 	return min_distance;
 }
 
+using namespace boost::ut;
+
+suite s = [] {
+	"2016-24"_test = [] {
+		const char *test_maze =
+			"###########\n"
+			"#0.1.....2#\n"
+			"#.#######.#\n"
+			"#4.......3#\n"
+			"###########";
+		expect(14_i == Solve(std::istringstream{test_maze}));
+
+		Printer::Print(__FILE__, "1", Solve(std::ifstream{INPUT}));
+		Printer::Print(__FILE__, "2", Solve2(std::ifstream{INPUT}));
+	};
+};
+
 } //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-	const char *test_maze =
-R"(###########
-#0.1.....2#
-#.#######.#
-#4.......3#
-###########")";
-	REQUIRE(14 == Solve(std::istringstream{test_maze}));
-
-	MESSAGE(Solve(std::ifstream{INPUT}));
-	MESSAGE(Solve2(std::ifstream{INPUT}));
-}

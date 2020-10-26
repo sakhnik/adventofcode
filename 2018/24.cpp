@@ -1,15 +1,16 @@
-#include <doctest/doctest.h>
 #include <sstream>
 #include <fstream>
 #include <vector>
 #include <regex>
-#include <iostream>
 #include <unordered_set>
 #include <numeric>
 #include <algorithm>
 #include <cassert>
+#include "../test.hpp"
 
 namespace {
+
+using namespace boost::ut;
 
 class Fight
 {
@@ -31,7 +32,7 @@ public:
 
             static const std::regex r{R"((\d+) units each with (\d+) hit points (\([^)]+\))? ?with an attack that does (\d+) (\w+) damage at initiative (\d+))"};
             std::smatch m;
-            REQUIRE(std::regex_match(line, m, r));
+            expect(std::regex_match(line, m, r));
             _Group group{
                 .id = side->size() + 1,
                 .count = std::stoi(m[1]),
@@ -66,7 +67,7 @@ public:
             side->emplace_back(std::move(group));
         }
 
-        REQUIRE(2 == _sides.size());
+        expect(2_u == _sides.size());
     }
 
     void Print()
@@ -291,11 +292,9 @@ private:
     std::vector<_Side> _sides;
 };
 
-} //namespace;
-
-TEST_CASE(TEST_NAME)
-{
-    static constexpr char const *const TEST = R"(Immune System:
+suite s = [] {
+    "2018-24"_test = [] {
+        static constexpr char const *const TEST = R"(Immune System:
 17 units each with 5390 hit points (weak to radiation, bludgeoning) with an attack that does 4507 fire damage at initiative 2
 989 units each with 1274 hit points (immune to fire; weak to bludgeoning, slashing) with an attack that does 25 slashing damage at initiative 3
 
@@ -304,50 +303,52 @@ Infection:
 4485 units each with 2961 hit points (immune to radiation; weak to fire, cold) with an attack that does 12 slashing damage at initiative 4
 )";
 
-    //SUBCASE("test1") {
-    //    Fight f(std::istringstream{TEST});
-    //    f.Round();
-    //    REQUIRE(1 == f.RunUntilVictory());
-    //    REQUIRE(0 == f.GetUnitCount(0));
-    //    REQUIRE(5216 == f.GetUnitCount(1));
-    //}
-
-    //SUBCASE("task") {
-    //    Fight f(std::ifstream{INPUT});
-    //    auto win = f.RunUntilVictory();
-    //    CHECK(0 == f.GetUnitCount(1 - win));
-    //    MESSAGE(f.GetUnitCount(win));
-    //}
-
-    SUBCASE("test2") {
-        Fight f(std::istringstream{TEST});
-        f.Boost(0, 1570);
-        REQUIRE(0 == f.RunUntilVictory());
-        REQUIRE(0 == f.GetUnitCount(1));
-        REQUIRE(51 == f.GetUnitCount(0));
-    }
-
-    SUBCASE("task2") {
-        const Fight original(std::ifstream{INPUT});
-
-        auto calc = [&](int val) {
-            Fight f(original);
-            f.Boost(0, val);
-            if (0 == f.RunUntilVictory())
-            {
-                MESSAGE(f.GetUnitCount(0));
-                return true;
-            }
-            return false;
-        };
-
-
-        for (int i = 1; ; ++i)
         {
-            if (calc(i))
+            Fight f(std::istringstream{TEST});
+            f.Round();
+            expect(1_u == f.RunUntilVictory());
+            expect(0_i == f.GetUnitCount(0));
+            expect(5216_i == f.GetUnitCount(1));
+        }
+
+        {
+            Fight f(std::ifstream{INPUT});
+            auto win = f.RunUntilVictory();
+            expect(0_i == f.GetUnitCount(1 - win));
+            Printer::Print(__FILE__, "1", f.GetUnitCount(win));
+        }
+
+        {
+            Fight f(std::istringstream{TEST});
+            f.Boost(0, 1570);
+            expect(0_u == f.RunUntilVictory());
+            expect(0_i == f.GetUnitCount(1));
+            expect(51_i == f.GetUnitCount(0));
+        }
+
+        {
+            const Fight original(std::ifstream{INPUT});
+
+            auto calc = [&](int val) {
+                Fight f(original);
+                f.Boost(0, val);
+                if (0 == f.RunUntilVictory())
+                {
+                    Printer::Print(__FILE__, "2", f.GetUnitCount(0));
+                    return true;
+                }
+                return false;
+            };
+
+            for (int i = 1;; ++i)
             {
-                break;
+                if (calc(i))
+                {
+                    break;
+                }
             }
         }
-    }
-}
+    };
+};
+
+} //namespace;

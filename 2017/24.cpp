@@ -1,8 +1,9 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include "../test.hpp"
+
+namespace {
 
 typedef std::pair<unsigned, unsigned> ComponentT;
 typedef std::vector<ComponentT> InventoryT;
@@ -77,20 +78,24 @@ InventoryT Parse(std::istream &is)
     return inventory;
 }
 
-TEST_CASE("1")
-{
-    std::istringstream iss("0/2\n2/2\n2/3\n3/4\n3/5\n0/1\n10/1\n9/10");
-    auto inventory = Parse(iss);
-    auto result = Solve(inventory);
-    REQUIRE(result.max_absolute == 31);
-    REQUIRE(result.max_longest == 19);
-}
+using namespace boost::ut;
 
-TEST_CASE(TEST_NAME)
-{
-    std::ifstream ifs(INPUT);
-    auto inventory = Parse(ifs);
-    auto result = Solve(inventory);
-    MESSAGE(result.max_absolute);
-    MESSAGE(result.max_longest);
-}
+suite s = [] {
+    "2017-24"_test = [] {
+        {
+            std::istringstream iss("0/2\n2/2\n2/3\n3/4\n3/5\n0/1\n10/1\n9/10");
+            auto inventory = Parse(iss);
+            auto result = Solve(inventory);
+            expect(result.max_absolute == 31_u);
+            expect(result.max_longest == 19_u);
+        }
+
+        std::ifstream ifs(INPUT);
+        auto inventory = Parse(ifs);
+        auto result = Solve(inventory);
+        Printer::Print(__FILE__, "1", result.max_absolute);
+        Printer::Print(__FILE__, "2", result.max_longest);
+    };
+};
+
+} //namespace;
