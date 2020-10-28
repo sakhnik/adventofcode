@@ -1,7 +1,8 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <unordered_set>
 #include <numeric>
+#include "../test.hpp"
+
+namespace {
 
 constexpr unsigned StateIdx(char c) { return c - 'A'; }
 
@@ -55,90 +56,100 @@ private:
     std::unordered_set<int> _tape;   // absent -- 0, present -- 1 at the position
 };
 
-TEST_CASE("1")
-{
-    State desc[] = {
-        {{ {true, 1, StateIdx('B')}, {false, -1, StateIdx('B')} }},
-        {{ {true, -1, StateIdx('A')}, {true, 1, StateIdx('A')} }},
+using namespace boost::ut;
+
+suite s = [] {
+    "2017-25"_test = [] {
+        {
+            State desc[] = {
+                {{{true, 1, StateIdx('B')}, {false, -1, StateIdx('B')}}},
+                {{{true, -1, StateIdx('A')}, {true, 1, StateIdx('A')}}},
+            };
+
+            Machine m;
+            m.Run(6, 0, desc);
+            expect(m.GetChecksum() == 3_u);
+        }
+
+        State desc[] = {
+
+            //In state A:
+            {{
+                //If the current value is 0:
+                {true,           //- Write the value 1.
+                    1,              //- Move one slot to the right.
+                    StateIdx('B')}, //- Continue with state B.
+                                    //If the current value is 1:
+                {false,          //- Write the value 0.
+                    -1,             //- Move one slot to the left.
+                    StateIdx('C')}  //- Continue with state C.
+            }},
+
+            //In state B:
+            {{
+                //If the current value is 0:
+                {true,           //- Write the value 1.
+                    -1,             //- Move one slot to the left.
+                    StateIdx('A')}, //- Continue with state A.
+                                    //If the current value is 1:
+                {true,           //- Write the value 1.
+                    -1,             //- Move one slot to the left.
+                    StateIdx('D')}  //- Continue with state D.
+            }},
+
+            //In state C:
+            {{
+                //If the current value is 0:
+                {true,           //- Write the value 1.
+                    1,              //- Move one slot to the right.
+                    StateIdx('D')}, //- Continue with state D.
+                                    //If the current value is 1:
+                {false,          //- Write the value 0.
+                    1,              //- Move one slot to the right.
+                    StateIdx('C')}  //- Continue with state C.
+            }},
+
+            //In state D:
+            {{
+                //If the current value is 0:
+                {false,          //- Write the value 0.
+                    -1,             //- Move one slot to the left.
+                    StateIdx('B')}, //- Continue with state B.
+                                    //If the current value is 1:
+                {false,          //- Write the value 0.
+                    1,              //- Move one slot to the right.
+                    StateIdx('E')}  //- Continue with state E.
+            }},
+
+            //In state E:
+            {{
+                //If the current value is 0:
+                {true,           //- Write the value 1.
+                    1,              //- Move one slot to the right.
+                    StateIdx('C')}, //- Continue with state C.
+                                    //If the current value is 1:
+                {true,           //- Write the value 1.
+                    -1,             //- Move one slot to the left.
+                    StateIdx('F')}  //- Continue with state F.
+            }},
+
+            //In state F:
+            {{
+                //If the current value is 0:
+                {true,           //- Write the value 1.
+                    -1,             //- Move one slot to the left.
+                    StateIdx('E')}, //- Continue with state E.
+                                    //If the current value is 1:
+                {true,           //- Write the value 1.
+                    1,              //- Move one slot to the right.
+                    StateIdx('A')}  //- Continue with state A.
+            }},
+        };
+
+        Machine m;
+        m.Run(12656374, 'A' - 'A', desc);
+        Printer::Print(__FILE__, nullptr, m.GetChecksum());
     };
+};
 
-    Machine m;
-    m.Run(6, 0, desc);
-    REQUIRE(m.GetChecksum() == 3);
-}
-
-TEST_CASE(TEST_NAME)
-{
-    State desc[] = {
-
-                                //In state A:
-        {{                      //If the current value is 0:
-             {true,             //- Write the value 1.
-              1,                //- Move one slot to the right.
-              StateIdx('B')},   //- Continue with state B.
-                                //If the current value is 1:
-             {false,            //- Write the value 0.
-              -1,               //- Move one slot to the left.
-              StateIdx('C')}    //- Continue with state C.
-         }},
-
-                                //In state B:
-        {{                      //If the current value is 0:
-             {true,             //- Write the value 1.
-              -1,               //- Move one slot to the left.
-              StateIdx('A')},   //- Continue with state A.
-                                //If the current value is 1:
-             {true,             //- Write the value 1.
-              -1,               //- Move one slot to the left.
-              StateIdx('D')}    //- Continue with state D.
-         }},
-
-                                //In state C:
-        {{                      //If the current value is 0:
-             {true,             //- Write the value 1.
-              1,                //- Move one slot to the right.
-              StateIdx('D')},   //- Continue with state D.
-                                //If the current value is 1:
-             {false,            //- Write the value 0.
-              1,                //- Move one slot to the right.
-              StateIdx('C')}    //- Continue with state C.
-         }},
-
-                                //In state D:
-        {{                      //If the current value is 0:
-             {false,            //- Write the value 0.
-              -1,               //- Move one slot to the left.
-              StateIdx('B')},   //- Continue with state B.
-                                //If the current value is 1:
-             {false,            //- Write the value 0.
-              1,                //- Move one slot to the right.
-              StateIdx('E')}    //- Continue with state E.
-         }},
-
-                                //In state E:
-        {{                      //If the current value is 0:
-             {true,             //- Write the value 1.
-              1,                //- Move one slot to the right.
-              StateIdx('C')},   //- Continue with state C.
-                                //If the current value is 1:
-             {true,             //- Write the value 1.
-              -1,               //- Move one slot to the left.
-              StateIdx('F')}    //- Continue with state F.
-         }},
-
-                                //In state F:
-        {{                      //If the current value is 0:
-             {true,             //- Write the value 1.
-              -1,               //- Move one slot to the left.
-              StateIdx('E')},   //- Continue with state E.
-                                //If the current value is 1:
-             {true,             //- Write the value 1.
-              1,                //- Move one slot to the right.
-              StateIdx('A')}    //- Continue with state A.
-         }},
-    };
-
-    Machine m;
-    m.Run(12656374, 'A'-'A', desc);
-    MESSAGE(m.GetChecksum());
-}
+} //namespace;

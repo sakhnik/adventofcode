@@ -1,14 +1,14 @@
-#include <doctest/doctest.h>
-#include <iostream>
 #include <sstream>
 #include <fstream>
 #include <vector>
 #include <cassert>
 #include <array>
 #include <functional>
-
+#include "../test.hpp"
 
 namespace {
+
+using namespace boost::ut;
 
 struct Op
 {
@@ -59,7 +59,7 @@ ProgramT ParseText(std::istream &is)
 			program.push_back({Op::OUT, true, r1 - 'a', false, 0});
 		else
 		{
-			FAIL(line);
+			expect(false) << line;
 		}
 	}
 
@@ -165,9 +165,10 @@ int Solve(std::istream &&is)
 	return -1;
 }
 
-} //namespace;
+suite s = [] {
+	"2016-25"_test = [] {
+		Printer::Print(__FILE__, nullptr, Solve(std::ifstream{INPUT}));
+	};
+};
 
-TEST_CASE(TEST_NAME)
-{
-	MESSAGE(Solve(std::ifstream{INPUT}));
-}
+} //namespace;

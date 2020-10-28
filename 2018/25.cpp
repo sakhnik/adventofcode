@@ -1,13 +1,14 @@
-#include <doctest/doctest.h>
 #include <sstream>
 #include <fstream>
 #include <array>
 #include <vector>
-#include <iostream>
 #include <boost/pending/disjoint_sets.hpp>
 #include <boost/iterator/counting_iterator.hpp>
+#include "../test.hpp"
 
 namespace {
+
+using namespace boost::ut;
 
 class Sky
 {
@@ -18,7 +19,7 @@ public:
         while (is && getline(is, line))
         {
             _Pos pos{};
-            REQUIRE(4 == sscanf(line.data(), "%d,%d,%d,%d", &pos[0], &pos[1], &pos[2], &pos[3]));
+            expect(4_i == sscanf(line.data(), "%d,%d,%d,%d", &pos[0], &pos[1], &pos[2], &pos[3]));
             _sky.push_back(pos);
         } 
     }
@@ -65,25 +66,24 @@ private:
     }
 };
 
-} //namespace;
+suite s = [] {
+    "2018-25"_test = [] {
+        {
+            Sky s(std::istringstream{
+                " 0,0,0,0\n"
+                " 3,0,0,0\n"
+                " 0,3,0,0\n"
+                " 0,0,3,0\n"
+                " 0,0,0,3\n"
+                " 0,0,0,6\n"
+                " 9,0,0,0\n"
+                "12,0,0,0\n"});
+            expect(2_i == s.Count());
+        }
 
-TEST_CASE(TEST_NAME)
-{
-    SUBCASE("test") {
-        Sky s(std::istringstream{
-            " 0,0,0,0\n"
-            " 3,0,0,0\n"
-            " 0,3,0,0\n"
-            " 0,0,3,0\n"
-            " 0,0,0,3\n"
-            " 0,0,0,6\n"
-            " 9,0,0,0\n"
-            "12,0,0,0\n"});
-        REQUIRE(2 == s.Count());
-    }
-
-    SUBCASE("task") {
         Sky s(std::ifstream{INPUT});
-        MESSAGE(s.Count());
-    }
-}
+        Printer::Print(__FILE__, nullptr, s.Count());
+    };
+};
+
+} //namespace;
