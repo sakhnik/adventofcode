@@ -102,7 +102,7 @@ suite s = [] {
 
 		std::ifstream ifs(INPUT);
 		std::string s;
-		getline(ifs, s, char{-1});
+		getline(ifs, s, char{0});
 
 		auto d = Decompress(s);
 		Printer::Print(__FILE__, "1", std::count_if(begin(d), end(d), [](char c) { return !isspace(c); }));
