@@ -60,9 +60,9 @@ suite s = [] {
                 case IntCodeB::S_OUTPUT:
                 {
                     auto x = n.prog.Advance(0);
-                    assert(n.prog.GetState() == IntCode::S_OUTPUT);
+                    assert(n.prog.GetState() == IntCodeB::S_OUTPUT);
                     auto y = n.prog.Advance(0);
-                    assert(n.prog.GetState() == IntCode::S_OUTPUT);
+                    assert(n.prog.GetState() == IntCodeB::S_OUTPUT);
                     n.input.push_front(0);
                     ++queue_size;
                     if (r == 255)

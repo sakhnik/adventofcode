@@ -21,7 +21,7 @@ std::string Solve(std::istream &&is, bool use_max)
 	}
 
 	std::string ret;
-	for (const auto c : counters)
+	for (const auto &c : counters)
 	{
 		auto it = use_max
 			? max_element(begin(c), end(c),

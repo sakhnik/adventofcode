@@ -49,11 +49,13 @@ public:
         _Sort();
     }
 
+    const static char NO_STEP = std::numeric_limits<char>::min();
+
     char GetNextStep()
     {
         if (_reported >= _todo.size())
         {
-            return -1;
+            return NO_STEP;
         }
 
         auto s = _todo[_reported];
@@ -65,7 +67,7 @@ public:
             return s;
         }
 
-        return -1;
+        return NO_STEP;
     }
 
     void StepDone(char s)
@@ -119,7 +121,7 @@ std::string SortSteps(const DepsT &deps)
     while (true)
     {
         auto s = gen.GetNextStep();
-        if (s == -1)
+        if (s == StepGenerator::NO_STEP)
         {
             break;
         }
@@ -153,7 +155,7 @@ int Simulate(int concurrency, int time_add, const DepsT &deps)
         for (int i = size(workers); i < concurrency; ++i)
         {
             char s = gen.GetNextStep();
-            if (-1 == s)
+            if (StepGenerator::NO_STEP == s)
             {
                 break;
             }
