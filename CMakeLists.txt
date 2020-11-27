@@ -14,7 +14,7 @@ enable_testing()
 
 list(APPEND sources main.cpp)
 
-foreach(src RANGE 1 20)
+foreach(src RANGE 1 21)
     string(REGEX REPLACE "^(.)$" "0\\1" zero_src ${src})
     list(APPEND sources 2015/${zero_src}.cpp)
     add_test(NAME 2015-${zero_src} COMMAND ${CMAKE_BUILD_DIRECTORY}/aoc "2015-${zero_src}*")
