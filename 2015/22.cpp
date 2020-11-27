@@ -141,9 +141,9 @@ struct Accumulator
     }
 };
 
-void Explore(const State &s, Accumulator &acc)
+void Explore(State s, Accumulator &acc, bool hard)
 {
-    auto proceed = [&acc](State curState) {
+    auto proceed = [&acc, hard](State curState) {
         if (acc.Check(curState))
             return;
         curState = ApplyEffects(curState);
@@ -155,8 +155,15 @@ void Explore(const State &s, Accumulator &acc)
         curState = ApplyEffects(curState);
         if (acc.Check(curState))
             return;
-        Explore(curState, acc);
+        Explore(curState, acc, hard);
     };
+
+    if (hard)
+    {
+        --s.playerHp;
+        if (acc.Check(s))
+            return;
+    }
 
     proceed(TryMissile(s));
     proceed(TryDrain(s));
@@ -172,9 +179,13 @@ using namespace boost::ut;
 
 suite s = [] {
     "2015-22"_test = [] {
-        Accumulator acc;
-        Explore(State{}, acc);
-        Printer::Print(__FILE__, "1", acc.minManaSpent);
+        Accumulator acc1;
+        Explore(State{}, acc1, false);
+        Printer::Print(__FILE__, "1", acc1.minManaSpent);
+
+        Accumulator acc2;
+        Explore(State{}, acc2, true);
+        Printer::Print(__FILE__, "1", acc2.minManaSpent);
     };
 };
 
