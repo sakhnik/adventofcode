@@ -20,26 +20,25 @@ const Item WEAPONS[] = {
     {25, 6, 0},
     {40, 7, 0},
     {74, 8, 0},
-    {0, 0, 0},
 };
 
 const Item ARMOR[] = {
+    {0, 0, 0},
     {13, 0, 1},
     {31, 0, 2},
     {53, 0, 3},
     {75, 0, 4},
     {102, 0, 5},
-    {0, 0, 0},
 };
 
 const Item RINGS[] = {
+    {0, 0, 0},
     {25, 1, 0},
     {50, 2, 0},
     {100, 3, 0},
     {20, 0, 1},
     {40, 0, 2},
     {80, 0, 3},
-    {0, 0, 0},
 };
 
 const int PLAYER_HP = 100;
@@ -64,9 +63,10 @@ bool PlayerWins(const Item &player, const Item &boss)
     return playerMoves <= bossMoves;
 };
 
-int FindMinimumCost()
+template <typename TrackerT>
+int FindCost()
 {
-    int minCost = std::numeric_limits<int>::max();
+    TrackerT tracker;
 
     for (size_t wi = 0, wN = std::size(WEAPONS); wi < wN; ++wi)
     {
@@ -79,29 +79,58 @@ int FindMinimumCost()
                 Item weaponArmorRing1 = weaponArmor + RINGS[ri1];
                 for (size_t ri2 = 0; ri2 < rN; ++ri2)
                 {
-                    if (ri1 != 0 && ri1 == ri2)
+                    if (ri1 != 0 && ri2 != 0 && ri1 == ri2)
                     {
                         continue;
                     }
                     Item player = weaponArmorRing1 + RINGS[ri2];
-                    int cost = player.cost;
-                    player.cost = PLAYER_HP;
-                    if (!PlayerWins(player, BOSS))
-                    {
-                        continue;
-                    }
-
-                    if (cost < minCost)
-                    {
-                        minCost = cost;
-                    }
+                    tracker.Check(player);
                 }
             }
         }
     }
 
-    return minCost;
+    return tracker.Result();
 }
+
+class MinCostTracker
+{
+private:
+    int minCost = std::numeric_limits<int>::max();
+
+public:
+    void Check(Item player)
+    {
+        int cost = player.cost;
+        player.cost = PLAYER_HP;
+        if (PlayerWins(player, BOSS) && cost < minCost)
+        {
+            minCost = cost;
+        }
+    }
+
+    int Result() const { return minCost; }
+};
+
+
+class MaxCostTracker
+{
+private:
+    int maxCost = std::numeric_limits<int>::min();
+
+public:
+    void Check(Item player)
+    {
+        int cost = player.cost;
+        player.cost = PLAYER_HP;
+        if (!PlayerWins(player, BOSS) && cost > maxCost)
+        {
+            maxCost = cost;
+        }
+    }
+
+    int Result() const { return maxCost; }
+};
 
 using namespace boost::ut;
 
@@ -109,7 +138,8 @@ suite s = [] {
     "2015-21"_test = [] {
         expect(PlayerWins({8, 5, 5}, {12, 7, 2}));
 
-        Printer::Print(__FILE__, "1", FindMinimumCost());
+        Printer::Print(__FILE__, "1", FindCost<MinCostTracker>());
+        Printer::Print(__FILE__, "2", FindCost<MaxCostTracker>());
     };
 };
 
