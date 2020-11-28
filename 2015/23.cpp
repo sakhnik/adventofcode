@@ -98,16 +98,23 @@ using namespace boost::ut;
 
 suite s = [] {
     "2015-23"_test = [] {
-        //{
-        //    Computer comp{std::istringstream{"inc a\njio a, +2\ntpl a\ninc a"}};
-        //    comp.Run();
-        //    expect(2_u == comp.a);
-        //}
+        {
+            Computer comp{std::istringstream{"inc a\njio a, +2\ntpl a\ninc a"}};
+            comp.Run();
+            expect(2_u == comp.a);
+        }
 
         {
             Computer comp{std::ifstream{INPUT}};
             comp.Run();
             Printer::Print(__FILE__, "1", comp.b);
+        }
+
+        {
+            Computer comp{std::ifstream{INPUT}};
+            comp.a = 1;
+            comp.Run();
+            Printer::Print(__FILE__, "2", comp.b);
         }
     };
 };
