@@ -6,6 +6,7 @@ using namespace boost::ut;
 
 using WeightsT = std::vector<unsigned>;
 
+template <int N>
 class Arranger
 {
 public:
@@ -14,9 +15,9 @@ public:
     {
         unsigned sum = std::accumulate(begin(weights), end(weights), 0u,
                                        [](unsigned a, unsigned b) { return a + b; });
-        expect(0_u == sum % 3);
-        _target = sum / 3;
-        _max_length = weights.size() / 3;
+        expect(0_u == sum % N);
+        _target = sum / N;
+        _max_length = weights.size() / N;
         std::sort(begin(_weights), end(_weights),
                   [](unsigned a, unsigned b) { return b < a; });
     }
@@ -44,30 +45,21 @@ private:
             return;
         if (partial_sum == _target)
         {
-            // Check if can split to the side compartments.
-            if (CheckCanSplit(length, 0))
+            auto calcQe = [this, length]() {
+                return std::accumulate(begin(_weights), begin(_weights) + length, 1ull,
+                                        [](auto a, auto b) { return a * b; });
+            };
+            if (length < _min_length)
             {
-                auto calcQe = [this, length]() {
-                    return std::accumulate(begin(_weights), begin(_weights) + length, 1ull,
-                                           [](auto a, auto b) { return a * b; });
-                };
-                if (length < _min_length)
-                {
-                    _min_length = length;
-                    _qe = calcQe();
-                }
-                else if (length == _min_length)
-                {
-                    auto qe = calcQe();
-                    if (qe < _qe)
-                        _qe = qe;
-                }
+                _min_length = length;
+                _qe = calcQe();
             }
-            else
+            else if (length == _min_length)
             {
-                return;
+                auto qe = calcQe();
+                if (qe < _qe)
+                    _qe = qe;
             }
-            
             return;
         }
 
@@ -105,17 +97,18 @@ private:
 
 suite s = [] {
     "2015-24"_test = [] {
-        //{
-        //    Arranger test{{1,2,3,4,5,7,8,9,10,11}};
-        //    expect(99_u == test.Compact());
-        //}
+        expect(99_u == Arranger<3>{{1,2,3,4,5,7,8,9,10,11}}.Compact());
 
         const WeightsT TASK_INPUT{
             1, 2, 3, 7, 11, 13, 17, 19, 23, 31,
             37, 41, 43, 47, 53, 59, 61, 67, 71, 73,
             79, 83, 89, 97, 101, 103, 107, 109, 113,
         };
-        Printer::Print(__FILE__, "1", Arranger{TASK_INPUT}.Compact());
+        Printer::Print(__FILE__, "1", Arranger<3>{TASK_INPUT}.Compact());
+
+        expect(44_u == Arranger<4>{{1,2,3,4,5,7,8,9,10,11}}.Compact());
+
+        Printer::Print(__FILE__, "2", Arranger<4>{TASK_INPUT}.Compact());
     };
 };
 
