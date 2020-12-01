@@ -22,6 +22,13 @@ foreach(year RANGE 2015 2019)
     endforeach()
 endforeach()
 
+foreach(src RANGE 1 1)
+    set(year 2020)
+    string(REGEX REPLACE "^(.)$" "0\\1" zero_src ${src})
+    list(APPEND sources ${year}/${zero_src}.cpp)
+    add_test(NAME ${year}-${zero_src} COMMAND ${CMAKE_BUILD_DIRECTORY}/aoc "${year}-${zero_src}*")
+endforeach()
+
 add_definitions(-std=c++20 -Wall)
 
 foreach(src ${sources})
