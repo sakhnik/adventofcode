@@ -14,17 +14,22 @@ public:
         }
     }
 
-    int Count() const
+    uint64_t Count(int right = 3, int down = 1) const
     {
-        int count{};
+        uint64_t count{};
 
-        for (size_t row{}, col{}; row < _map.size(); ++row, col += 3)
+        for (size_t row{}, col{}; row < _map.size(); row += down, col += right)
         {
             const auto &line = _map[row];
             count += (line[col % line.size()] == '#');
         }
 
         return count;
+    }
+
+    uint64_t Count2() const
+    {
+        return Count(1, 1) * Count(3, 1) * Count(5, 1) * Count(7, 1) * Count(1, 2);
     }
 
 private:
@@ -49,11 +54,13 @@ suite s = [] {
                 "#...##....#\n"
                 ".#..#...#.#\n";
             Map m{std::istringstream{TEST}};
-            expect(7_i == m.Count());
+            expect(7_u == m.Count());
+            expect(336_u == m.Count2());
         }
 
         Map m{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", m.Count());
+        Printer::Print(__FILE__, "2", m.Count2());
     };
 };
 
