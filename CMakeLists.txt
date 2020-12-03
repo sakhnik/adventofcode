@@ -22,7 +22,7 @@ foreach(year RANGE 2015 2019)
     endforeach()
 endforeach()
 
-foreach(src RANGE 1 2)
+foreach(src RANGE 1 3)
     set(year 2020)
     string(REGEX REPLACE "^(.)$" "0\\1" zero_src ${src})
     list(APPEND sources ${year}/${zero_src}.cpp)
