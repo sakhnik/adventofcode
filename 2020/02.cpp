@@ -1,4 +1,6 @@
 #include "../test.hpp"
+#include <regex>
+#include <fstream>
 
 namespace {
 

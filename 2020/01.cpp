@@ -1,4 +1,6 @@
 #include "../test.hpp"
+#include <unordered_set>
+#include <fstream>
 
 namespace {
 
