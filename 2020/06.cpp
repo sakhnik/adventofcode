@@ -1,10 +1,28 @@
 #include "../test.hpp"
 #include <sstream>
 #include <fstream>
+#include <functional>
 
 namespace {
 
-int Count(std::istream &&is)
+void Anyone(std::string &accum, const std::string &value)
+{
+    std::string combined;
+    std::set_union(accum.begin(), accum.end(),
+                   value.begin(), value.end(),
+                   std::back_insert_iterator(combined));
+    swap(combined, accum);
+}
+
+void Everyone(std::string &accum, const std::string &value)
+{
+    auto it = std::set_intersection(accum.begin(), accum.end(),
+                                    value.begin(), value.end(),
+                                    accum.begin());
+    accum.erase(it, accum.end());
+}
+
+int Count(std::istream &&is, std::function<void(std::string &, const std::string &)> policy)
 {
     int count{};
 
@@ -29,11 +47,7 @@ int Count(std::istream &&is)
             continue;
         }
 
-        std::string combined;
-        std::set_union(answers.begin(), answers.end(),
-                       line.begin(), line.end(),
-                       std::back_insert_iterator(combined));
-        swap(combined, answers);
+        policy(answers, line);
     }
     count += answers.size();
 
@@ -59,9 +73,11 @@ a
 a
 
 b)";
-        expect(11_i == Count(std::istringstream{TEST}));
+        //expect(11_i == Count(std::istringstream{TEST}, Anyone));
+        expect(6_i == Count(std::istringstream{TEST}, Everyone));
 
-        Printer::Print(__FILE__, "1", Count(std::ifstream{INPUT}));
+        Printer::Print(__FILE__, "1", Count(std::ifstream{INPUT}, Anyone));
+        Printer::Print(__FILE__, "2", Count(std::ifstream{INPUT}, Everyone));
     };
 };
 
