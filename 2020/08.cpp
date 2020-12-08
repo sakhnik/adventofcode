@@ -15,30 +15,80 @@ public:
         {
             int arg{};
             if (1 == sscanf(line.c_str(), "acc %d", &arg))
-                _program.emplace_back([this, arg] { _a += arg; ++_ip; });
+                _program.emplace_back(Op::Acc, arg);
             else if (1 == sscanf(line.c_str(), "jmp %d", &arg))
-                _program.emplace_back([this, arg] { _ip += arg; });
+                _program.emplace_back(Op::Jmp, arg);
             else // nop
-                _program.emplace_back([this] { ++_ip; });
+                _program.emplace_back(Op::Nop, arg);
         }
     }
 
-    int RunUntilLoop()
+    bool Run()
     {
+        _ip = 0;
+        _a = 0;
         std::unordered_set<size_t> history;
         while (!history.contains(_ip))
         {
             history.insert(_ip);
-            _program.at(_ip)();
+            if (_ip == _program.size())
+                return true;  // normal finish
+            Cmd cmd = _program.at(_ip);
+            Execute(cmd);
         }
-        return _a;
+        return false;  // loop detected
     }
 
+    bool FixProgram()
+    {
+        for (size_t i = 0; i < _program.size(); ++i)
+        {
+            auto old_cmd = _program[i];
+            if (old_cmd.op == Op::Jmp)
+                _program[i].op = Op::Nop;
+            else if (old_cmd.op == Op::Nop)
+                _program[i].op = Op::Jmp;
+
+            if (old_cmd.op != _program[i].op)
+            {
+                if (Run())
+                    return true;
+            }
+
+            _program[i] = old_cmd;
+        }
+        return false;
+    }
+
+    int GetAcc() const { return _a; }
+
 private:
-    using CmdT = std::function<void(void)>;
-    std::vector<CmdT> _program;
+    enum class Op { Acc, Jmp, Nop, };
+    struct Cmd
+    {
+        Op op;
+        int arg;
+    };
+    std::vector<Cmd> _program;
     size_t _ip = 0;
     int _a = 0;
+
+    void Execute(Cmd cmd)
+    {
+        switch (cmd.op)
+        {
+        case Op::Acc:
+            _a += cmd.arg;
+            ++_ip;
+            break;
+        case Op::Jmp:
+            _ip += cmd.arg;
+            break;
+        case Op::Nop:
+            ++_ip;
+            break;
+        }
+    }
 };
 
 using namespace boost::ut;
@@ -56,11 +106,18 @@ acc -99
 acc +1
 jmp -4
 acc +6)";
-            expect(5_i == Comp{std::istringstream{TEST}}.RunUntilLoop());
+            Comp c{std::istringstream{TEST}};
+            expect(!c.Run());
+            expect(5_i == c.GetAcc());
+            expect(c.FixProgram());
+            expect(8_i == c.GetAcc());
         }
 
         Comp comp{std::ifstream{INPUT}};
-        Printer::Print(__FILE__, "1", comp.RunUntilLoop());
+        expect(!comp.Run());
+        Printer::Print(__FILE__, "1", comp.GetAcc());
+        expect(comp.FixProgram());
+        Printer::Print(__FILE__, "2", comp.GetAcc());
     };
 };
 
