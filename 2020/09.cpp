@@ -45,15 +45,15 @@ public:
 
     uint64_t FindWeakness() const
     {
-        // Dynamic programming: sums contains accumulative sums starting from
-        // the respective element.
-        std::vector<uint64_t> sums{_nums};
-        for (size_t i{1}; i < _nums.size(); ++i)  // length of the range
+        // For every sequence that starts from i-th element.
+        for (size_t i{0}; i < _nums.size(); ++i)
         {
-            for (size_t j{i + 1}; j < _nums.size(); ++j)
+            // Try accumulating.
+            uint64_t sum = _nums[i];
+            for (size_t j{i + 1}; j < _nums.size() && sum < _target; ++j)
             {
-                sums[i] += _nums[j];
-                if (sums[i] == _target)
+                sum += _nums[j];
+                if (sum == _target)
                 {
                     auto it = _nums.begin() + i;
                     auto it_end = _nums.begin() + j + 1;
