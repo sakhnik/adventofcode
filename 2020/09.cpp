@@ -5,39 +5,69 @@
 
 namespace {
 
-uint64_t FindFirst(size_t preamble, std::istream &&is)
+class Xmas
 {
-    std::unordered_set<uint64_t> last_nums;
-    std::queue<uint64_t> q;
-
-    auto is_sum = [&last_nums](uint64_t num) {
-        for (uint64_t i : last_nums)
-        {
-            uint64_t j = num - i;
-            if (i != j && last_nums.contains(j))
-            {
-                return true;
-            }
-        }
-        return false;
-    };
-
-    uint64_t a{};
-    while (is && (is >> a))
+public:
+    Xmas(size_t preamble, std::istream &&is)
     {
-        if (q.size() == preamble)
+        std::unordered_set<uint64_t> last_nums;
+
+        auto is_sum = [&last_nums](uint64_t num) {
+            for (uint64_t i : last_nums)
+            {
+                uint64_t j = num - i;
+                if (i != j && last_nums.contains(j))
+                {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        uint64_t a{};
+        while (is && (is >> a))
         {
-            if (!is_sum(a))
-                return a;
-            last_nums.erase(q.front());
-            q.pop();
+            if (_nums.size() >= preamble)
+            {
+                if (!is_sum(a))
+                {
+                    _target = a;
+                    return;
+                }
+                last_nums.erase(_nums[_nums.size() - preamble]);
+            }
+            _nums.push_back(a);
+            last_nums.insert(a);
         }
-        q.push(a);
-        last_nums.insert(a);
     }
 
-    return -1;
-}
+    uint64_t GetTarget() const { return _target; }
+
+    uint64_t FindWeakness() const
+    {
+        // Dynamic programming: sums contains accumulative sums starting from
+        // the respective element.
+        std::vector<uint64_t> sums{_nums};
+        for (size_t i{1}; i < _nums.size(); ++i)  // length of the range
+        {
+            for (size_t j{i + 1}; j < _nums.size(); ++j)
+            {
+                sums[i] += _nums[j];
+                if (sums[i] == _target)
+                {
+                    auto it = _nums.begin() + i;
+                    auto it_end = _nums.begin() + j + 1;
+                    return *std::min_element(it, it_end) + *std::max_element(it, it_end);
+                }
+            }
+        }
+        return 0;
+    }
+
+private:
+    std::vector<uint64_t> _nums;
+    uint64_t _target = 0;
+};
 
 using namespace boost::ut;
 
@@ -64,10 +94,14 @@ suite s = [] {
 277
 309
 576)";
-            expect(127_u == FindFirst(5, std::istringstream{TEST}));
+            Xmas x{5, std::istringstream{TEST}};
+            expect(127_u == x.GetTarget());
+            expect(62_u == x.FindWeakness());
         }
 
-        Printer::Print(__FILE__, "1", FindFirst(25, std::ifstream{INPUT}));
+        Xmas x{25, std::ifstream{INPUT}};
+        Printer::Print(__FILE__, "1", x.GetTarget());
+        Printer::Print(__FILE__, "2", x.FindWeakness());
     };
 };
 
