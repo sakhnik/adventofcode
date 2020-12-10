@@ -1,5 +1,5 @@
 #include "../test.hpp"
-#include <set>
+#include <vector>
 #include <fstream>
 
 namespace {
@@ -12,14 +12,16 @@ public:
         int rating{};
         while (is && (is >> rating))
         {
-            _ratings.emplace(rating);
+            _ratings.push_back(rating);
         }
+        std::sort(_ratings.begin(), _ratings.end());
     }
 
     template <typename IterT>
     Adapters(IterT first, IterT last)
         : _ratings(first, last)
     {
+        std::sort(_ratings.begin(), _ratings.end());
     }
 
     int CalcDistribution() const
@@ -36,8 +38,30 @@ public:
         return diff1 * diff3;
     }
 
+    uint64_t CalcCombinations() const
+    {
+        const size_t start{3};
+        std::vector<uint64_t> counts(_ratings.back() + 1 + start, 0);  // jolts -> count
+        counts[start] = 1;
+
+        // 1,       4, 5, 6, 7,           10
+        //
+        // Counts:
+        // 1  0  0  0  0  0  0  0  0
+        // 1  0  0  1  0  0  0  0  0
+        // 1  0  0  1  1  0  0  0  0
+        // 1  0  0  1  1  1  0  0  0
+        // 1  0  0  1  1  1  3  0  0
+        for (int r : _ratings)
+        {
+            counts[r + start] = counts[r + start - 1] + counts[r + start - 2] + counts[r + start - 3];
+        }
+
+        return counts.back();
+    }
+
 private:
-    std::set<int> _ratings;
+    std::vector<int> _ratings;
 };
 
 using namespace boost::ut;
@@ -48,6 +72,7 @@ suite s = [] {
             const int r[] = {16, 10, 15, 5, 1, 11, 7, 19, 6, 12, 4};
             Adapters a{std::begin(r), std::end(r)};
             expect(35_i == a.CalcDistribution());
+            expect(8_u == a.CalcCombinations());
         }
 
         {
@@ -58,10 +83,12 @@ suite s = [] {
             };
             Adapters a{std::begin(r), std::end(r)};
             expect(220_i == a.CalcDistribution());
+            expect(19208_u == a.CalcCombinations());
         }
 
         Adapters a{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", a.CalcDistribution());
+        Printer::Print(__FILE__, "2", a.CalcCombinations());
     };
 };
 
