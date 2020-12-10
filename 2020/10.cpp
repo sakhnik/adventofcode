@@ -2,6 +2,7 @@
 #include <vector>
 #include <fstream>
 #include <unordered_map>
+#include <numeric>
 
 namespace {
 
@@ -28,12 +29,12 @@ public:
     int CalcDistribution() const
     {
         int diff1{}, diff3{};
-        std::accumulate(_ratings.begin(), _ratings.end(), 0, [&](int cur, int r) {
-                            if (r - cur == 1)
+        std::accumulate(_ratings.begin(), _ratings.end(), 0, [&](int prev, int cur) {
+                            if (cur - prev == 1)
                                 ++diff1;
-                            else if (r - cur == 3)
+                            else if (cur - prev == 3)
                                 ++diff3;
-                            return r;
+                            return cur;
                         });
         ++diff3;
         return diff1 * diff3;
