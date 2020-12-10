@@ -1,6 +1,7 @@
 #include "../test.hpp"
 #include <vector>
 #include <fstream>
+#include <unordered_map>
 
 namespace {
 
@@ -40,9 +41,8 @@ public:
 
     uint64_t CalcCombinations() const
     {
-        const size_t start{3};
-        std::vector<uint64_t> counts(_ratings.back() + 1 + start, 0);  // jolts -> count
-        counts[start] = 1;
+        std::unordered_map<int, uint64_t> counts;
+        counts[0] = 1;
 
         // 1,       4, 5, 6, 7,           10
         //
@@ -54,10 +54,10 @@ public:
         // 1  0  0  1  1  1  3  0  0
         for (int r : _ratings)
         {
-            counts[r + start] = counts[r + start - 1] + counts[r + start - 2] + counts[r + start - 3];
+            counts[r] = counts[r - 1] + counts[r - 2] + counts[r - 3];
         }
 
-        return counts.back();
+        return counts[_ratings.back()];;
     }
 
 private:
