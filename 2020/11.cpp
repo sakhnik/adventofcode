@@ -4,6 +4,7 @@
 #include <sstream>
 #include <fstream>
 #include <limits>
+#include <functional>
 
 namespace {
 
