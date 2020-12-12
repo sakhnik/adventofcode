@@ -15,11 +15,11 @@ public:
         {
             int arg{};
             if (1 == sscanf(line.c_str(), "acc %d", &arg))
-                _program.emplace_back(Op::Acc, arg);
+                _program.push_back({Op::Acc, arg});
             else if (1 == sscanf(line.c_str(), "jmp %d", &arg))
-                _program.emplace_back(Op::Jmp, arg);
+                _program.push_back({Op::Jmp, arg});
             else // nop
-                _program.emplace_back(Op::Nop, arg);
+                _program.push_back({Op::Nop, arg});
         }
     }
 
