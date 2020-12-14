@@ -6,7 +6,6 @@ mkdir -p BUILD
 (
 cd BUILD
 CC=clang CXX=clang++ cmake \
-    -G Ninja \
     -DCMAKE_BUILD_TYPE=Debug \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=Yes \
     ..
