@@ -1,0 +1,62 @@
+#include "../test.hpp"
+#include <vector>
+#include <unordered_map>
+
+namespace {
+
+class Game
+{
+public:
+    Game(std::vector<int> start)
+    {
+        for (size_t turn = 0; turn != start.size(); ++turn)
+        {
+            _history[start[turn]] = {turn};
+        }
+        _turn = start.size();
+        _recent = start.back();
+    }
+
+    int Run(size_t target)
+    {
+        while (_turn < target)
+        {
+            if (_history[_recent].size() < 2)
+            {
+                _recent = 0;
+            }
+            else
+            {
+                const auto &turns = _history[_recent];
+                _recent = turns[turns.size() - 1] - turns[turns.size() - 2];
+            }
+            _history[_recent].push_back(_turn);
+            ++_turn;
+        }
+        return _recent;
+    }
+
+private:
+    int _recent;
+    size_t _turn;
+    // number -> turns
+    std::unordered_map<int, std::vector<size_t>> _history;
+};
+
+using namespace boost::ut;
+
+suite s = [] {
+    "2020-15"_test = [] {
+        expect(436_i == Game{{0,3,6}}.Run(2020));
+        expect(1_i == Game{{1,3,2}}.Run(2020));
+        expect(10_i == Game{{2,1,3}}.Run(2020));
+        expect(27_i == Game{{1,2,3}}.Run(2020));
+        expect(78_i == Game{{2,3,1}}.Run(2020));
+        expect(438_i == Game{{3,2,1}}.Run(2020));
+        expect(1836_i == Game{{3,1,2}}.Run(2020));
+
+        Printer::Print(__FILE__, "1", Game{{9,12,1,4,17,0,18}}.Run(2020));
+    };
+};
+
+} //namespace;
