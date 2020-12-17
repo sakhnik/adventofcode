@@ -4,28 +4,22 @@
 
 namespace {
 
-struct Point
-{
-    int x, y, z;
+using Point3 = std::array<int, 3>;
+using Point4 = std::array<int, 4>;
 
-    bool operator==(const Point &o) const
-    {
-        return x == o.x && y == o.y && z == o.z;
-    }
-};
-
+template <typename P>
 struct PointHash
 {
-    size_t operator()(const Point &p) const noexcept
+    size_t operator()(const P &p) const noexcept
     {
         size_t seed{};
-        boost::hash_combine(seed, p.x);
-        boost::hash_combine(seed, p.y);
-        boost::hash_combine(seed, p.z);
+        for (auto x : p)
+            boost::hash_combine(seed, x);
         return seed;
     }
 };
 
+template <typename PointT>
 class Life
 {
 public:
@@ -47,14 +41,27 @@ public:
 
     void Evolve()
     {
-        std::unordered_map<Point, int, PointHash> counts;
+        std::unordered_map<PointT, int, PointHash<PointT>> counts;
         for (const auto &p : _points)
         {
-            for (int dx = -1; dx <= 1; ++dx)
-                for (int dy = -1; dy <= 1; ++dy)
-                    for (int dz = -1; dz <= 1; ++dz)
-                        if (dx || dy || dz)
-                            ++counts[{p.x + dx, p.y + dy, p.z + dz}];
+            std::function<void(size_t i, PointT, PointT)> calc_counts = [&](size_t i, PointT dp, PointT np) {
+                if (i == dp.size())
+                {
+                    if (dp == PointT{})
+                        return;
+                    ++counts[np];
+                    return;
+                }
+
+                auto x = np[i];
+                for (int j = -1; j <= 1; ++j)
+                {
+                    dp[i] = j;
+                    np[i] = x + j;
+                    calc_counts(i + 1, dp, np);
+                }
+            };
+            calc_counts(0, PointT{}, p);
         }
 
         _PointsT new_points;
@@ -85,7 +92,7 @@ public:
     size_t CountActive() const { return _points.size(); }
 
 private:
-    using _PointsT = std::unordered_set<Point, PointHash>;
+    using _PointsT = std::unordered_set<PointT, PointHash<PointT>>;
     _PointsT _points;
 };
 
@@ -94,14 +101,22 @@ using namespace boost::ut;
 suite s = [] {
     "2020-17"_test = [] {
         const char *const TEST = ".#.\n..#\n###";
-        Life l{std::istringstream{TEST}};
+        Life<Point3> l{std::istringstream{TEST}};
         l.Evolve(6);
         expect(112_u == l.CountActive());
+
+        Life<Point4> l4{std::istringstream{TEST}};
+        l4.Evolve(6);
+        expect(848_u == l4.CountActive());
     };
 
-    Life life{std::ifstream{INPUT}};
+    Life<Point3> life{std::ifstream{INPUT}};
     life.Evolve(6);
     Printer::Print(__FILE__, "1", life.CountActive());
+
+    Life<Point4> life4{std::ifstream{INPUT}};
+    life4.Evolve(6);
+    Printer::Print(__FILE__, "2", life4.CountActive());
 };
 
 } //namespace;
