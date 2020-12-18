@@ -108,15 +108,15 @@ suite s = [] {
         Life<Point4> l4{std::istringstream{TEST}};
         l4.Evolve(6);
         expect(848_u == l4.CountActive());
+
+        Life<Point3> life{std::ifstream{INPUT}};
+        life.Evolve(6);
+        Printer::Print(__FILE__, "1", life.CountActive());
+
+        Life<Point4> life4{std::ifstream{INPUT}};
+        life4.Evolve(6);
+        Printer::Print(__FILE__, "2", life4.CountActive());
     };
-
-    Life<Point3> life{std::ifstream{INPUT}};
-    life.Evolve(6);
-    Printer::Print(__FILE__, "1", life.CountActive());
-
-    Life<Point4> life4{std::ifstream{INPUT}};
-    life4.Evolve(6);
-    Printer::Print(__FILE__, "2", life4.CountActive());
 };
 
 } //namespace;
