@@ -4,130 +4,148 @@
 
 namespace {
 
-class Parser
+size_t Count(std::istream &&is, bool subst = false)
 {
-public:
-    Parser(std::istream &&is)
+    struct Rex
     {
-        struct Rex
+        std::string rex;
+
+        enum class Status
         {
-            std::string rex;
+            Unresolved = 0,
+            Pending,
+            Resolved
+        } status = Status::Unresolved;
+    };
 
-            enum class Status
-            {
-                Unresolved = 0,
-                Pending,
-                Resolved
-            } status = Status::Unresolved;
-        };
+    std::unordered_map<int, Rex> rules;
 
-        std::unordered_map<int, Rex> rules;
-
-        std::string line;
-        while (getline(is, line))
+    std::string line;
+    while (getline(is, line))
+    {
+        if (line.empty())
+            break;
+        char ch{};
+        int num{};
+        if (2 == sscanf(line.c_str(), "%d: \"%c\"", &num, &ch))
         {
-            if (line.empty())
-                break;
-            char ch{};
-            int num{};
-            if (2 == sscanf(line.c_str(), "%d: \"%c\"", &num, &ch))
-            {
-                rules[num] = {{ch}, Rex::Status::Resolved};
-            }
-            else
-            {
-                std::string_view s{line};
-                s = std::from_chars(s.begin(), s.end(), num).ptr + 1;
-
-                rules[num] = {std::string{s}, Rex::Status::Unresolved};
-            }
+            rules[num] = {{ch}, Rex::Status::Resolved};
         }
+        else
+        {
+            std::string_view s{line};
+            s = std::from_chars(s.begin(), s.end(), num).ptr + 1;
 
-        std::function<bool(int)> resolve = [&](int num) -> bool {
-            auto &rex = rules.find(num)->second;
-            if (rex.status == Rex::Status::Resolved)
-                return true;
-            if (rex.status == Rex::Status::Pending)
-                return false;
-
-            rex.status = Rex::Status::Pending;
-
-            std::string resolved;
-            std::string_view s{rex.rex};
-
-            std::string seq;
-
-            auto combine = [&] {
-                if (resolved.empty())
-                    resolved = '(' + seq;
-                else
-                    resolved += '|' + seq;
-                seq.clear();
-            };
-
-            while (!s.empty())
+            std::string ss{s};
+            if (subst)
             {
-                if (s[0] == ' ')
+                // Part 2 adjustments
+                if (num == 8)
                 {
-                    s = s.substr(1);
-                }
-                else if (s[0] == '|')
-                {
-                    s = s.substr(1);
-                    combine();
-                }
-                else
-                {
-                    int ref{};
-                    s = std::from_chars(s.begin(), s.end(), ref).ptr;
-                    if (!resolve(ref))
+                    for (int i = 2; i < 10; ++i)
                     {
-                        rex.status = Rex::Status::Unresolved;
-                        return false;
+                        ss += " |";
+                        for (int j = 0; j < i; ++j)
+                            ss += " 42";
                     }
-                    auto &ref_rex = rules.find(ref)->second;
-                    seq += ref_rex.rex;
                 }
-            }
-
-            combine();
-            if (resolved.front() == '(')
-                resolved += ')';
-            rex.rex = resolved;
-            rex.status = Rex::Status::Resolved;
-            return true;
-        };
-
-        // Didn't implement topological sort, so brute force.
-        while (true)
-        {
-            bool finished{true};
-            for (const auto &r : rules)
-            {
-                if (!resolve(r.first))
+                else if (num == 11)
                 {
-                    finished = false;
+                    for (int i = 2; i < 5; ++i)
+                    {
+                        ss += " |";
+                        for (int j = 0; j < i; ++j)
+                            ss += " 42";
+                        for (int j = 0; j < i; ++j)
+                            ss += " 31";
+                    }
                 }
             }
-            if (finished)
-                break;
-        }
 
-        //std::cout << rules[0].rex << std::endl;
-        _rex = std::regex(rules[0].rex);
-
-        while (getline(is, line))
-        {
-            _count += std::regex_match(line, _rex);
+            rules[num] = {ss, Rex::Status::Unresolved};
         }
     }
 
-    size_t GetCount() const { return _count; }
+    std::function<bool(int)> resolve = [&](int num) -> bool {
+        auto &rex = rules.find(num)->second;
+        if (rex.status == Rex::Status::Resolved)
+            return true;
+        if (rex.status == Rex::Status::Pending)
+            return false;
 
-private:
-    std::regex _rex;
-    size_t _count = 0;
-};
+        rex.status = Rex::Status::Pending;
+
+        std::string resolved;
+        std::string_view s{rex.rex};
+
+        std::string seq;
+
+        auto combine = [&] {
+            if (resolved.empty())
+                resolved = '(' + seq;
+            else
+                resolved += '|' + seq;
+            seq.clear();
+        };
+
+        while (!s.empty())
+        {
+            if (s[0] == ' ')
+            {
+                s = s.substr(1);
+            }
+            else if (s[0] == '|')
+            {
+                s = s.substr(1);
+                combine();
+            }
+            else
+            {
+                int ref{};
+                s = std::from_chars(s.begin(), s.end(), ref).ptr;
+                if (!resolve(ref))
+                {
+                    rex.status = Rex::Status::Unresolved;
+                    return false;
+                }
+                auto &ref_rex = rules.find(ref)->second;
+                seq += ref_rex.rex;
+            }
+        }
+
+        combine();
+        if (resolved.front() == '(')
+            resolved += ')';
+        rex.rex = resolved;
+        rex.status = Rex::Status::Resolved;
+        return true;
+    };
+
+    // Didn't implement topological sort, so brute force.
+    while (true)
+    {
+        bool finished{true};
+        for (const auto &r : rules)
+        {
+            if (!resolve(r.first))
+            {
+                finished = false;
+            }
+        }
+        if (finished)
+            break;
+    }
+
+    //std::cout << rules[0].rex << std::endl;
+    auto rex = std::regex(rules[0].rex);
+
+    size_t count{};
+    while (getline(is, line))
+    {
+        count += std::regex_match(line, rex);
+    }
+    return count;
+}
 
 using namespace boost::ut;
 
@@ -146,17 +164,11 @@ bababa
 abbbab
 aaabbb
 aaaabbb)";
-            Parser p{std::istringstream{TEST}};
-            //expect(p.Match(4, "a"));
-            //expect(!p.Match(4, "b"));
-            //expect(!p.Match(4, "aa"));
-            //expect(p.Match(2, "bb"));
-            //expect(p.Match(1, "babb"));
-            expect(2_u == p.GetCount());
+            expect(2_u == Count(std::istringstream{TEST}));
         }
 
-        Parser p{std::ifstream{INPUT}};
-        Printer::Print(__FILE__, "1", p.GetCount());
+        Printer::Print(__FILE__, "1", Count(std::ifstream{INPUT}));
+        Printer::Print(__FILE__, "2", Count(std::ifstream{INPUT}, true));
     };
 };
 
