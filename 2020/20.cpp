@@ -9,6 +9,7 @@ class Tiles
 public:
     Tiles(std::istream &&is)
     {
+        int64_t id{};
         _Tile tile;
 
         std::string line;
@@ -16,28 +17,31 @@ public:
         {
             if (line.empty())
             {
-                _tiles.push_back(std::move(tile));
+                _tiles[id] = std::move(tile);
                 tile = _Tile{};
                 continue;
             }
-            if (1 == sscanf(line.c_str(), "Tile %ld", &tile.id))
+            if (1 == sscanf(line.c_str(), "Tile %ld", &id))
                 continue;
             tile.rows.push_back(line);
         }
-        _tiles.push_back(std::move(tile));
+        _tiles[id] = std::move(tile);
     }
 
-    int64_t FindCorners()
+    void Arrange()
     {
         // Find tiles with two unique edges.
         std::unordered_map<std::string, std::vector<int64_t>> edge2id;
 
-        for (const auto &tile : _tiles)
+        for (const auto &id_tile : _tiles)
         {
+            int64_t id = id_tile.first;
+            const auto &tile = id_tile.second;
+
             for (int i = 0; i < 4; ++i)
             {
-                edge2id[tile.GetEdge(i, false)].push_back(tile.id);
-                edge2id[tile.GetEdge(i, true)].push_back(tile.id);
+                edge2id[tile.GetEdge(i, false)].push_back(id);
+                edge2id[tile.GetEdge(i, true)].push_back(id);
             }
         }
 
@@ -54,24 +58,30 @@ public:
             }
         }
 
-        int64_t res{1};
+        int64_t first_id{};
         for (const auto &c : counts)
         {
             if (c.second == 4)  // two pairs of unique edges (normal and flipped)
             {
-                res *= c.first;
+                first_id = c.first;
+                _corner_product *= c.first;
             }
         }
-        return res;
+
+
+        // TODO: orient the chosen corner tile and start picking
+        // the adjacent tiles.
     }
 
+    int64_t GetCornerProduct() const { return _corner_product; }
 
 private:
+    int64_t _corner_product = 1;
+
     const static size_t N = 10;
 
     struct _Tile
     {
-        int64_t id;
         std::vector<std::string> rows;
 
         std::string GetEdge(int c, bool flip) const
@@ -102,7 +112,7 @@ private:
         }
     };
 
-    std::vector<_Tile> _tiles;
+    std::unordered_map<int64_t, _Tile> _tiles;
 };
 
 using namespace boost::ut;
@@ -218,11 +228,13 @@ Tile 3079:
 ..#.......
 ..#.###...)";
             Tiles tiles{std::istringstream{TEST}};
-            expect(eq(20899048083289ll, tiles.FindCorners()));
+            tiles.Arrange();
+            expect(eq(20899048083289ll, tiles.GetCornerProduct()));
         }
 
         Tiles tiles{std::ifstream{INPUT}};
-        Printer::Print(__FILE__, "1", tiles.FindCorners());
+        tiles.Arrange();
+        Printer::Print(__FILE__, "1", tiles.GetCornerProduct());
     };
 };
 
