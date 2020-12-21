@@ -1,31 +1,94 @@
 #include "../test.hpp"
 #include <fstream>
 #include <unordered_map>
+#include <cmath>
 
 namespace {
+
+template <int N>
+struct Tile
+{
+    std::vector<std::string> rows;
+    int64_t id = 0;
+
+    std::string GetEdge(int c, bool flip = false) const
+    {
+        std::string edge;
+        switch (c)
+        {
+        case 0:
+            for (size_t i = 0; i < N; ++i)
+                edge.push_back(rows[0][i]);
+            break;
+        case 1:
+            for (size_t i = 0; i < N; ++i)
+                edge.push_back(rows[i][N-1]);
+            break;
+        case 2:
+            for (size_t i = 0; i < N; ++i)
+                edge.push_back(rows[N-1][N-i-1]);
+            break;
+        case 3:
+            for (size_t i = 0; i < N; ++i)
+                edge.push_back(rows[N-i-1][0]);
+            break;
+        }
+        if (flip)
+            std::reverse(edge.begin(), edge.end());
+        return edge;
+    }
+
+    void Rotate()
+    {
+        for (int i = 0; i < N/2; ++i)
+        {
+            for (int j = 0; j + i + i + 1 < N; ++j)
+            {
+                int i2 = i + j;
+                int i3 = N - 1 - i - j;
+                int i4 = N - 1 - i;
+
+                char t = rows[i][i2];
+                rows[i][i2] = rows[i3][i];
+                rows[i3][i] = rows[i4][i3];
+                rows[i4][i3] = rows[i2][i4];
+                rows[i2][i4] = t;
+            }
+        }
+    }
+
+    void Flip()
+    {
+        std::reverse(rows.begin(), rows.end());
+    }
+
+    bool operator==(const Tile<N> &o) const
+    {
+        return rows == o.rows;
+    }
+};
 
 class Tiles
 {
 public:
     Tiles(std::istream &&is)
     {
-        int64_t id{};
-        _Tile tile;
+        Tile<N> tile;
 
         std::string line;
         while (getline(is, line))
         {
             if (line.empty())
             {
-                _tiles[id] = std::move(tile);
-                tile = _Tile{};
+                _tiles[tile.id] = std::move(tile);
+                tile = {};
                 continue;
             }
-            if (1 == sscanf(line.c_str(), "Tile %ld", &id))
+            if (1 == sscanf(line.c_str(), "Tile %ld", &tile.id))
                 continue;
             tile.rows.push_back(line);
         }
-        _tiles[id] = std::move(tile);
+        _tiles[tile.id] = std::move(tile);
     }
 
     void Arrange()
@@ -33,19 +96,36 @@ public:
         // Find tiles with two unique edges.
         std::unordered_map<std::string, std::vector<int64_t>> edge2id;
 
-        for (const auto &id_tile : _tiles)
-        {
-            int64_t id = id_tile.first;
-            const auto &tile = id_tile.second;
-
+        // Add edges to the pool {edge -> id}.
+        auto addEdges = [&](const Tile<N> &tile) {
             for (int i = 0; i < 4; ++i)
             {
-                edge2id[tile.GetEdge(i, false)].push_back(id);
-                edge2id[tile.GetEdge(i, true)].push_back(id);
+                for (int j = 0; j < 2; ++j)
+                {
+                    edge2id[tile.GetEdge(i, j)].push_back(tile.id);
+                }
             }
-        }
+        };
 
-        std::unordered_map<int64_t, int> counts;
+        for (const auto &id_tile : _tiles)
+            addEdges(id_tile.second);
+
+        // Remove unused edges from the {edge -> id} mapping when found a good placement.
+        auto removeEdges = [&](const Tile<N> &tile) {
+            for (int i = 0; i < 4; ++i)
+            {
+                for (int j = 0; j < 2; ++j)
+                {
+                    std::string edge = tile.GetEdge(i, j);
+                    auto it = edge2id.find(edge);
+                    it->second.erase(std::find(it->second.begin(), it->second.end(), tile.id));
+                    if (it->second.empty())
+                        edge2id.erase(it);
+                }
+            }
+        };
+
+        std::unordered_map<int64_t, std::vector<std::string>> id2unique;
 
         for (const auto &edge_ids : edge2id)
         {
@@ -54,23 +134,98 @@ public:
                 continue;
             for (auto id : ids)
             {
-                ++counts[id];
+                id2unique[id].push_back(edge_ids.first);
             }
         }
 
         int64_t first_id{};
-        for (const auto &c : counts)
+        for (const auto &c : id2unique)
         {
-            if (c.second == 4)  // two pairs of unique edges (normal and flipped)
+            if (c.second.size() == 4)  // two pairs of unique edges (normal and flipped)
             {
                 first_id = c.first;
                 _corner_product *= c.first;
             }
         }
 
-
         // TODO: orient the chosen corner tile and start picking
         // the adjacent tiles.
+
+        size_t dim = std::sqrt(_tiles.size());
+        std::vector<Tile<N>> arranged(_tiles.size());
+
+        auto get_arranged = [&arranged, dim](size_t row, size_t col) -> Tile<N>& {
+            return arranged[row * dim + col];
+        };
+
+        auto isCorner = [&](const std::string &edge) {
+            auto it = edge2id.find(edge);
+            return it->second.size() == 1;
+        };
+
+        auto fits = [&](const std::string &e1, const std::string &e2) {
+            if (e1.empty())
+                return isCorner(e2);
+            return std::equal(e1.begin(), e1.end(), e2.rbegin());
+        };
+
+        auto findRotation = [](Tile<N> &tile, auto left, auto top) {
+            for (int j = 0; j < 2; ++j)
+            {
+                for (int i = 0; i < 4; ++i)
+                {
+                    if (left(tile.GetEdge(3)) && top(tile.GetEdge(0)))
+                        return true;
+                    tile.Rotate();
+                }
+                tile.Flip();
+            }
+            return false;
+        };
+
+        for (size_t row = 0; row < dim; ++row)
+        {
+            for (size_t col = 0; col < dim; ++col)
+            {
+                if (!row && !col)
+                {
+                    auto &t = _tiles[first_id];
+                    if (!findRotation(t, isCorner, isCorner))
+                        throw "(_|_)";
+                    get_arranged(row, col) = t;
+                    removeEdges(t);
+                    continue;
+                }
+
+                std::string left_edge = col > 0 ? get_arranged(row, col - 1).GetEdge(1) : "";
+                std::string top_edge = row > 0 ? get_arranged(row - 1, col).GetEdge(2) : "";
+
+                decltype(&edge2id.begin()->second) ids{};
+
+                if (!left_edge.empty())
+                {
+                    ids = &edge2id[left_edge];
+                }
+                else if (!top_edge.empty())
+                {
+                    ids = &edge2id[top_edge];
+                }
+
+                if (ids->size() != 1)
+                    throw "(_|_)";
+                auto &t = _tiles[ids->front()];
+                if (!findRotation(t,
+                                  [&](const std::string &e) { return fits(left_edge, e); },
+                                  [&](const std::string &e) { return fits(top_edge, e); }))
+                {
+                    throw "(_|_)";
+                }
+                get_arranged(row, col) = t;
+                removeEdges(t);
+            }
+        }
+
+        std::cout << "Arranged" << std::endl;
     }
 
     int64_t GetCornerProduct() const { return _corner_product; }
@@ -78,47 +233,77 @@ public:
 private:
     int64_t _corner_product = 1;
 
+
     const static size_t N = 10;
-
-    struct _Tile
-    {
-        std::vector<std::string> rows;
-
-        std::string GetEdge(int c, bool flip) const
-        {
-            std::string edge;
-            switch (c)
-            {
-            case 0:
-                for (size_t i = 0; i < N; ++i)
-                    edge.push_back(rows[0][i]);
-                break;
-            case 1:
-                for (size_t i = 0; i < N; ++i)
-                    edge.push_back(rows[i][N-1]);
-                break;
-            case 2:
-                for (size_t i = 0; i < N; ++i)
-                    edge.push_back(rows[N-1][N-i-1]);
-                break;
-            case 3:
-                for (size_t i = 0; i < N; ++i)
-                    edge.push_back(rows[N-i-1][0]);
-                break;
-            }
-            if (flip)
-                std::reverse(edge.begin(), edge.end());
-            return edge;
-        }
-    };
-
-    std::unordered_map<int64_t, _Tile> _tiles;
+    std::unordered_map<int64_t, Tile<N>> _tiles;
 };
 
 using namespace boost::ut;
 
 suite s = [] {
     "2020-20"_test = [] {
+        {
+            Tile<3> t{{
+                "###",
+                ".##",
+                "..#",
+            }};
+            t.Rotate();
+            Tile<3> t2{{
+                "..#",
+                ".##",
+                "###",
+            }};
+
+            expect(t2 == t);
+        }
+
+        {
+            Tile<4> t{{
+                "####",
+                "#.##",
+                "##.#",
+                ".###",
+            }};
+            t.Rotate();
+            Tile<4> t2{{
+                ".###",
+                "##.#",
+                "#.##",
+                "####",
+            }};
+            expect(t2 == t);
+        }
+
+        {
+            Tile<10> t{{
+                "####...##.",
+                "#..##.#..#",
+                "##.#..#.#.",
+                ".###.####.",
+                "..###.####",
+                ".##....##.",
+                ".#...####.",
+                "#.##.####.",
+                "####..#...",
+                ".....##...",
+            }};
+            t.Rotate();
+            Tile<10> t2{{
+                ".##....###",
+                ".#.##.##.#",
+                ".##.###..#",
+                ".##..#####",
+                ".....#..#.",
+                "#.##..#...",
+                "####.####.",
+                "..#####..#",
+                "..######.#",
+                ".....#..#.",
+            }};
+            expect(t2 == t);
+        }
+
         {
             const char *const TEST = R"(Tile 2311:
 ..##.#..#.
