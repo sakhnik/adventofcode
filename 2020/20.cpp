@@ -2,13 +2,50 @@
 #include <fstream>
 #include <unordered_map>
 #include <cmath>
+#include <regex>
 
 namespace {
+
+using MapT = std::vector<std::string>;
+
+void Rotate(MapT &m)
+{
+    size_t N = m.size();
+
+    for (size_t i = 0; i < N; ++i)
+    {
+        for (size_t j = 0; j + i + i + 1 < N; ++j)
+        {
+            int i2 = i + j;
+            int i3 = N - 1 - i - j;
+            int i4 = N - 1 - i;
+
+            char t = m[i][i2];
+            m[i][i2] = m[i3][i];
+            m[i3][i] = m[i4][i3];
+            m[i4][i3] = m[i2][i4];
+            m[i2][i4] = t;
+        }
+    }
+}
+
+void Flip(MapT &m)
+{
+    std::reverse(m.begin(), m.end());
+}
+
+size_t Count(const MapT &m)
+{
+    size_t c{};
+    for (size_t r = 0; r < m.size(); ++r)
+        c += std::count(m[r].begin(), m[r].end(), '#');
+    return c;
+}
 
 template <int N>
 struct Tile
 {
-    std::vector<std::string> rows;
+    MapT rows;
     int64_t id = 0;
 
     std::string GetEdge(int c, bool flip = false) const
@@ -36,30 +73,6 @@ struct Tile
         if (flip)
             std::reverse(edge.begin(), edge.end());
         return edge;
-    }
-
-    void Rotate()
-    {
-        for (int i = 0; i < N/2; ++i)
-        {
-            for (int j = 0; j + i + i + 1 < N; ++j)
-            {
-                int i2 = i + j;
-                int i3 = N - 1 - i - j;
-                int i4 = N - 1 - i;
-
-                char t = rows[i][i2];
-                rows[i][i2] = rows[i3][i];
-                rows[i3][i] = rows[i4][i3];
-                rows[i4][i3] = rows[i2][i4];
-                rows[i2][i4] = t;
-            }
-        }
-    }
-
-    void Flip()
-    {
-        std::reverse(rows.begin(), rows.end());
     }
 
     bool operator==(const Tile<N> &o) const
@@ -148,7 +161,7 @@ public:
             }
         }
 
-        // TODO: orient the chosen corner tile and start picking
+        // Orient the chosen corner tile and start picking
         // the adjacent tiles.
 
         size_t dim = std::sqrt(_tiles.size());
@@ -176,9 +189,9 @@ public:
                 {
                     if (left(tile.GetEdge(3)) && top(tile.GetEdge(0)))
                         return true;
-                    tile.Rotate();
+                    Rotate(tile.rows);
                 }
-                tile.Flip();
+                Flip(tile.rows);
             }
             return false;
         };
@@ -225,10 +238,66 @@ public:
             }
         }
 
-        std::cout << "Arranged" << std::endl;
+        for (size_t row = 0; row < dim; ++row)
+        {
+            for (size_t l = 1; l < N - 1; ++l)
+            {
+                std::string line;
+                for (size_t col = 0; col < dim; ++col)
+                {
+                    const auto &tile = get_arranged(row, col);
+                    line += tile.rows[l].substr(1, N - 2);
+                }
+                _map.push_back(std::move(line));
+            }
+        }
     }
 
     int64_t GetCornerProduct() const { return _corner_product; }
+
+    size_t GetRoughness()
+    {
+        const MapT MONSTER_MAP = {{
+            "..................#.",
+            "#....##....##....###",
+            ".#..#..#..#..#..#...",
+        }};
+        const size_t MONSTER_HEIGHT = MONSTER_MAP.size();
+        const size_t MONSTER_WIDTH = MONSTER_MAP[0].size();
+
+        std::vector<std::regex> MONSTER;
+        for (const auto &s : MONSTER_MAP)
+            MONSTER.emplace_back(s);
+
+        auto has_monster = [&](size_t row, size_t col) {
+            for (size_t i = 0; i < MONSTER_HEIGHT; ++i)
+            {
+                auto it = _map[row + i].data() + col;
+                if (!std::regex_match(it, it + MONSTER_WIDTH, MONSTER[i]))
+                    return false;
+            }
+            return true;
+        };
+
+        size_t monster_count{};
+        for (int side = 0; side < 2; ++side)
+        {
+            for (int rotation = 0; rotation < 4; ++rotation)
+            {
+                for (size_t row = 0; row < _map.size() - MONSTER_HEIGHT; ++row)
+                {
+                    for (size_t col = 0; col < _map[0].size() - MONSTER_WIDTH; ++col)
+                    {
+                        monster_count += has_monster(row, col);
+                    }
+                }
+                Rotate(_map);
+            }
+            Flip(_map);
+        }
+
+        return Count(_map) - monster_count * Count(MONSTER_MAP);
+    }
 
 private:
     int64_t _corner_product = 1;
@@ -236,6 +305,8 @@ private:
 
     const static size_t N = 10;
     std::unordered_map<int64_t, Tile<N>> _tiles;
+
+    MapT _map;
 };
 
 using namespace boost::ut;
@@ -243,13 +314,13 @@ using namespace boost::ut;
 suite s = [] {
     "2020-20"_test = [] {
         {
-            Tile<3> t{{
+            MapT t{{
                 "###",
                 ".##",
                 "..#",
             }};
-            t.Rotate();
-            Tile<3> t2{{
+            Rotate(t);
+            MapT t2{{
                 "..#",
                 ".##",
                 "###",
@@ -259,14 +330,14 @@ suite s = [] {
         }
 
         {
-            Tile<4> t{{
+            MapT t{{
                 "####",
                 "#.##",
                 "##.#",
                 ".###",
             }};
-            t.Rotate();
-            Tile<4> t2{{
+            Rotate(t);
+            MapT t2{{
                 ".###",
                 "##.#",
                 "#.##",
@@ -276,7 +347,7 @@ suite s = [] {
         }
 
         {
-            Tile<10> t{{
+            MapT t{{
                 "####...##.",
                 "#..##.#..#",
                 "##.#..#.#.",
@@ -288,8 +359,8 @@ suite s = [] {
                 "####..#...",
                 ".....##...",
             }};
-            t.Rotate();
-            Tile<10> t2{{
+            Rotate(t);
+            MapT t2{{
                 ".##....###",
                 ".#.##.##.#",
                 ".##.###..#",
@@ -415,11 +486,13 @@ Tile 3079:
             Tiles tiles{std::istringstream{TEST}};
             tiles.Arrange();
             expect(eq(20899048083289ll, tiles.GetCornerProduct()));
+            expect(273_u == tiles.GetRoughness());
         }
 
         Tiles tiles{std::ifstream{INPUT}};
         tiles.Arrange();
         Printer::Print(__FILE__, "1", tiles.GetCornerProduct());
+        Printer::Print(__FILE__, "2", tiles.GetRoughness());
     };
 };
 
