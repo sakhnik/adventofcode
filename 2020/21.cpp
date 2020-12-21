@@ -1,6 +1,7 @@
 #include "../test.hpp"
 #include <set>
 #include <map>
+#include <fstream>
 
 namespace {
 
