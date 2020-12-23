@@ -1,4 +1,5 @@
 #include "../test.hpp"
+#include <numeric>
 
 namespace {
 
@@ -6,35 +7,37 @@ class Cups
 {
 public:
     Cups(const std::string &labels)
-        : _labels(labels.begin(), labels.end())
+        : _next(labels.size())
     {
-        _min = *std::min_element(_labels.begin(), _labels.end());
-        _max = *std::max_element(_labels.begin(), _labels.end());
+        for (size_t i = 0, n = labels.size() - 1; i < n; ++i)
+        {
+            _next[labels[i] - '1'] = labels[i + 1] - '1';
+        }
+        _next[labels.back() - '1'] = labels[0] - '1';
+
+        _cur = labels.front() - '1';
     }
 
     void Move()
     {
-        std::rotate(_labels.begin(), _labels.begin() + _cur, _labels.end());
+        ssize_t buf1 = _next[_cur];
+        ssize_t buf2 = _next[buf1];
+        ssize_t buf3 = _next[buf2];
+        _next[_cur] = _next[buf3];
 
-        std::array<char, 3> buffer;
-        auto it = _labels.begin() + 1;
-        std::copy(it, it + 3, buffer.begin());
-        _labels.erase(it, it + 3);
-
-        auto cup = _labels.front(), dest = cup;
+        int dest = _cur;
         do
         {
-            if (--dest < _min)
-                dest = _max;
+            if (--dest < 0)
+                dest = _next.size() - 1;
         }
-        while (std::find(buffer.begin(), buffer.end(), dest) != buffer.end());
+        while (dest == buf1 || dest == buf2 || dest == buf3);
 
-        it = std::find(_labels.begin(), _labels.end(), dest) + 1;
-        _labels.insert(it, buffer.begin(), buffer.end());
+        size_t last = _next[dest];
+        _next[dest] = buf1;
+        _next[buf3] = last;
 
-        std::rotate(_labels.begin(), _labels.begin() + _labels.size() - _cur, _labels.end());
-        if (++_cur >= _labels.size())
-            _cur = 0;
+        _cur = _next[_cur];
     }
 
     void Move(int count)
@@ -43,26 +46,33 @@ public:
             Move();
     }
 
-    void PopCup1()
+    std::vector<size_t> GetLabels(int count = 0) const
     {
-        auto it = std::find(_labels.begin(), _labels.end(), '1');
-        auto d = it - _labels.begin();
+        if (!count)
+            count = _next.size() - 1;
 
-        std::rotate(_labels.begin(), it, _labels.end());
-        _cur += _labels.size() - d;
-        _cur %= _labels.size();
+        std::vector<size_t> ret;
+        size_t p = 0;
+        while (count-- > 0)
+        {
+            p = _next[p];
+            ret.push_back(p);
+        }
+        return ret;
     }
 
-    std::string GetLabels(size_t skip = 0) const
+    std::string GetStr() const
     {
-        return {_labels.begin() + skip, _labels.end()};
+        auto labels = GetLabels();
+        std::ostringstream oss;
+        for (auto l : labels)
+            oss << l + 1;
+        return oss.str();
     }
 
 private:
-    std::vector<char> _labels;
+    std::vector<size_t> _next;
     size_t _cur = 0;
-    char _min;
-    char _max;
 };
 
 using namespace boost::ut;
@@ -72,14 +82,12 @@ suite s = [] {
         {
             Cups c{"389125467"};
             c.Move(100);
-            c.PopCup1();
-            expect(eq(c.GetLabels(1), std::string{"67384529"}));
+            expect(eq(c.GetStr(), std::string{"67384529"}));
         }
 
         Cups c{"215694783"};
         c.Move(100);
-        c.PopCup1();
-        Printer::Print(__FILE__, "1", c.GetLabels(1));
+        Printer::Print(__FILE__, "1", c.GetStr());
     };
 };
 
