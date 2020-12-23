@@ -6,16 +6,25 @@ namespace {
 class Cups
 {
 public:
-    Cups(const std::string &labels)
-        : _next(labels.size())
+    Cups(const std::string &labels, size_t count = 0)
+        : _next(count ? count : labels.size())
     {
-        for (size_t i = 0, n = labels.size() - 1; i < n; ++i)
-        {
-            _next[labels[i] - '1'] = labels[i + 1] - '1';
-        }
-        _next[labels.back() - '1'] = labels[0] - '1';
+        if (!count)
+            count = labels.size();
 
-        _cur = labels.front() - '1';
+        auto get_label = [&](size_t i) {
+            return i < labels.size() ? labels[i] - '1' : i;
+        };
+
+        for (size_t i = 0; i < count - 1; ++i)
+        {
+            auto cur = get_label(i);
+            auto next = get_label(i + 1);
+            _next[cur] = next;
+        }
+        _next[get_label(_next.size() - 1)] = get_label(0);
+
+        _cur = get_label(0);
     }
 
     void Move()
@@ -56,7 +65,7 @@ public:
         while (count-- > 0)
         {
             p = _next[p];
-            ret.push_back(p);
+            ret.push_back(p + 1);
         }
         return ret;
     }
@@ -66,7 +75,7 @@ public:
         auto labels = GetLabels();
         std::ostringstream oss;
         for (auto l : labels)
-            oss << l + 1;
+            oss << l;
         return oss.str();
     }
 
@@ -85,9 +94,26 @@ suite s = [] {
             expect(eq(c.GetStr(), std::string{"67384529"}));
         }
 
-        Cups c{"215694783"};
-        c.Move(100);
-        Printer::Print(__FILE__, "1", c.GetStr());
+        {
+            Cups c{"215694783"};
+            c.Move(100);
+            Printer::Print(__FILE__, "1", c.GetStr());
+        }
+
+        {
+            Cups c{"389125467", 1000000};
+            c.Move(10000000);
+            auto res = c.GetLabels(2);
+            expect(934001_u == res[0]);
+            expect(159792_u == res[1]);
+        }
+
+        {
+            Cups c{"215694783", 1000000};
+            c.Move(10000000);
+            auto res = c.GetLabels(2);
+            Printer::Print(__FILE__, "2", res[0] * res[1]);
+        }
     };
 };
 
