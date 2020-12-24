@@ -1,5 +1,6 @@
 #include "../test.hpp"
 #include <unordered_set>
+#include <unordered_map>
 #include <fstream>
 #include <boost/functional/hash.hpp>
 
@@ -12,6 +13,11 @@ struct Tile
     bool operator==(const Tile &o) const
     {
         return x == o.x && y == o.y;
+    }
+
+    Tile operator+(const Tile &o) const
+    {
+        return {x + o.x, y + o.y};
     }
 };
 
@@ -76,23 +82,69 @@ Tile TracePath(const std::string &path)
     return cur;
 }
 
-size_t CountTiles(std::istream &&is)
+class Floor
 {
-    std::unordered_set<Tile, TileHash> blacks;
-
-    std::string line;
-    while (getline(is, line))
+public:
+    Floor(std::istream &&is)
     {
-        auto tile = TracePath(line);
-        auto it = blacks.find(tile);
-        if (it == blacks.end())
-            blacks.insert(tile);
-        else
-            blacks.erase(it);
+        std::string line;
+        while (getline(is, line))
+        {
+            auto tile = TracePath(line);
+            auto it = _blacks.find(tile);
+            if (it == _blacks.end())
+                _blacks.insert(tile);
+            else
+                _blacks.erase(it);
+        }
     }
 
-    return blacks.size();
-}
+    void NextDay()
+    {
+        std::unordered_map<Tile, int, TileHash> counts;
+
+        const std::array<Tile, 6> NEIGHBOURS{
+            Tile{0, -1}, Tile{1, -1}, Tile{1, 0},
+            Tile{0, 1}, Tile{-1, 1}, Tile{-1, 0},
+        };
+
+        for (const auto &b : _blacks)
+        {
+            for (const auto &n : NEIGHBOURS)
+            {
+                ++counts[b + n];
+            }
+        }
+
+        decltype(_blacks) new_blacks;
+        for (const auto &tc : counts)
+        {
+            if (_blacks.contains(tc.first))
+            {
+                if (tc.second == 1 || tc.second == 2)
+                    new_blacks.insert(tc.first);
+            }
+            else
+            {
+                if (tc.second == 2)
+                    new_blacks.insert(tc.first);
+            }
+        }
+
+        _blacks.swap(new_blacks);
+    }
+
+    void SkipDays(int count)
+    {
+        while (count-- > 0)
+            NextDay();
+    }
+
+    size_t GetCount() const { return _blacks.size(); }
+
+private:
+    std::unordered_set<Tile, TileHash> _blacks;
+};
 
 using namespace boost::ut;
 
@@ -100,8 +152,7 @@ suite s = [] {
     "2020-24"_test = [] {
         {
             expect(Tile{0, 1} == TracePath("esew"));
-            expect(1_u == CountTiles(std::istringstream{"esew"}));
-            expect(1_u == CountTiles(std::istringstream{"nwwswee"}));
+
             const char *const TEST =
                 "sesenwnenenewseeswwswswwnenewsewsw\n"
                 "neeenesenwnwwswnenewnwwsewnenwseswesw\n"
@@ -123,10 +174,22 @@ suite s = [] {
                 "eneswnwswnwsenenwnwnwwseeswneewsenese\n"
                 "neswnwewnwnwseenwseesewsenwsweewe\n"
                 "wseweeenwnesenwwwswnew\n";
-            expect(10_u == CountTiles(std::istringstream{TEST}));
+            Floor f{std::istringstream{TEST}};
+            expect(10_u == f.GetCount());
+            f.NextDay();
+            expect(15_u == f.GetCount());
+            f.NextDay();
+            expect(12_u == f.GetCount());
+            f.NextDay();
+            expect(25_u == f.GetCount());
+            f.NextDay();
+            expect(14_u == f.GetCount());
         }
 
-        Printer::Print(__FILE__, "1", CountTiles(std::ifstream{INPUT}));
+        Floor f{std::ifstream{INPUT}};
+        Printer::Print(__FILE__, "1", f.GetCount());
+        f.SkipDays(100);
+        Printer::Print(__FILE__, "2", f.GetCount());
     };
 };
 
