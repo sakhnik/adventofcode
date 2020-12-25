@@ -14,19 +14,12 @@ enable_testing()
 
 list(APPEND sources main.cpp)
 
-foreach(year RANGE 2015 2019)
+foreach(year RANGE 2015 2020)
     foreach(src RANGE 1 25)
         string(REGEX REPLACE "^(.)$" "0\\1" zero_src ${src})
         list(APPEND sources ${year}/${zero_src}.cpp)
         add_test(NAME ${year}-${zero_src} COMMAND ${CMAKE_BUILD_DIRECTORY}/aoc "${year}-${zero_src}*")
     endforeach()
-endforeach()
-
-foreach(src RANGE 1 24)
-    set(year 2020)
-    string(REGEX REPLACE "^(.)$" "0\\1" zero_src ${src})
-    list(APPEND sources ${year}/${zero_src}.cpp)
-    add_test(NAME ${year}-${zero_src} COMMAND ${CMAKE_BUILD_DIRECTORY}/aoc "${year}-${zero_src}*")
 endforeach()
 
 add_definitions(-std=c++20 -Wall)
