@@ -31,7 +31,7 @@ public:
         std::string line;
         while (getline(is, line))
         {
-            for (int x = 0; x < line.size(); ++x)
+            for (int x = 0, n = line.size(); x < n; ++x)
             {
                 if (line[x] == '#')
                     _points.insert({x, y, 0});
