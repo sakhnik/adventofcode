@@ -1,5 +1,7 @@
 #include "../test.hpp"
 #include <algorithm>
+#include <numeric>
+#include <fstream>
 
 namespace {
 

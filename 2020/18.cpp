@@ -1,4 +1,7 @@
 #include "../test.hpp"
+#include <functional>
+#include <stack>
+#include <fstream>
 
 namespace {
 

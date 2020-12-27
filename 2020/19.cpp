@@ -1,6 +1,10 @@
 #include "../test.hpp"
 #include <charconv>
 #include <sstream>
+#include <unordered_map>
+#include <functional>
+#include <regex>
+#include <fstream>
 
 namespace {
 
