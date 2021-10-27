@@ -5,7 +5,9 @@ mkdir -p BUILD
 
 (
 cd BUILD
-CC=clang CXX=clang++ cmake \
+# Full path to clang to avoid rebuilds because of incorrect system header paths
+CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake \
+    -G Ninja \
     -DCMAKE_BUILD_TYPE=Debug \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=Yes \
     ..
