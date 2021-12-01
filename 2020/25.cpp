@@ -36,11 +36,11 @@ suite s = [] {
         expect(8_u == FindLoopSize(5764801));
         expect(11_u == FindLoopSize(17807724));
         expect(14897079_u == TransformLoop(8, 17807724));
-    };
 
-    size_t loop = FindLoopSize(8335663);
-    uint64_t key = TransformLoop(loop, 8614349);
-    Printer::Print(__FILE__, "1", key);
+        size_t loop = FindLoopSize(8335663);
+        uint64_t key = TransformLoop(loop, 8614349);
+        Printer::Print(__FILE__, "1", key);
+    };
 };
 
 } //namespace;
