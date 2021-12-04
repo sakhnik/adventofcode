@@ -77,25 +77,38 @@ public:
         }
     }
 
-    ssize_t Play()
+    std::pair<ssize_t, ssize_t> Play()
     {
+        ssize_t first_winner{};
+        ssize_t last_winner{};
+
         for (auto n : _numbers)
         {
-            for (auto &b : _boards)
+            for (auto it = _boards.begin(); it != _boards.end(); )
             {
-                if (b.Mark(n))
+                if (it->Mark(n))
                 {
                     // Bingo!
-                    return b.Score() * n;
+                    if (!first_winner)
+                        first_winner = it->Score() * n;
+                    if (_boards.size() == 1)
+                    {
+                        last_winner = it->Score() * n;
+                        return {first_winner, last_winner};
+                    }
+                    it = _boards.erase(it);
                 }
+                else
+                    ++it;
             }
         }
-        return -1;
+
+        return {first_winner, last_winner};
     }
 
 private:
     std::vector<int> _numbers;
-    std::vector<Board> _boards;
+    std::list<Board> _boards;
 };
 
 using namespace boost::ut;
@@ -125,9 +138,14 @@ const char *const TEST_INPUT = R"(
 suite s = [] {
     "2021-04"_test = [] {
         Bingo test{std::istringstream{TEST_INPUT}};
-        expect(4512_i == test.Play());
+        auto winners = test.Play();
+        expect(4512_i == winners.first);
+        expect(1924_i == winners.second);
+
         Bingo bingo{std::ifstream{INPUT}};
-        Printer::Print(__FILE__, "1", bingo.Play());
+        winners = bingo.Play();
+        Printer::Print(__FILE__, "1", winners.first);
+        Printer::Print(__FILE__, "2", winners.second);
     };
 };
 
