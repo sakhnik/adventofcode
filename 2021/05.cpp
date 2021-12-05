@@ -34,13 +34,14 @@ int Sign(int d)
     return d > 0;
 }
 
-void Trace(Vector v, FieldT &points)
+void Trace(Vector v, FieldT &points, bool ignore_diagonals)
 {
     int dx = Sign(v.b.x - v.a.x);
     int dy = Sign(v.b.y - v.a.y);
 
-    if (dx != 0 && dy != 0)
+    if (ignore_diagonals && dx != 0 && dy != 0)
         return;
+
     Point p{v.a};
     while (p != v.b)
     {
@@ -67,11 +68,11 @@ LinesT Parse(std::istream &&is)
     return lines;
 }
 
-size_t CountIntersections(const LinesT &lines)
+size_t CountIntersections(const LinesT &lines, bool ignore_diagonals)
 {
     FieldT field;
     for (const auto &line : lines)
-        Trace(line, field);
+        Trace(line, field, ignore_diagonals);
 
     return std::count_if(field.begin(), field.end(), [](const auto &en) { return en.second > 1; });
 
@@ -95,10 +96,12 @@ const char *const TEST_INPUT = R"(
 suite s = [] {
     "2021-05"_test = [] {
         auto test_lines = Parse(std::istringstream{TEST_INPUT});
-        expect(5_u == CountIntersections(test_lines));
+        expect(5_u == CountIntersections(test_lines, true));
+        expect(12_u == CountIntersections(test_lines, false));
 
         auto lines = Parse(std::ifstream{INPUT});
-        Printer::Print(__FILE__, "1", CountIntersections(lines));
+        Printer::Print(__FILE__, "1", CountIntersections(lines, true));
+        Printer::Print(__FILE__, "2", CountIntersections(lines, false));
     };
 };
 
