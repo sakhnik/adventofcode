@@ -1,5 +1,4 @@
 #include "../test.hpp"
-#include <boost/foreach_fwd.hpp>
 
 namespace {
 
