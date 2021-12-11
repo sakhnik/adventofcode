@@ -11,7 +11,7 @@ public:
         while (is >> line)
         {
             _width = line.size();
-            _field += line + '\n';
+            _field += line;
         }
         _field_to_step[_field] = _step;
         _step_to_field[_step] = _field;
@@ -23,7 +23,7 @@ public:
         size_t new_flashes{};
 
         auto idx = [&](int row, int col) {
-            return row * (_width + 1) + col;
+            return row * _width + col;
         };
 
         std::function<void(int, int)> flash;
@@ -71,37 +71,31 @@ public:
             }
         }
 
-        auto it = _field_to_step.find(_field);
-        if (it != _field_to_step.end())
-        {
-            _loop_start = it->second;
-            return it->first;
-        }
         _field_to_step[_field] = ++_step;
         _step_to_field[_step] = _field;
         _flashes.push_back(new_flashes + _flashes.back());
         return _field;
     }
 
-    void FindLoop()
+    const std::string& Evolve(int count)
     {
-        while (_loop_start == -1)
+        while (count-- > 0)
             Evolve();
+        return _step_to_field.at(_step);
     }
-
-    int LoopStart() const { return _loop_start; }
-    int LoopPeriod() const { return _flashes.size() - _loop_start; }
 
     size_t CountFlashes(int steps) const
     {
-        if (steps < _loop_start)
-            return _flashes[steps];
-        size_t res{};
-        int count = (steps - _loop_start) / LoopPeriod();
-        int rem = (steps - _loop_start) % LoopPeriod();
-        res += count * (_flashes.back() - _flashes[_loop_start]);
-        res += _flashes[_loop_start + rem];
-        return res;
+        return _flashes[steps];
+    }
+
+    int GetStep() const { return _step; }
+    const std::string& GetField(int step) const { return _step_to_field.at(step); }
+
+    bool IsAllFlash() const
+    {
+        const auto &f = _step_to_field.at(_step);
+        return f.find_first_not_of("0") == f.npos;
     }
 
 private:
@@ -110,7 +104,6 @@ private:
     int _step{};
     std::unordered_map<std::string, int> _field_to_step;
     std::unordered_map<int, std::string> _step_to_field;
-    int _loop_start = -1;
     std::vector<size_t> _flashes;
 };
 
@@ -128,40 +121,64 @@ const char *TEST_INPUT = R"(
 )";
 
 const char *TEST1 =
-    "6594254334\n"
-    "3856965822\n"
-    "6375667284\n"
-    "7252447257\n"
-    "7468496589\n"
-    "5278635756\n"
-    "3287952832\n"
-    "7993992245\n"
-    "5957959665\n"
-    "6394862637\n";
+    "6594254334"
+    "3856965822"
+    "6375667284"
+    "7252447257"
+    "7468496589"
+    "5278635756"
+    "3287952832"
+    "7993992245"
+    "5957959665"
+    "6394862637";
 
 const char *TEST2 =
-    "8807476555\n"
-    "5089087054\n"
-    "8597889608\n"
-    "8485769600\n"
-    "8700908800\n"
-    "6600088989\n"
-    "6800005943\n"
-    "0000007456\n"
-    "9000000876\n"
-    "8700006848\n";
+    "8807476555"
+    "5089087054"
+    "8597889608"
+    "8485769600"
+    "8700908800"
+    "6600088989"
+    "6800005943"
+    "0000007456"
+    "9000000876"
+    "8700006848";
 
 const char *TEST3 =
-    "0050900866\n"
-    "8500800575\n"
-    "9900000039\n"
-    "9700000041\n"
-    "9935080063\n"
-    "7712300000\n"
-    "7911250009\n"
-    "2211130000\n"
-    "0421125000\n"
-    "0021119000\n";
+    "0050900866"
+    "8500800575"
+    "9900000039"
+    "9700000041"
+    "9935080063"
+    "7712300000"
+    "7911250009"
+    "2211130000"
+    "0421125000"
+    "0021119000";
+
+const char *TEST193 =
+    "5877777777"
+    "8877777777"
+    "7777777777"
+    "7777777777"
+    "7777777777"
+    "7777777777"
+    "7777777777"
+    "7777777777"
+    "7777777777"
+    "7777777777";
+
+const char *TEST194 =
+    "6988888888"
+    "9988888888"
+    "8888888888"
+    "8888888888"
+    "8888888888"
+    "8888888888"
+    "8888888888"
+    "8888888888"
+    "8888888888"
+    "8888888888";
 
 using namespace boost::ut;
 
@@ -171,15 +188,24 @@ suite s = [] {
         expect(eq(std::string{TEST1}, test.Evolve()));
         expect(eq(std::string{TEST2}, test.Evolve()));
         expect(eq(std::string{TEST3}, test.Evolve()));
-        test.FindLoop();
+        test.Evolve(100);
         expect(0_u == test.CountFlashes(0));
         expect(0_u == test.CountFlashes(1));
         expect(35_u == test.CountFlashes(2));
         expect(204_u == test.CountFlashes(10));
+        expect(1656_u == test.CountFlashes(100));
+        while (!test.IsAllFlash())
+            test.Evolve();
+        expect(195_i == test.GetStep());
+        expect(eq(std::string{TEST193}, test.GetField(193)));
+        expect(eq(std::string{TEST194}, test.GetField(194)));
 
         Octopuses octopuses{std::ifstream{INPUT}};
-        octopuses.FindLoop();
+        octopuses.Evolve(100);
         Printer::Print(__FILE__, "1", octopuses.CountFlashes(100));
+        while (!octopuses.IsAllFlash())
+            octopuses.Evolve();
+        Printer::Print(__FILE__, "2", octopuses.GetStep());
     };
 };
 
