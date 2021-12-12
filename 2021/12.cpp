@@ -18,23 +18,33 @@ public:
             _vertices[b].push_back(a);
         }
 
-        _State s{_count};
-        _TrackPaths("start", s);
+        _State s1{_count1, false};
+        _TrackPaths("start", s1);
+
+        _State s2{_count2, true};
+        _TrackPaths("start", s2);
     }
 
-    size_t GetCount() { return _count; }
+    size_t GetCount1() { return _count1; }
+    size_t GetCount2() { return _count2; }
 
 private:
     using _AdjacenciesT = std::vector<std::string>;
     std::unordered_map<std::string, _AdjacenciesT> _vertices;
-    size_t _count{};
+    size_t _count1{};
+    size_t _count2{};
 
     struct _State
     {
-        _State(size_t &count): count{count} {}
+        _State(size_t &count, bool bonus)
+            : count{count}
+            , bonus{bonus}
+        {
+        }
 
         std::unordered_map<std::string, std::vector<std::string>> way;
         size_t &count;
+        bool bonus;
 
         bool TryGo(const std::string &vert, const std::string &to)
         {
@@ -48,23 +58,29 @@ private:
                     w.push_back(to);
                     return true;
                 }
+                // If there's a bonus available, we can go from this room one more time.
+                if (bonus)
+                {
+                    bonus = false;
+                    w.push_back(to);
+                    return true;
+                }
                 return false;
             }
 
-            // Can go only to unique destinations to avoid loops
-            auto it = std::find(w.begin(), w.end(), to);
-            if (it == w.end())
-            {
-                w.push_back(to);
-                return true;
-            }
-
-            return false;
+            w.push_back(to);
+            return true;
         }
 
         void Return(const std::string &vert)
         {
             auto &w = way[vert];
+            if (std::islower(vert[0]))
+            {
+                // Return the bonus if necessary
+                if (!bonus && w.size() > 1)
+                    bonus = true;
+            }
             assert(!w.empty());
             w.pop_back();
         }
@@ -158,14 +174,18 @@ using namespace boost::ut;
 suite s = [] {
     "2021-12"_test = [] {
         Map test{std::istringstream{TEST_INPUT}};
-        expect(10_u == test.GetCount());
+        expect(10_u == test.GetCount1());
+        expect(36_u == test.GetCount2());
         Map test2{std::istringstream{TEST_INPUT2}};
-        expect(19_u == test2.GetCount());
+        expect(19_u == test2.GetCount1());
+        expect(103_u == test2.GetCount2());
         Map test3{std::istringstream{TEST_INPUT3}};
-        expect(226_u == test3.GetCount());
+        expect(226_u == test3.GetCount1());
+        expect(3509_u == test3.GetCount2());
 
         Map map{std::ifstream{INPUT}};
-        Printer::Print(__FILE__, "1", map.GetCount());
+        Printer::Print(__FILE__, "1", map.GetCount1());
+        Printer::Print(__FILE__, "2", map.GetCount2());
     };
 };
 
