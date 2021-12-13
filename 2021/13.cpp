@@ -1,5 +1,4 @@
 #include "../test.hpp"
-#include <boost/functional/hash.hpp>
 
 namespace {
 
@@ -55,8 +54,10 @@ public:
 
     size_t GetCount1() const { return _count1; }
 
-    void Print() const
+    std::string Print() const
     {
+        std::ostringstream oss;
+
         int max_col{0};
         for (const auto &pos : _dots)
         {
@@ -67,10 +68,10 @@ public:
         for (int row = 0; row <= _dots.rbegin()->first; ++row)
         {
             for (int col = 0; col <= max_col; ++col)
-                std::cout << (_dots.contains({row, col}) ? '#' : '.');
-            std::cout << "\n";
+                oss << (_dots.contains({row, col}) ? '#' : '.');
+            oss << "\n";
         }
-        std::cout << "----" << std::endl;
+        return oss.str();
     }
 
 private:
@@ -111,6 +112,7 @@ suite s = [] {
 
         Origami origami{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", origami.GetCount1());
+        Printer::Print(__FILE__, "2", "\n" + origami.Print());
     };
 };
 
