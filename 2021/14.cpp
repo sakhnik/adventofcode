@@ -9,7 +9,10 @@ public:
     {
         std::string line;
         getline(is, line);
-        _chain.assign(line.begin(), line.end());
+        std::adjacent_find(line.begin(), line.end(),
+                [this](char a, char b) { ++_pair_counts[{a, b}]; return false; });
+        for (char c : line)
+            ++_link_counts[c];
 
         while (getline(is, line))
         {
@@ -21,14 +24,19 @@ public:
 
     Polymer& Iterate()
     {
-        for (auto it = _chain.begin(), it_prev = it++; it != _chain.end(); ++it, ++it_prev)
+        decltype(_pair_counts) next_pair_counts;
+        for (const auto &[p, c] : _pair_counts)
         {
-            std::string p{*it_prev};
-            p.push_back(*it);
-            auto j = _links.find(p);
-            if (j != _links.end())
-                it_prev = _chain.insert(it, j->second);
+            auto it = _links.find(p);
+            if (it != _links.end())
+            {
+                next_pair_counts[{p[0], it->second}] += c;
+                next_pair_counts[{it->second, p[1]}] += c;
+                _link_counts[it->second] += c;
+            }
         }
+
+        std::swap(_pair_counts, next_pair_counts);
         return *this;
     }
 
@@ -39,23 +47,16 @@ public:
         return *this;
     }
 
-    std::string Print()
-    {
-        return {_chain.begin(), _chain.end()};
-    }
-
     size_t CountScore() const
     {
-        std::unordered_map<char, size_t> counts;
-        for (auto l : _chain)
-            ++counts[l];
-        auto [it_min, it_max] = std::minmax_element(counts.begin(), counts.end(),
+        auto [it_min, it_max] = std::minmax_element(_link_counts.begin(), _link_counts.end(),
                 [](auto &a, auto &b) { return a.second < b.second; });
         return it_max->second - it_min->second;
     }
 
 private:
-    std::list<char> _chain;
+    std::unordered_map<std::string, size_t> _pair_counts;
+    std::unordered_map<char, size_t> _link_counts;
     std::unordered_map<std::string, char> _links;
 };
 
@@ -85,14 +86,16 @@ using namespace std::string_literals;
 suite s = [] {
     "2021-14"_test = [] {
         Polymer test{std::istringstream{TEST_INPUT}};
-        expect("NCNBCHB"s == test.Iterate().Print());
-        expect(1_u == test.CountScore());
-        test.Iterate(9);
+        test.Iterate(10);
         expect(1588_u == test.CountScore());
+        test.Iterate(30);
+        expect(eq(2188189693529ull, test.CountScore()));
 
         Polymer polymer{std::ifstream{INPUT}};
         polymer.Iterate(10);
         Printer::Print(__FILE__, "1", polymer.CountScore());
+        polymer.Iterate(30);
+        Printer::Print(__FILE__, "2", polymer.CountScore());
     };
 };
 
