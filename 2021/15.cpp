@@ -7,20 +7,27 @@ class Map
 public:
     Map(std::istream &&is)
     {
-        _map.assign(std::istreambuf_iterator<char>{is}, std::istreambuf_iterator<char>{});
-        _width = _map.find("\n") + 1;
+        std::string line;
+        while (getline(is, line))
+        {
+            if (line.empty())
+                continue;
+            _map.emplace_back(std::move(line));
+        }
     }
 
-    int CalcRisk() const
+    int CalcRisk(int mult) const
     {
-        auto getIdx = [this](int x, int y) {
-            return y * _width + x;
+        const auto width = _map.size() * mult;
+
+        auto getIdx = [=](int x, int y) {
+            return y * width + x;
         };
-        auto getX = [this](int idx) {
-            return idx % _width;
+        auto getX = [=](int idx) {
+            return idx % width;
         };
-        auto getY = [this](int idx) {
-            return idx / _width;
+        auto getY = [=](int idx) {
+            return idx / width;
         };
 
         auto const INF = std::numeric_limits<int>::max();
@@ -31,13 +38,13 @@ public:
             bool processed{};
         };
 
-        std::vector<Data> data(_width * _width);
+        std::vector<Data> data(width * width);
         data[0].risk = 0;
 
         //auto print = [&] {
-        //    for (int y = 0; y < _width - 1; ++y)
+        //    for (int y = 0; y < width; ++y)
         //    {
-        //        for (int x = 0; x < _width - 1; ++x)
+        //        for (int x = 0; x < width; ++x)
         //        {
         //            std::cout << "\t";
         //            auto risk = data[getIdx(x, y)].risk;
@@ -48,7 +55,7 @@ public:
         //    }
         //    std::cout << "----" << std::endl;
         //};
-
+      
         // Dijkstra algorithm
         struct Vert
         {
@@ -70,12 +77,12 @@ public:
             data[v.idx].risk = v.risk;
 
             auto tryGo = [&](int nx, int ny) {
-                if (nx < 0 || ny < 0 || nx >= _width - 1 || ny >= _width - 1)
+                if (nx < 0 || ny < 0 || nx >= width || ny >= width)
                     return;
                 auto idx = getIdx(nx, ny);
                 if (data[idx].processed)
                     return;
-                q.push({idx, v.risk + (_map[idx] - '0')});
+                q.push({idx, v.risk + _GetRiskFromMap(nx, ny)});
             };
 
             auto x = getX(v.idx);
@@ -86,15 +93,38 @@ public:
             tryGo(x, y + 1);
         }
 
-        return data[getIdx(_width - 2, _width - 2)].risk;
+        return data.back().risk;
+    }
+
+    void PrintMap(int mult) const
+    {
+        const auto width = _map.size() * mult;
+        for (int y = 0; y < width; ++y)
+        {
+            for (int x = 0; x < width; ++x)
+                std::cout << _GetRiskFromMap(x, y);
+            std::cout << "\n";
+        }
     }
 
 private:
-    std::string _map;
-    size_t _width{};
+    std::vector<std::string> _map;
+
+    int _GetRiskFromMap(int x, int y) const
+    {
+        const auto width = _map.size();
+        int dx = x / width;
+        int dy = y / width;
+        int val = _map[y % width][x % width] - '0';
+        val += dx + dy;
+        if (val > 9)
+            return val % 9;
+        return val;
+    }
 };
 
-const char *TEST_INPUT = R"(1163751742
+const char *TEST_INPUT = R"(
+1163751742
 1381373672
 2136511328
 3694931569
@@ -112,10 +142,12 @@ using namespace std::string_literals;
 suite s = [] {
     "2021-15"_test = [] {
         Map test{std::istringstream{TEST_INPUT}};
-        expect(40_i == test.CalcRisk());
+        expect(40_i == test.CalcRisk(1));
+        expect(315_i == test.CalcRisk(5));
 
         Map map{std::ifstream{INPUT}};
-        Printer::Print(__FILE__, "1", map.CalcRisk());
+        Printer::Print(__FILE__, "1", map.CalcRisk(1));
+        Printer::Print(__FILE__, "2", map.CalcRisk(5));
     };
 };
 
