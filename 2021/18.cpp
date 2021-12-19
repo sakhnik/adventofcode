@@ -45,6 +45,8 @@ public:
         }
     }
 
+    Number(const Number &o) = default;
+
     std::string Dump() const
     {
         return Dump(nullptr, num.end());
@@ -138,6 +140,8 @@ public:
 
         //std::cout << Dump() << std::endl;
 
+        // NOTE: It's possible to carefully track the iterators and levels
+        // between last explode/split to avoid rescans from begin.
         while (true)
         {
             auto it = num.begin();
@@ -216,13 +220,33 @@ public:
         return Reduce();
     }
 
-    static Number ChainSum(std::istream &&is)
+    Number& Add(const Number &o)
     {
+        num.insert(num.begin(), LB);
+        num.insert(num.end(), o.num.begin(), o.num.end());
+        num.push_back(RB);
+        return Reduce();
+    }
+
+    using NumbersT = std::vector<Number>;
+
+    static NumbersT ParseNumbers(std::istream &&is)
+    {
+        NumbersT numbers;
         std::string line;
-        is >> line;
-        Number a{line};
         while (is >> line)
-            a.Add(Number{line});
+            numbers.emplace_back(Number{line});
+        return numbers;
+    }
+
+    static Number ChainSum(const NumbersT &numbers)
+    {
+        auto it = numbers.begin();
+        Number a{*it++};
+
+        for (; it != numbers.end(); ++it)
+            a.Add(*it);
+
         return a;
     }
 
@@ -249,6 +273,25 @@ public:
             }
         }
         return accum.top();
+    }
+
+    static int FindMaxMagnitude(const NumbersT &numbers)
+    {
+        int max = 0;
+        for (size_t i = 0; i < numbers.size(); ++i)
+        {
+            for (size_t j = 0; j < numbers.size(); ++j)
+            {
+                if (i == j)
+                    continue;
+                Number a = numbers[i];
+                Number b = a.Add(numbers[j]);
+                auto mag = b.CalcMagnitude();
+                if (mag > max)
+                    max = mag;
+            }
+        }
+        return max;
     }
 };
 
@@ -279,14 +322,14 @@ suite s = [] {
         expect("[[3,[2,[8,0]]],[9,[5,[7,0]]]]"s == Number{"[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]]"}.Reduce().Dump());
 
         expect("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]"s == Number{"[[[[4,3],4],4],[7,[[8,4],9]]]"}.Add(Number{"[1,1]"}).Dump());
-        expect("[[[[1,1],[2,2]],[3,3]],[4,4]]"s == Number::ChainSum(std::istringstream{"[1,1]\n[2,2]\n[3,3]\n[4,4]"}).Dump());
-        expect("[[[[3,0],[5,3]],[4,4]],[5,5]]"s == Number::ChainSum(std::istringstream{"[1,1]\n[2,2]\n[3,3]\n[4,4]\n[5,5]"}).Dump());
-        expect("[[[[5,0],[7,4]],[5,5]],[6,6]]"s == Number::ChainSum(std::istringstream{"[1,1]\n[2,2]\n[3,3]\n[4,4]\n[5,5]\n[6,6]"}).Dump());
+        expect("[[[[1,1],[2,2]],[3,3]],[4,4]]"s == Number::ChainSum(Number::ParseNumbers(std::istringstream{"[1,1]\n[2,2]\n[3,3]\n[4,4]"})).Dump());
+        expect("[[[[3,0],[5,3]],[4,4]],[5,5]]"s == Number::ChainSum(Number::ParseNumbers(std::istringstream{"[1,1]\n[2,2]\n[3,3]\n[4,4]\n[5,5]"})).Dump());
+        expect("[[[[5,0],[7,4]],[5,5]],[6,6]]"s == Number::ChainSum(Number::ParseNumbers(std::istringstream{"[1,1]\n[2,2]\n[3,3]\n[4,4]\n[5,5]\n[6,6]"})).Dump());
         expect("[[[[4,0],[5,4]],[[7,7],[6,0]]],[[8,[7,7]],[[7,9],[5,0]]]]"s ==
                 Number{"[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]"}.Add(Number{"[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]"}).Dump());
 
         expect("[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]"s
-                == Number::ChainSum(std::istringstream{R"(
+                == Number::ChainSum(Number::ParseNumbers(std::istringstream{R"(
 [[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]
 [7,[[[3,7],[4,3]],[[6,3],[8,8]]]]
 [[2,[[0,8],[3,4]]],[[[6,7],1],[7,[1,6]]]]
@@ -297,12 +340,16 @@ suite s = [] {
 [1,[[[9,3],9],[[9,0],[0,7]]]]
 [[[5,[7,4]],7],1]
 [[[[4,2],2],6],[8,7]]
-                )"}).Dump());
+                )"})).Dump());
         expect(29_i == Number{"[9,1]"}.CalcMagnitude());
         expect(129_i == Number{"[[9,1],[1,9]]"}.CalcMagnitude());
-        expect(4140_i == Number::ChainSum(std::istringstream{TEST_INPUT}).CalcMagnitude());
+        auto test = Number::ParseNumbers(std::istringstream{TEST_INPUT});
+        expect(4140_i == Number::ChainSum(test).CalcMagnitude());
+        expect(3993_i == Number::FindMaxMagnitude(test));
 
-        Printer::Print(__FILE__, "1", Number::ChainSum(std::ifstream{INPUT}).CalcMagnitude());
+        auto numbers = Number::ParseNumbers(std::fstream{INPUT});
+        Printer::Print(__FILE__, "1", Number::ChainSum(numbers).CalcMagnitude());
+        Printer::Print(__FILE__, "2", Number::FindMaxMagnitude(numbers));
     };
 };
 
