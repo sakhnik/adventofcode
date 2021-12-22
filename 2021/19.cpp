@@ -308,6 +308,21 @@ public:
 
         return unique_beacons.size();
     }
+
+    size_t GetMaxDistance() const
+    {
+        size_t max_d{};
+        for (size_t i = 0; i < scanners.size() - 1; ++i)
+        {
+            for (size_t j = i + 1; j < scanners.size(); ++j)
+            {
+                size_t d = (scanners[i].transformation.trans - scanners[j].transformation.trans).Len();
+                if (d > max_d)
+                    max_d = d;
+            }
+        }
+        return max_d;
+    }
 };
 
 const char *TEST_INPUT = R"(
@@ -456,10 +471,11 @@ suite s = [] {
     "2021-19"_test = [] {
         Scanners test{std::istringstream{TEST_INPUT}};
         expect(79_u == test.CountUniqueBeacons(12));
+        expect(3621_u == test.GetMaxDistance());
 
         Scanners scanners{std::fstream{INPUT}};
         Printer::Print(__FILE__, "1", scanners.CountUniqueBeacons(12));
-        //Printer::Print(__FILE__, "2", Number::FindMaxMagnitude(numbers));
+        Printer::Print(__FILE__, "2", scanners.GetMaxDistance());
     };
 };
 
