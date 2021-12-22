@@ -89,6 +89,11 @@ public:
     }
 };
 
+//inline std::ostream& operator<<(std::ostream &os, const Vector &v)
+//{
+//    return os << v.x[0] << "," << v.x[1] << "," << v.x[2];
+//}
+
 struct Transformation
 {
     Vector trans{};
@@ -222,7 +227,7 @@ public:
                 auto &o = overlaps[last_translation];
                 o.insert(p1);
                 o.insert(p2);
-                if (o.size() >= overlap_count)
+                if (o.size() >= overlap_count - 1)
                     return true;
                 return false;
             });
