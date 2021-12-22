@@ -72,9 +72,9 @@ public:
         MapT todo;
         for (PosT pos : map)
         {
-            for (int i = -2; i <= 2; ++i)
+            for (int i = -1; i <= 1; ++i)
             {
-                for (int j = -2; j <= 2; ++j)
+                for (int j = -1; j <= 1; ++j)
                 {
                     todo.insert({pos.first + i, pos.second + j});
                 }
@@ -105,7 +105,11 @@ public:
     void Enhance(int count)
     {
         while (count--)
+        {
+            //std::cout << " " << count << std::flush;
             Enhance();
+        }
+        //std::cout << std::endl;
     }
 
     size_t GetCount() const { return map.size(); }
@@ -159,13 +163,16 @@ suite s = [] {
         expect(10_u == test.GetCount());
         test.Enhance();
         test.Enhance();
-        test.Print();
         expect(35_u == test.GetCount());
+        test.Enhance(50 - 2);
+        expect(3351_u == test.GetCount());
 
         TrenchMap image{std::ifstream{INPUT}};
         image.Enhance();
         image.Enhance();
         Printer::Print(__FILE__, "1", image.GetCount());
+        image.Enhance(50 - 2);
+        Printer::Print(__FILE__, "2", image.GetCount());
     };
 };
 
