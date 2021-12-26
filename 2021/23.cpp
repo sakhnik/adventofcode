@@ -11,7 +11,14 @@ public:
     {
         std::string hallway = "...........";
         std::array<std::string, 4> rooms = {"AA", "BB", "CC", "DD"};
-        int room_capacity = 2;
+        int capacity = 2;
+
+        Config(int capacity = 2)
+            : capacity{capacity}
+        {
+            for (int i = 0; i < rooms.size(); ++i)
+                rooms[i].resize(capacity, 'A' + i);
+        }
 
         bool operator==(const Config &o) const
         {
@@ -22,12 +29,12 @@ public:
         {
             std::cout << "--------------\n";
             std::cout << hallway << "\n";
-            for (int r = 0; r < room_capacity; ++r)
+            for (int r = 0; r < capacity; ++r)
             {
                 std::cout << " ";
                 for (int i = 0; i < rooms.size(); ++i)
                 {
-                    auto spaces = room_capacity - rooms[i].size();
+                    auto spaces = capacity - rooms[i].size();
                     std::cout << " " << (r >= spaces ? rooms[i][r - spaces] : '.');
                 }
                 std::cout << "\n";
@@ -83,7 +90,7 @@ public:
                 ConfigWeighted new_config{*this};
                 new_config.hallway[i] = '.';
                 new_config.rooms[idx] = std::string{kind} + new_config.rooms[idx];
-                new_config.cost = PRICE[idx] * (step * (door - i) + room_capacity - rooms[idx].size());
+                new_config.cost = PRICE[idx] * (step * (door - i) + capacity - rooms[idx].size());
                 moves.push_back(std::move(new_config));
             }
 
@@ -96,7 +103,7 @@ public:
                 ConfigWeighted new_config{*this};
                 char kind = new_config.rooms[i].front();
                 new_config.rooms[i].erase(0, 1);
-                new_config.cost = (2 - new_config.rooms[i].size()) * PRICE[kind - 'A'];
+                new_config.cost = (capacity - new_config.rooms[i].size()) * PRICE[kind - 'A'];
 
                 int door = 2 + 2 * i;
                 for (auto &s : steps)
@@ -183,8 +190,8 @@ public:
             }
         }
 
-        //int prev_cost = configs.at(Config{}).cost;
-        //Config cfg;
+        //Config cfg{start.capacity};
+        //int prev_cost = configs.at(cfg).cost;
         //while (true)
         //{
         //    cfg.Print();
@@ -196,7 +203,7 @@ public:
         //    prev_cost = cost.cost;
         //}
 
-        return configs.at(Config{}).cost;
+        return configs.at(Config{start.capacity}).cost;
     }
 };
 
@@ -224,7 +231,14 @@ suite s = [] {
         Amphipods::Config task;
         task.rooms = {"DB", "AC", "DB", "CA"};
         Printer::Print(__FILE__, "1", Amphipods::Arrange(task));
-        //Printer::Print(__FILE__, "2", reactor.Execute());
+
+        Amphipods::Config test2(4);
+        test2.rooms = {"BDDA", "CCBD", "BBAC", "DACA"};
+        expect(44169_u == Amphipods::Arrange(test2));
+
+        Amphipods::Config task2(4);
+        task2.rooms = {"DDDB", "ACBC", "DBAB", "CACA"};
+        Printer::Print(__FILE__, "2", Amphipods::Arrange(task2));
     };
 };
 
