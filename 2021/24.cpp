@@ -1,4 +1,5 @@
 #include "../test.hpp"
+#include <boost/functional/hash.hpp>
 
 namespace {
 
@@ -349,8 +350,7 @@ public:
         z += (w + 12) * x;
 
         w = *input++ - '0';
-        x = z % 26 - 10;
-        x = x != w;
+        x = (z % 26 - 10) != w;
 
         z /= 26;
         z *= 25 * x + 1;
@@ -359,29 +359,160 @@ public:
         return z;
     }
 
+    static const std::function<int64_t(int64_t, int)> STAGES[14];
+
+    static int64_t CalcChained(const char *input)
+    {
+        int64_t z{};
+        for (auto f : STAGES)
+            z = f(z, *input++ - '0');
+        return z;
+    }
+
+    //static std::string Solve()
+    //{
+    //    using ZW = std::pair<int64_t, int>;
+    //    using ValuesT = std::unordered_map<ZW, std::vector<int64_t>, boost::hash<ZW>>;
+    //    ValuesT values;
+
+    //    for (int64_t z = 0; z < 1000000; ++z)
+    //        for (int w = 1; w <= 9; ++w)
+    //        {
+    //            int64_t zr = Stage14(z, w);
+    //            values[{zr, w}].push_back(z);
+    //        }
+    //    return "";
+    //}
 };
 
+const std::function<int64_t(int64_t, int)> Alu::STAGES[14] = {
+    [](int64_t z, int w) {
+        z = w + 13;
+        return z;
+    },
+    [](int64_t z, int w) {
+        z = z * 26 + w + 10;
+        return z;
+    },
+    [](int64_t z, int w) {
+        z = z * 26 + w + 3;
+        return z;
+    },
+    [](int64_t z, int w) {
+        int64_t x = z % 26 - 11;
+        x = x != w;
+
+        z /= 26;
+        z *= 25 * x + 1;
+        z += x * (w + 1);
+        return z;
+    },
+    [](int64_t z, int w) {
+        int64_t x = z % 26 != w;
+        z *= 25 * x + 1;
+        z += (w + 9) * x;
+        return z;
+    },
+    [](int64_t z, int w) {
+        int64_t x = z % 26 - 4;
+        z /= 26;
+        x = x != w;
+        z *= 25 * x + 1;
+        z += (w + 3) * x;
+        return z;
+    },
+    [](int64_t z, int w) {
+        int64_t x = z % 26 + 12;
+        x = x != w;
+
+        z *= 25 * x + 1;
+        z += (w + 5) * x;
+        return z;
+    },
+    [](int64_t z, int w) {
+        int64_t x = z % 26 + 12;
+        x = x != w;
+
+        z *= 25 * x + 1;
+        z += (w + 1) * x;
+        return z;
+    },
+    [](int64_t z, int w) {
+        int64_t x = z % 26 + 15;
+        x = x != w;
+
+        z *= 25 * x + 1;
+        z += w * x;
+        return z;
+    },
+    [](int64_t z, int w) {
+        int64_t x = z % 26 - 2;
+        x = x != w;
+
+        z /= 26;
+        z *= 25 * x + 1;
+        z += (w + 13) * x;
+        return z;
+    },
+    [](int64_t z, int w) {
+        int64_t x = z % 26 - 5;
+        x = x != w;
+
+        z /= 26;
+        z *= 25 * x + 1;
+        z += (w + 7) * x;
+        return z;
+    },
+    [](int64_t z, int w) {
+        int64_t x = z % 26 - 11;
+        x = x != w;
+
+        z /= 26;
+        z *= 25 * x + 1;
+        z += (w + 15) * x;
+        return z;
+    },
+    [](int64_t z, int w) {
+        int64_t x = z % 26 - 13;
+        x = x != w;
+
+        z /= 26;
+        z *= 25 * x + 1;
+        z += (w + 12) * x;
+        return z;
+    },
+    [](int64_t z, int w) {
+        int64_t x = (z % 26 - 10) != w;
+        z /= 26;
+        z *= 25 * x + 1;
+        z += (w + 8) * x;
+        return z;
+    },
+};
 
 using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
     "2021-24"_test = [] {
-        expect(eq(4135231966ll, Alu::Calc("00000000000000")));
-        expect(eq(4135231967ll, Alu::Calc("00000000000001")));
-        expect(eq(159047383ll, Alu::Calc("00000000000002")));
-        expect(eq(4456504373ll, Alu::Calc("11111111111111")));
-        expect(eq(4777776780ll, Alu::Calc("22222222222222")));
-        expect(eq(5099049187ll, Alu::Calc("33333333333333")));
-        expect(eq(5420321594ll, Alu::Calc("44444444444444")));
-        expect(eq(5741594001ll, Alu::Calc("55555555555555")));
-        expect(eq(6062866408ll, Alu::Calc("66666666666666")));
-        expect(eq(6384138815ll, Alu::Calc("77777777777777")));
-        expect(eq(6705411222ll, Alu::Calc("88888888888888")));
-        expect(eq(7026683626ll, Alu::Calc("99999999999996")));
-        expect(eq(7026683627ll, Alu::Calc("99999999999997")));
-        expect(eq(7026683628ll, Alu::Calc("99999999999998")));
-        expect(eq(7026683629ll, Alu::Calc("99999999999999")));
+        expect(eq(4135231966ll, Alu::CalcChained("00000000000000")));
+        expect(eq(4135231967ll, Alu::CalcChained("00000000000001")));
+        expect(eq(159047383ll, Alu::CalcChained("00000000000002")));
+        expect(eq(4456504373ll, Alu::CalcChained("11111111111111")));
+        expect(eq(4777776780ll, Alu::CalcChained("22222222222222")));
+        expect(eq(5099049187ll, Alu::CalcChained("33333333333333")));
+        expect(eq(5420321594ll, Alu::CalcChained("44444444444444")));
+        expect(eq(5741594001ll, Alu::CalcChained("55555555555555")));
+        expect(eq(6062866408ll, Alu::CalcChained("66666666666666")));
+        expect(eq(6384138815ll, Alu::CalcChained("77777777777777")));
+        expect(eq(6705411222ll, Alu::CalcChained("88888888888888")));
+        expect(eq(7026683626ll, Alu::CalcChained("99999999999996")));
+        expect(eq(7026683627ll, Alu::CalcChained("99999999999997")));
+        expect(eq(7026683628ll, Alu::CalcChained("99999999999998")));
+        expect(eq(7026683629ll, Alu::CalcChained("99999999999999")));
+
+ 
+        //Alu::Solve();
         //Printer::Print(__FILE__, "1", Amphipods::Arrange(task));
         //Printer::Print(__FILE__, "2", Amphipods::Arrange(task2));
     };
