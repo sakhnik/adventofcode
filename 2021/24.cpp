@@ -5,7 +5,7 @@ namespace {
 class Alu
 {
 public:
-    static int Calc(const char *input)
+    static int64_t Calc(const char *input)
     {
         // inp w
         // mul x 0
@@ -268,7 +268,7 @@ public:
         // '<,'>s/mod \([^ ]\+\) \([^ ]\+\)/\1 %= \2;/g
         // '<,'>s/eql \([^ ]\+\) \([^ ]\+\)/\1 = \1 == \2;/g
 
-        int x{}, y{}, z{}, w{};
+        int64_t x{}, y{}, z{}, w{};
 
         w = *input++ - '0';
         x *= 0;
@@ -534,22 +534,21 @@ using namespace std::string_literals;
 
 suite s = [] {
     "2021-24"_test = [] {
-
-        expect(-159735204_i == Alu::Calc("00000000000000"));
-        expect(-159735203_i == Alu::Calc("00000000000001"));
-        expect(-159735202_i == Alu::Calc("00000000000002"));
-        expect(161537073_i == Alu::Calc("11111111111111"));
-        expect(482809480_i == Alu::Calc("22222222222222"));
-        expect(804081887_i == Alu::Calc("33333333333333"));
-        expect(1125354294_i == Alu::Calc("44444444444444"));
-        expect(1446626701_i == Alu::Calc("55555555555555"));
-        expect(1767899108_i == Alu::Calc("66666666666666"));
-        expect(2089171515_i == Alu::Calc("77777777777777"));
-        expect(-1884523248_i == Alu::Calc("88888888888888"));
-        expect(-1563250844_i == Alu::Calc("99999999999996"));
-        expect(-1563250843_i == Alu::Calc("99999999999997"));
-        expect(-1563250842_i == Alu::Calc("99999999999998"));
-        expect(-1563250841_i == Alu::Calc("99999999999999"));
+        expect(eq(4135231966ll, Alu::Calc("00000000000000")));
+        expect(eq(4135231967ll, Alu::Calc("00000000000001")));
+        expect(eq(159047383ll, Alu::Calc("00000000000002")));
+        expect(eq(4456504373ll, Alu::Calc("11111111111111")));
+        expect(eq(4777776780ll, Alu::Calc("22222222222222")));
+        expect(eq(5099049187ll, Alu::Calc("33333333333333")));
+        expect(eq(5420321594ll, Alu::Calc("44444444444444")));
+        expect(eq(5741594001ll, Alu::Calc("55555555555555")));
+        expect(eq(6062866408ll, Alu::Calc("66666666666666")));
+        expect(eq(6384138815ll, Alu::Calc("77777777777777")));
+        expect(eq(6705411222ll, Alu::Calc("88888888888888")));
+        expect(eq(7026683626ll, Alu::Calc("99999999999996")));
+        expect(eq(7026683627ll, Alu::Calc("99999999999997")));
+        expect(eq(7026683628ll, Alu::Calc("99999999999998")));
+        expect(eq(7026683629ll, Alu::Calc("99999999999999")));
         //Printer::Print(__FILE__, "1", Amphipods::Arrange(task));
         //Printer::Print(__FILE__, "2", Amphipods::Arrange(task2));
     };
