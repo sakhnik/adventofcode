@@ -49,7 +49,8 @@ public:
     std::pair<int, int> Find() const
     {
         int idx[_ncities];
-        std::iota(idx, idx + _ncities, 0);
+        for (int i = 0; i < _ncities; ++i)
+            idx[i] = i;
         auto dist = [this](int *idx) {
             int d{};
             for (int i = 1; i < _ncities; ++i)
