@@ -12,14 +12,14 @@ NumbersT Parse(std::istream &&is)
 
 size_t CalcConsumption(const NumbersT &numbers)
 {
-    std::vector<int> counts(numbers[0].size());
+    std::vector<size_t> counts(numbers[0].size());
     for (const auto &number : numbers)
     {
-        for (int i = 0; i < number.size(); ++i)
+        for (size_t i = 0; i < number.size(); ++i)
             counts[i] += number[i] - '0';
     }
     size_t gamma{}, epsilon{};
-    for (int i = 0; i < counts.size(); ++i)
+    for (size_t i = 0; i < counts.size(); ++i)
     {
         gamma = (gamma << 1) + (counts[i] > numbers.size() / 2);
         epsilon = (epsilon << 1) + (counts[i] <= numbers.size() / 2);
@@ -40,13 +40,13 @@ template <typename PredT>
 size_t Calc(NumbersT &numbers, PredT pred)
 {
     auto it = numbers.end();
-    for (int i = 0; i < numbers[0].size(); ++i)
+    for (size_t i = 0; i < numbers[0].size(); ++i)
     {
         it = Filter(numbers.begin(), it, i, pred);
         if (it == numbers.begin() + 1)
         {
             size_t val{};
-            for (int j = 0; j < numbers[0].size(); ++j)
+            for (size_t j = 0; j < numbers[0].size(); ++j)
                 val = (val << 1) + (numbers[0][j] - '0');
             return val;
         }

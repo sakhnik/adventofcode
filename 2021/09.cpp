@@ -16,9 +16,9 @@ public:
     {
         int risk{};
 
-        for (int row = 0; row < _heights.size(); ++row)
+        for (size_t row = 0; row < _heights.size(); ++row)
         {
-            for (int col = 0; col < _heights[row].size(); ++col)
+            for (size_t col = 0; col < _heights[row].size(); ++col)
             {
                 auto height = _heights[row][col];
                 auto l = col > 0 ? _heights[row][col - 1] : std::numeric_limits<char>::max();

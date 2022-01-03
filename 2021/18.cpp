@@ -148,7 +148,7 @@ public:
             int level = 0;
             while (true)
             {
-                bool exploded = trackForward(it, level, [=,&it,&level](int &n) {
+                bool exploded = trackForward(it, level, [=,this,&it,&level](int &n) {
                     if (level <= 4)
                         return false;
                     //std::cout << Dump("Explode", it) << std::endl;
@@ -192,7 +192,7 @@ public:
 
             it = num.begin();
             level = 0;
-            bool split = trackForward(it, level, [=,&it](int &n) {
+            bool split = trackForward(it, level, [=,this,&it](int &n) {
                 if (n <= 9)
                     return false;
                 // split

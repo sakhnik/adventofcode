@@ -16,7 +16,7 @@ public:
         Config(int capacity = 2)
             : capacity{capacity}
         {
-            for (int i = 0; i < rooms.size(); ++i)
+            for (size_t i = 0; i < rooms.size(); ++i)
                 rooms[i].resize(capacity, 'A' + i);
         }
 
@@ -32,9 +32,9 @@ public:
             for (int r = 0; r < capacity; ++r)
             {
                 std::cout << " ";
-                for (int i = 0; i < rooms.size(); ++i)
+                for (int i = 0, rooms_size = rooms.size(); i < rooms_size; ++i)
                 {
-                    auto spaces = capacity - rooms[i].size();
+                    int spaces = capacity - rooms[i].size();
                     std::cout << " " << (r >= spaces ? rooms[i][r - spaces] : '.');
                 }
                 std::cout << "\n";
@@ -65,7 +65,7 @@ public:
             std::vector<ConfigWeighted> moves;
 
             // Move to the room
-            for (size_t i = 0; i < hallway.size(); ++i)
+            for (int i = 0, hallway_size = hallway.size(); i < hallway_size; ++i)
             {
                 if (hallway[i] == '.')
                     continue;

@@ -18,7 +18,7 @@ public:
 
     int CalcRisk(int mult) const
     {
-        const auto width = _map.size() * mult;
+        const int width = _map.size() * mult;
 
         auto getIdx = [=](int x, int y) {
             return y * width + x;
@@ -59,7 +59,7 @@ public:
         // Dijkstra algorithm
         struct Vert
         {
-            size_t idx{};
+            int idx{};
             int risk{};
 
             bool operator<(const Vert &o) const { return risk > o.risk; }
@@ -98,7 +98,7 @@ public:
 
     void PrintMap(int mult) const
     {
-        const auto width = _map.size() * mult;
+        const int width = _map.size() * mult;
         for (int y = 0; y < width; ++y)
         {
             for (int x = 0; x < width; ++x)
