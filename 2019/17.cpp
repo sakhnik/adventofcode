@@ -40,7 +40,8 @@ suite s = [] {
         auto height = map.size() / width;
 
         auto getTile = [&](int row, int col) {
-            return map[row * (width + 1) + col];
+            auto idx = row * (width + 1) + col;
+            return idx >= map.size() ? '.' : map[idx];
         };
 
         auto isIntersection = [&](int row, int col) {
