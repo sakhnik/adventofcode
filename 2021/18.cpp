@@ -1,4 +1,10 @@
 #include "../test.hpp"
+#include <limits>
+#include <fstream>
+#include <list>
+#include <stack>
+#include <functional>
+#include <cassert>
 
 namespace {
 

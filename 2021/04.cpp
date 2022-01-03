@@ -1,4 +1,9 @@
 #include "../test.hpp"
+#include <unordered_map>
+#include <fstream>
+#include <numeric>
+#include <list>
+#include <iterator>
 
 namespace {
 

@@ -1,4 +1,7 @@
 #include "../test.hpp"
+#include <unordered_map>
+#include <fstream>
+#include <functional>
 
 namespace {
 

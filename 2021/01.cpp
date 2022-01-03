@@ -1,4 +1,7 @@
 #include "../test.hpp"
+#include <fstream>
+#include <iterator>
+#include <vector>
 
 namespace {
 

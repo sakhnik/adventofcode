@@ -1,5 +1,6 @@
 #include "../test.hpp"
 #include <boost/range/irange.hpp>
+#include <fstream>
 
 namespace {
 

@@ -1,4 +1,5 @@
 #include "../test.hpp"
+#include <unordered_map>
 
 namespace {
 

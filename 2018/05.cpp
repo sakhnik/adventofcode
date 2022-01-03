@@ -1,6 +1,8 @@
 #include <fstream>
 #include <algorithm>
+#include <limits>
 #include "../test.hpp"
+
 namespace {
 
 std::string Reduce(const std::string &s)

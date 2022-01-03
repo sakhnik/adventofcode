@@ -1,5 +1,7 @@
 #include "../test.hpp"
 #include <boost/functional/hash.hpp>
+#include <unordered_set>
+#include <fstream>
 
 namespace {
 

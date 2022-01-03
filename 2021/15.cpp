@@ -1,4 +1,7 @@
 #include "../test.hpp"
+#include <limits>
+#include <fstream>
+#include <queue>
 
 namespace {
 

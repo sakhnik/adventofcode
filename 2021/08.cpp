@@ -1,4 +1,7 @@
 #include "../test.hpp"
+#include <unordered_set>
+#include <fstream>
+#include <cassert>
 
 namespace {
 

@@ -3,7 +3,9 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
+#include <limits>
 #include "../test.hpp"
+
 namespace {
 
 struct Dep

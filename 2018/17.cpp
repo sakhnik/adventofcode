@@ -2,6 +2,7 @@
 #include <fstream>
 #include <unordered_map>
 #include <regex>
+#include <limits>
 #include "../test.hpp"
 
 namespace {

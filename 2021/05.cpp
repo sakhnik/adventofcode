@@ -1,4 +1,5 @@
 #include "../test.hpp"
+#include <fstream>
 #include <boost/functional/hash.hpp>
 
 namespace {

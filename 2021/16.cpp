@@ -1,4 +1,8 @@
 #include "../test.hpp"
+#include <functional>
+#include <fstream>
+#include <numeric>
+#include <bitset>
 
 namespace {
 
