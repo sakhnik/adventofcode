@@ -44,14 +44,50 @@ int FindDuplicates(std::istream &&is)
     return total_priority;
 }
 
+int FindIntersection(std::istream &&is)
+{
+    int total_priority{};
+    do
+    {
+        std::array<int, 26 * 2> items;
+        items.fill(0);
+        for (int i = 0; i < 3; ++i)
+        {
+            std::array<int, 26 * 2> dedup;
+            dedup.fill(0);
+
+            std::string line;
+            is >> line;
+            for (char item : line)
+            {
+                int p = GetIndex(item);
+                if (!dedup[p])
+                {
+                    dedup[p] = 1;
+                    ++items[p];
+                }
+            }
+        }
+        auto it = std::find(items.begin(), items.end(), 3);
+        if (it != items.end())
+        {
+            int p = it - items.begin();
+            total_priority += 1 + p;
+        }
+    }
+    while (is);
+    return total_priority;
+}
+
 using namespace boost::ut;
 
 suite s = [] {
     "2022-03"_test = [] {
         expect(157_i == FindDuplicates(std::istringstream{TEST}));
+        expect(70_i == FindIntersection(std::istringstream{TEST}));
 
         Printer::Print(__FILE__, "1", FindDuplicates(std::ifstream{INPUT}));
-        //Printer::Print(__FILE__, "2", score.second);
+        Printer::Print(__FILE__, "2", FindIntersection(std::ifstream{INPUT}));
     };
 };
 
