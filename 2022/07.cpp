@@ -111,6 +111,35 @@ size_t Task1(Node *root)
     return size;
 }
 
+size_t Task2(Node *root)
+{
+    ssize_t ds = 30000000;
+    size_t to_free = ds - (70000000 - root->size);
+    size_t closest_size = {};
+
+    auto walk = [&](Node *n, auto &&walk) -> void{
+        for (auto &[name, node] : n->children)
+        {
+            if (node->parent)
+            {
+                if (node->size >= to_free)
+                {
+                    ssize_t d = node->size - to_free;
+                    if (d < ds)
+                    {
+                        closest_size = node->size;
+                        ds = d;
+                    }
+                }
+
+                walk(node.get(), walk);
+            }
+        }
+    };
+    walk(root, walk);
+    return closest_size;
+}
+
 const char *const TEST = R"($ cd /
 $ ls
 dir a
@@ -142,9 +171,11 @@ suite s = [] {
     "2022-07"_test = [] {
         auto test_root = ParseLog(std::istringstream{TEST});
         expect(95437_u == Task1(test_root.get()));
+        expect(24933642_u == Task2(test_root.get()));
 
         auto root = ParseLog(std::ifstream{INPUT});
         Printer::Print(__FILE__, "1", Task1(root.get()));
+        Printer::Print(__FILE__, "2", Task2(root.get()));
     };
 };
 
