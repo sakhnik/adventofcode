@@ -22,13 +22,12 @@ struct PointHash
     }
 };
 
-size_t TrackTail(std::istream &&is)
+size_t TrackTail(int length, std::istream &&is)
 {
     std::unordered_set<Point, PointHash> tail_positions;
 
-    Point head{0, 0};
-    Point tail{0, 0};
-    tail_positions.insert(tail);
+    std::vector<Point> rope(length);
+    tail_positions.insert(rope.back());
 
     char dir{};
     int count{};
@@ -44,20 +43,26 @@ size_t TrackTail(std::istream &&is)
         }
         while (count--)
         {
-            head.x += d.x;
-            head.y += d.y;
+            rope.front().x += d.x;
+            rope.front().y += d.y;
 
-            auto dx = head.x - tail.x;
-            auto dy = head.y - tail.y;
-            if (std::abs(dx) > 1 || std::abs(dy) > 1)
+            for (size_t i = 1; i < rope.size(); ++i)
             {
-                if (dx)
-                    tail.x += dx / std::abs(dx);
-                if (dy)
-                    tail.y += dy / std::abs(dy);
-
-                tail_positions.insert(tail);
+                auto &head = rope[i - 1];
+                auto &tail = rope[i];
+                auto dx = head.x - tail.x;
+                auto dy = head.y - tail.y;
+                if (std::abs(dx) > 1 || std::abs(dy) > 1)
+                {
+                    if (dx)
+                        tail.x += dx / std::abs(dx);
+                    if (dy)
+                        tail.y += dy / std::abs(dy);
+                }
+                else
+                    break;
             }
+            tail_positions.insert(rope.back());
         }
     }
     return tail_positions.size();
@@ -73,13 +78,26 @@ const char *const TEST =
     "L 5\n"
     "R 2\n";
 
+const char *const TEST2 =
+    "R 5\n"
+    "U 8\n"
+    "L 8\n"
+    "D 3\n"
+    "R 17\n"
+    "D 10\n"
+    "L 25\n"
+    "U 20\n";
+
 using namespace boost::ut;
 
 suite s = [] {
     "2022-09"_test = [] {
-        expect(13_u == TrackTail(std::istringstream{TEST}));
+        expect(13_u == TrackTail(2, std::istringstream{TEST}));
+        expect(1_u == TrackTail(10, std::istringstream{TEST}));
+        expect(36_u == TrackTail(10, std::istringstream{TEST2}));
 
-        Printer::Print(__FILE__, "1", TrackTail(std::ifstream{INPUT}));
+        Printer::Print(__FILE__, "1", TrackTail(2, std::ifstream{INPUT}));
+        Printer::Print(__FILE__, "2", TrackTail(10, std::ifstream{INPUT}));
     };
 };
 
