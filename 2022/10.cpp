@@ -29,31 +29,46 @@ struct Task1 : IObserver
     }
 };
 
+struct Task2 : Task1
+{
+    std::string screen;
+
+    void Tick(int cycle, int x) override
+    {
+        Task1::Tick(cycle, x);
+
+        int col = (cycle - 1) % 40;
+        screen.push_back((col >= x - 1 && col <= x + 1) ? '#' : '.');
+        if (col == 39)
+            screen.push_back('\n');
+    }
+};
+
 struct Machine
 {
     IObserver &observer;
-    int cycle = 1;
+    int cycle = 0;
     int x = 1;
 
     Machine(IObserver &observer) : observer{observer} { }
 
     void AddX(int val)
     {
-        observer.Tick(cycle++, x);
-        observer.Tick(cycle++, x);
+        observer.Tick(++cycle, x);
+        observer.Tick(++cycle, x);
         x += val;
     }
 
     void Noop()
     {
-        observer.Tick(cycle++, x);
+        observer.Tick(++cycle, x);
     }
 };
 
-size_t Execute(std::istream &&is)
+std::pair<size_t, std::string> Execute(std::istream &&is)
 {
-    Task1 task1;
-    Machine machine{task1};
+    Task2 task;
+    Machine machine{task};
     std::string line;
     while (std::getline(is, line))
     {
@@ -63,7 +78,7 @@ size_t Execute(std::istream &&is)
         else if (line == "noop")
             machine.Noop();
     }
-    return task1.strength;
+    return {task.strength, task.screen};
 }
 
 const char *const TEST = R"(addx 15
@@ -215,11 +230,23 @@ noop)";
 
 using namespace boost::ut;
 
+const char *const TEST_RES =
+    "##..##..##..##..##..##..##..##..##..##..\n"
+    "###...###...###...###...###...###...###.\n"
+    "####....####....####....####....####....\n"
+    "#####.....#####.....#####.....#####.....\n"
+    "######......######......######......####\n"
+    "#######.......#######.......#######.....\n";
+
 suite s = [] {
     "2022-10"_test = [] {
-        expect(13140_u == Execute(std::istringstream{TEST}));
+        auto test = Execute(std::istringstream{TEST});
+        expect(13140_u == test.first);
+        expect(TEST_RES == test.second);
 
-        Printer::Print(__FILE__, "1", Execute(std::ifstream{INPUT}));
+        auto res = Execute(std::ifstream{INPUT});
+        Printer::Print(__FILE__, "1", res.first);
+        Printer::Print(__FILE__, "2", "\n" + res.second);
     };
 };
 
