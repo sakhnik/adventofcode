@@ -5,9 +5,11 @@ namespace {
 
 struct Monkey
 {
-    std::vector<int> items;
-    std::function<int(int)> operation;
-    std::function<int(int)> test;   // item -> monkey
+    std::vector<size_t> items;
+    std::function<size_t(size_t)> operation;
+    size_t divisor{};
+    size_t throw_true{};
+    size_t throw_false{};
     size_t inspected{};
 };
 
@@ -29,7 +31,7 @@ MonkeysT Parse(std::istream &&is)
         std::getline(is, line);
         line = line.substr(line.find(':') + 2);
         std::istringstream iss{line};
-        int item{};
+        size_t item{};
         while (iss >> item)
         {
             monkey.items.push_back(item);
@@ -41,43 +43,44 @@ MonkeysT Parse(std::istream &&is)
         line = line.substr(line.find(':') + 2);
         int val{};
         if (1 == sscanf(line.c_str(), "new = old + %d", &val))
-            monkey.operation = [val](int old) { return old + val; };
+            monkey.operation = [val](size_t old) { return old + val; };
         else if (1 == sscanf(line.c_str(), "new = old * %d", &val))
-            monkey.operation = [val](int old) { return old * val; };
+            monkey.operation = [val](size_t old) { return old * val; };
         else if (line == "new = old * old")
-            monkey.operation = [](int old) { return old * old; };
+            monkey.operation = [](size_t old) { return old * old; };
         else
             throw std::runtime_error("Failed to parse operation");
 
         // Test
         std::getline(is, line);
         line = line.substr(line.find(':') + 2);
-        sscanf(line.c_str(), "divisible by %d", &val);
+        sscanf(line.c_str(), "divisible by %ld", &monkey.divisor);
         std::getline(is, line);
         line = line.substr(line.find(':') + 2);
-        int throw_true{};
-        sscanf(line.c_str(), "throw to monkey %d", &throw_true);
+        sscanf(line.c_str(), "throw to monkey %ld", &monkey.throw_true);
         std::getline(is, line);
         line = line.substr(line.find(':') + 2);
-        int throw_false{};
-        sscanf(line.c_str(), "throw to monkey %d", &throw_false);
-        monkey.test = [=](int item) {
-            return (item % val == 0) ? throw_true : throw_false;
-        };
+        sscanf(line.c_str(), "throw to monkey %ld", &monkey.throw_false);
 
         monkeys.push_back(monkey);
     }
     return monkeys;
 }
 
-void Run(MonkeysT &monkeys)
+void Run(MonkeysT &monkeys, bool relax)
 {
+    int lcm{1};
+    for (const auto &monkey : monkeys)
+        lcm *= monkey.divisor;
+
     for (auto &monkey : monkeys)
     {
         for (auto &item : monkey.items)
         {
-            item = monkey.operation(item) / 3;
-            int next = monkey.test(item);
+            item = (monkey.operation(item) % lcm);
+            if (relax)
+                item /= 3;
+            int next = (0 == item % monkey.divisor) ? monkey.throw_true : monkey.throw_false;
             monkeys[next].items.push_back(item);
             ++monkey.inspected;
         }
@@ -85,17 +88,28 @@ void Run(MonkeysT &monkeys)
     }
 }
 
-size_t Task1(MonkeysT &monkeys)
+size_t CalcBusiness(MonkeysT &monkeys)
 {
-    for (int i = 0; i < 20; ++i)
-        Run(monkeys);
-
     std::vector<size_t> champs;
     champs.reserve(monkeys.size());
     for (const auto &monkey : monkeys)
         champs.push_back(monkey.inspected);
     std::nth_element(champs.begin(), champs.begin() + 1, champs.end(), std::greater<size_t>());
     return champs[0] * champs[1];
+}
+
+size_t Task1(MonkeysT &monkeys)
+{
+    for (int i = 0; i < 20; ++i)
+        Run(monkeys, true);
+    return CalcBusiness(monkeys);
+}
+
+size_t Task2(MonkeysT &monkeys)
+{
+    for (int i = 0; i < 10000; ++i)
+        Run(monkeys, false);
+    return CalcBusiness(monkeys);
 }
 
 const char *const TEST = R"(Monkey 0:
@@ -132,9 +146,13 @@ suite s = [] {
     "2022-11"_test = [] {
         auto test = Parse(std::istringstream{TEST});
         expect(10605_u == Task1(test));
+        auto test2 = Parse(std::istringstream{TEST});
+        expect(2713310158_u == Task2(test2));
 
         auto monkeys = Parse(std::ifstream{INPUT});
         Printer::Print(__FILE__, "1", Task1(monkeys));
+        auto monkeys2 = Parse(std::ifstream{INPUT});
+        Printer::Print(__FILE__, "2", Task2(monkeys2));
     };
 };
 
