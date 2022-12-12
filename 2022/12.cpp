@@ -5,7 +5,7 @@ namespace {
 
 using MapT = std::vector<std::string>;
 
-int FindPath(std::istream &&is)
+std::pair<int, int> FindPath(std::istream &&is)
 {
     MapT map;
 
@@ -43,9 +43,11 @@ int FindPath(std::istream &&is)
         int distance = std::numeric_limits<int>::max();
     };
     std::unordered_map<int, Info> info_map;
-    info_map[idx(start_row, start_col)].distance = 0;
+    info_map[idx(finish_row, finish_col)].distance = 0;
     std::queue<std::pair<int, int>> q;
-    q.push({start_row, start_col});
+    q.push({finish_row, finish_col});
+
+    int first_a = -1;
 
     while (!q.empty())
     {
@@ -62,8 +64,10 @@ int FindPath(std::istream &&is)
             if (info_map.contains(idx(new_row, new_col)))
                 return;
             auto new_elevation = map[new_row][new_col];
-            if (elevation + 1 < new_elevation)
+            if (elevation - 1 > new_elevation)
                 return;
+            if (new_elevation == 'a' && first_a == -1)
+                first_a = info.distance + 1;
             info_map[idx(new_row, new_col)].distance = info.distance + 1;
             q.push({new_row, new_col});
         };
@@ -73,7 +77,8 @@ int FindPath(std::istream &&is)
         tryMove(row + 1, col);
         tryMove(row, col + 1);
     }
-    return info_map[idx(finish_row, finish_col)].distance;
+
+    return {info_map[idx(start_row, start_col)].distance, first_a};
 }
 
 const char *const TEST =
@@ -87,9 +92,13 @@ using namespace boost::ut;
 
 suite s = [] {
     "2022-12"_test = [] {
-        expect(31_i == FindPath(std::istringstream{TEST}));
+        auto test = FindPath(std::istringstream{TEST});
+        expect(31_i == test.first);
+        expect(29_i == test.second);
 
-        Printer::Print(__FILE__, "1", FindPath(std::ifstream{INPUT}));
+        auto res = FindPath(std::ifstream{INPUT});
+        Printer::Print(__FILE__, "1", res.first);
+        Printer::Print(__FILE__, "2", res.second);
     };
 };
 
