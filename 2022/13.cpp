@@ -45,6 +45,34 @@ int Task1(std::istream &&is)
     return res;
 }
 
+int Task2(std::istream &&is)
+{
+    std::vector<boost::json::value> msgs;
+    const auto m1 = boost::json::parse("[[2]]");
+    const auto m2 = boost::json::parse("[[6]]");
+    msgs.push_back(m1);
+    msgs.push_back(m2);
+
+    std::string line;
+    while (std::getline(is, line))
+    {
+        if (line.empty())
+            continue;
+        msgs.emplace_back(boost::json::parse(line));
+    }
+
+    std::vector<size_t> idx(msgs.size(), 0);
+    std::iota(begin(idx), end(idx), 0);
+
+    std::sort(begin(idx), end(idx), [&](size_t a, size_t b) {
+        return msgs[a] < msgs[b];
+    });
+
+    auto i1 = std::find(begin(idx), end(idx), 0);
+    auto i2 = std::find(begin(idx), end(idx), 1);
+    return (1 + i1 - begin(idx)) * (1 + i2 - begin(idx));
+}
+
 const char *const TEST = R"([1,1,3,1,1]
 [1,1,5,1,1]
 
@@ -74,8 +102,10 @@ using namespace boost::ut;
 suite s = [] {
     "2022-13"_test = [] {
         expect(13_i == Task1(std::istringstream{TEST}));
+        expect(140_i == Task2(std::istringstream{TEST}));
 
         Printer::Print(__FILE__, "1", Task1(std::ifstream{INPUT}));
+        Printer::Print(__FILE__, "2", Task2(std::ifstream{INPUT}));
     };
 };
 
