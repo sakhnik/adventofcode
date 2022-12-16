@@ -85,31 +85,50 @@ struct Pipes
             this->good_valves[i] = good_valves[i];
     }
 
-    int Walk()
+    using OpenValvesT = std::bitset<16>;
+    using MaxPressureT = std::unordered_map<OpenValvesT, int>;
+
+    void Walk(const std::string &v, int time, OpenValvesT open_valves, int pressure, MaxPressureT &max_pressure)
     {
-        int max_pressure{};
+        auto it = max_pressure.find(open_valves);
+        max_pressure[open_valves] = std::max(pressure, it != max_pressure.end() ? it->second : 0);
 
-        auto walk = [&](const std::string &v, int time, int pressure, auto &&walk) {
-            max_pressure = std::max(max_pressure, pressure);
-            if (time <= 0 || good_valves.empty())
-                return;
+        const auto &valve = valves.at(v);
+        for (const auto &[i, next] : good_valves)
+        {
+            const auto &next_valve = valves.at(next);
+            int d = dist[DistIdx(valve.index, next_valve.index)];
+            int new_time = time - d - 1;
+            if (open_valves.test(i) || new_time < 0)
+                continue;
+            Walk(next, new_time, open_valves.to_ulong() | (1 << i), pressure + next_valve.flow * new_time, max_pressure);
+        }
+    }
 
-            const auto &valve = valves.at(v);
-            for (auto it = good_valves.begin(); it != good_valves.end(); ++it)
+    int Task1()
+    {
+        MaxPressureT max_pressure;
+        Walk("AA", 30, 0, 0, max_pressure);
+        return std::max_element(max_pressure.begin(), max_pressure.end(),
+                [](const auto &a, const auto &b) { return a.second < b.second; })->second;
+    }
+
+    int Task2()
+    {
+        MaxPressureT max_pressure;
+        Walk("AA", 26, 0, 0, max_pressure);
+
+        int res{};
+        for (const auto &[path1, pressure1] : max_pressure)
+        {
+            for (const auto &[path2, pressure2] : max_pressure)
             {
-                auto [i, next] = *it;
-                good_valves.erase(it);
-
-                const auto &next_valve = valves.at(next);
-                int d = dist[DistIdx(valve.index, next_valve.index)];
-                if (time > d)
-                    walk(next, time - d - 1, pressure + next_valve.flow * (time - d - 1), walk);
-
-                it = good_valves.insert({i, next}).first;
+                if ((path1.to_ulong() & path2.to_ulong()))
+                    continue;
+                res = std::max(res, pressure1 + pressure2);
             }
-        };
-        walk("AA", 30, 0, walk);
-        return max_pressure;
+        }
+        return res;
     }
 };
 
@@ -130,10 +149,12 @@ using namespace boost::ut;
 suite s = [] {
     "2022-16"_test = [] {
         Pipes test{std::istringstream{TEST}};
-        expect(1651_i == test.Walk());
+        expect(1651_i == test.Task1());
+        expect(1707_i == test.Task2());
 
         Pipes pipes{std::ifstream{INPUT}};
-        Printer::Print(__FILE__, "1", pipes.Walk());
+        Printer::Print(__FILE__, "1", pipes.Task1());
+        Printer::Print(__FILE__, "2", pipes.Task2());
     };
 };
 
