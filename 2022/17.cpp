@@ -10,8 +10,10 @@ struct Rocks
     std::vector<ShapeT> shapes;
 
     std::string winds;
-    boost::circular_buffer<std::string> well{1000};
-    int height{0};
+    boost::circular_buffer<std::string> well{2048};
+    size_t height{0};
+    std::vector<size_t> heights = {0};
+    size_t offset{};
 
     Rocks(std::istream &&is)
     {
@@ -22,14 +24,32 @@ struct Rocks
         shapes.push_back({{0, 0}, {1, 0}, {0, 1}, {1, 1}});
 
         std::getline(is, winds);
+
+        Run();
     }
 
-    int Run(int count)
+    void Run()
     {
         int rock = 0;
         int jet = 0;
 
-        while (count--)
+        auto get_signature = [&]() -> std::string {
+            std::ostringstream oss;
+            oss << rock << "\n";
+            oss << jet << "\n";
+            for (int i = 0; i < 7; ++i)
+            {
+                auto it = std::find_if(well.rbegin(), well.rend(),
+                        [&](const auto &row) { return row[i] == '#'; });
+                oss << " " << (it == well.rend() ? -1 : it - well.rbegin());
+            }
+            oss << "\n";
+            return oss.str();
+        };
+
+        std::unordered_map<std::string, size_t> signatures;
+
+        while (true)
         {
             const auto &shape = shapes[rock++];
             if (rock >= shapes.size())
@@ -86,9 +106,18 @@ struct Rocks
                 }
             }
 
+            int dh = FindEmptySpaceOnTop();
+            heights.push_back(height - dh);
+            auto signature = get_signature();
+            auto it = signatures.find(signature);
+            if (it != signatures.end())
+            {
+                offset = it->second;
+                signatures.clear();
+                return;
+            }
+            signatures[signature] = heights.size();
         }
-
-        return height - FindEmptySpaceOnTop();
     }
 
     int FindEmptySpaceOnTop() const
@@ -100,6 +129,17 @@ struct Rocks
         }
         return well.size();
     }
+
+    size_t CalcHeight(size_t count)
+    {
+        if (count < offset)
+            return heights[count];
+        size_t period = heights.size() - offset;
+        count -= offset;
+        size_t periods = count / period;
+        size_t rest = count % period;
+        return (heights.back() - heights[offset - 1]) * periods + heights[rest + offset];
+    }
 };
 
 const char *const TEST = ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>";
@@ -109,10 +149,12 @@ using namespace boost::ut;
 suite s = [] {
     "2022-17"_test = [] {
         Rocks test{std::istringstream{TEST}};
-        expect(3068_i == test.Run(2022));
+        expect(3068_u == test.CalcHeight(2022));
+        expect(eq(1514285714288ull, test.CalcHeight(1000000000000ull)));
 
         Rocks rocks{std::ifstream{INPUT}};
-        Printer::Print(__FILE__, "1", rocks.Run(2022));
+        Printer::Print(__FILE__, "1", rocks.CalcHeight(2022));
+        Printer::Print(__FILE__, "2", rocks.CalcHeight(1000000000000ull));
     };
 };
 
