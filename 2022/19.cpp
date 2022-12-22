@@ -158,63 +158,70 @@ struct Minerals
         }
     }
 
+    int FindGeodes(const Blueprint &bp, int target_time)
+    {
+        // No need to build too many robots
+        Cost max_robots{0};
+        for (int i = 0; i < COUNT; ++i)
+            for (int j = 0; j < COUNT; ++j)
+                max_robots[j] = std::max(max_robots[j], bp.costs[i][j]);
+        max_robots.back() = std::numeric_limits<int>::max();
+
+        std::unordered_map<size_t, int> maximums;  // robots -> max geode
+
+        auto search = [&](int time, const Cost &robots, const Cost &minerals, auto &&search) {
+
+            if (time > target_time)
+                return;
+
+            auto it = maximums.find(time);
+            if (it != maximums.end() && minerals.back() < it->second)
+                return;
+            maximums[time] = minerals.back();
+
+            //std::cout << "t=" << time << ": robots=" << robots << " minerals=" << minerals << std::endl;
+            if (time == target_time)
+                return;
+
+            int next_event{100};
+            for (int i = bp.costs.size() - 1; i >= 0; --i)
+            {
+                if (robots[i] >= max_robots[i])
+                    continue;
+                const auto &cost = bp.costs[i];
+                int next = minerals.NextBuild(cost, robots);
+                if (next < 0)
+                    continue;
+                next_event = std::min(next_event, next);
+                auto next_robots = robots.Add(i);
+                auto next_minerals = minerals - cost + robots * (next + 1);
+                search(time + next + 1, next_robots, next_minerals, search);
+            }
+
+            int eta = target_time - time;
+            next_event = std::min(eta, next_event);
+            if (next_event)
+                search(time + next_event, robots, minerals + robots * next_event, search);
+        };
+        search(0, Cost{1}, Cost{0}, search);
+
+        return maximums[target_time];
+    }
+
     int Task1()
     {
-        constexpr int TARGET_TIME = 24;
         int bp_quality{};
-
-        for (int ibp = 0; ibp < blueprints.size(); ++ibp)
-        {
-            const auto &bp = blueprints[ibp];
-
-            // No need to build too many robots
-            Cost max_robots{0};
-            for (int i = 0; i < COUNT; ++i)
-                for (int j = 0; j < COUNT; ++j)
-                    max_robots[j] = std::max(max_robots[j], bp.costs[i][j]);
-            max_robots.back() = std::numeric_limits<int>::max();
-
-            std::unordered_map<size_t, int> maximums;  // robots -> max geode
-
-            auto search = [&](int time, const Cost &robots, const Cost &minerals, auto &&search) {
-
-                if (time > TARGET_TIME)
-                    return;
-
-                auto it = maximums.find(time);
-                if (it != maximums.end() && minerals.back() < it->second)
-                    return;
-                maximums[time] = minerals.back();
-
-                //std::cout << "t=" << time << ": robots=" << robots << " minerals=" << minerals << std::endl;
-                if (time == TARGET_TIME)
-                    return;
-
-                int next_event{100};
-                for (int i = bp.costs.size() - 1; i >= 0; --i)
-                {
-                    if (robots[i] >= max_robots[i])
-                        continue;
-                    const auto &cost = bp.costs[i];
-                    int next = minerals.NextBuild(cost, robots);
-                    if (next < 0)
-                        continue;
-                    next_event = std::min(next_event, next);
-                    auto next_robots = robots.Add(i);
-                    auto next_minerals = minerals - cost + robots * (next + 1);
-                    search(time + next + 1, next_robots, next_minerals, search);
-                }
-
-                int eta = TARGET_TIME - time;
-                next_event = std::min(eta, next_event);
-                if (next_event)
-                    search(time + next_event, robots, minerals + robots * next_event, search);
-            };
-            search(0, Cost{1}, Cost{0}, search);
-
-            bp_quality += maximums[TARGET_TIME] * (1 + ibp);
-        }
+        for (int i = 0; i < blueprints.size(); ++i)
+            bp_quality += FindGeodes(blueprints[i], 24) * (i + 1);
         return bp_quality;
+    }
+
+    int Task2()
+    {
+        size_t res{1};
+        for (int i = 0; i < 3; ++i)
+            res *= FindGeodes(blueprints[i], 32);
+        return res;
     }
 };
 
@@ -230,6 +237,7 @@ suite s = [] {
 
         Minerals minerals{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", minerals.Task1());
+        Printer::Print(__FILE__, "2", minerals.Task2());
     };
 };
 
