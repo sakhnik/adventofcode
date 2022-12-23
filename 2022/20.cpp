@@ -24,9 +24,9 @@ struct Sequence
         prev.front() = nums.size() - 1;
     }
 
-    void Mix(int i)
+    void Mix(int i, int64_t key)
     {
-        int num = nums[i] % static_cast<int>(nums.size() - 1);
+        int num = (key * nums[i]) % static_cast<int>(nums.size() - 1);
         if (!num)
             return;
         if (num < 0)
@@ -58,12 +58,13 @@ struct Sequence
         next[target_i] = i;
     }
 
-    int Task1()
+    int64_t Decrypt(int64_t key, int repeats)
     {
-        for (int i = 0; i < nums.size(); ++i)
-            Mix(i);
+        while (repeats--)
+            for (int i = 0; i < nums.size(); ++i)
+                Mix(i, key);
 
-        int sum{};
+        int64_t sum{};
         int i = std::find(nums.begin(), nums.end(), 0) - nums.begin();
         for (int k = 0; k < 3; ++k)
         {
@@ -71,7 +72,17 @@ struct Sequence
                 i = next[i];
             sum += nums[i];
         }
-        return sum;
+        return key * sum;
+    }
+
+    int Task1()
+    {
+        return Decrypt(1, 1);
+    }
+
+    int64_t Task2()
+    {
+        return Decrypt(811589153LL, 10);
     }
 
     void Print() const
@@ -101,9 +112,13 @@ suite s = [] {
     "2022-20"_test = [] {
         Sequence test{std::istringstream{TEST}};
         expect(3_i == test.Task1());
+        Sequence test2{std::istringstream{TEST}};
+        expect(1623178306_i == test2.Task2());
 
         Sequence sequence{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", sequence.Task1());
+        Sequence sequence2{std::ifstream{INPUT}};
+        Printer::Print(__FILE__, "2", sequence2.Task2());
     };
 };
 
