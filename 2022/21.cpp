@@ -10,8 +10,7 @@ struct Monkeys
         bool is_val = true;
         int64_t val{};
         std::string a, b;
-        using OpT = std::function<int64_t(int64_t, int64_t)>;
-        OpT op;
+        char op{};
 
         Expr(int64_t val = 0)
             : is_val{true}
@@ -23,26 +22,13 @@ struct Monkeys
             : is_val{false}
             , a{a}
             , b{b}
+            , op{op}
         {
-            switch (op)
-            {
-            case '+':
-                this->op = [](int64_t a, int64_t b) { return a + b; };
-                break;
-            case '-':
-                this->op = [](int64_t a, int64_t b) { return a - b; };
-                break;
-            case '*':
-                this->op = [](int64_t a, int64_t b) { return a * b; };
-                break;
-            case '/':
-                this->op = [](int64_t a, int64_t b) { return a / b; };
-                break;
-            }
         }
     };
 
-    std::unordered_map<std::string, Expr> expr;
+    using ExprT = std::unordered_map<std::string, Expr>;
+    ExprT expr;
 
     Monkeys(std::istream &&is)
     {
@@ -68,19 +54,111 @@ struct Monkeys
         }
     }
 
+    using EvalCtxT = std::unordered_map<std::string, int64_t>;
+
+    int64_t Eval(const std::string &name, const ExprT &expr, EvalCtxT &ctx) const
+    {
+        auto it = ctx.find(name);
+        if (it != ctx.end())
+            return it->second;
+        const auto &e = expr.at(name);
+        if (e.is_val)
+            return ctx[name] = e.val;
+        auto a = Eval(e.a, expr, ctx);
+        auto b = Eval(e.b, expr, ctx);
+        auto oper = [&]() {
+            switch (e.op)
+            {
+            case '+': return a + b; break;
+            case '-': return a - b; break;
+            case '*': return a * b; break;
+            case '/': return a / b; break;
+            default: throw std::runtime_error("Unknown operation");
+            }
+        };
+        return ctx[name] = oper();
+    }
+
     int64_t Task1()
     {
-        std::unordered_map<std::string, int64_t> vals;
-        auto eval = [&](const std::string &name, auto &&eval) -> int64_t {
-            auto it = vals.find(name);
-            if (it != vals.end())
-                return it->second;
+        EvalCtxT ctx;
+        return Eval("root", expr, ctx);
+    }
+
+    int64_t Task2()
+    {
+        EvalCtxT ctx;
+        ExprT solution;
+
+        using PromiseT = std::pair<bool, int64_t>;
+
+        auto eval = [&](const std::string &name, auto &&eval) -> PromiseT {
+            auto it = ctx.find(name);
+            if (it != ctx.end())
+                return {true, it->second};
+
             const auto &e = expr.at(name);
+            if (name == "root")
+            {
+                auto a = eval(e.a, eval);
+                auto b = eval(e.b, eval);
+                if (a.first)
+                    ctx[e.b] = a.second;
+                else if (b.first)
+                    ctx[e.a] = b.second;
+                else
+                    throw std::runtime_error("Can't solve");
+                return {true, 0};
+            }
+            if (name == "humn")
+                return {false, 0};
+
             if (e.is_val)
-                return vals[name] = e.val;
-            return vals[name] = e.op(eval(e.a, eval), eval(e.b, eval));
+                return {true, ctx[name] = e.val};
+
+            auto a = eval(e.a, eval);
+            auto b = eval(e.b, eval);
+            if (!a.first && !b.first)
+                throw std::runtime_error("No solution");
+            if (a.first && b.first)
+            {
+                auto oper = [&]() {
+                    switch (e.op)
+                    {
+                    case '+': return a.second + b.second; break;
+                    case '-': return a.second - b.second; break;
+                    case '*': return a.second * b.second; break;
+                    case '/': return a.second / b.second; break;
+                    default: throw std::runtime_error("Unknown operation");
+                    }
+                };
+                return {true, ctx[name] = oper()};
+            }
+            if (!a.first)
+            {
+                switch (e.op)
+                {
+                case '+': solution[e.a] = Expr(name, '-', e.b); break;
+                case '-': solution[e.a] = Expr(name, '+', e.b); break;
+                case '*': solution[e.a] = Expr(name, '/', e.b); break;
+                case '/': solution[e.a] = Expr(name, '*', e.b); break;
+                }
+            }
+            if (!b.first)
+            {
+                switch (e.op)
+                {
+                case '+': solution[e.b] = Expr(name, '-', e.a); break;
+                case '-': solution[e.b] = Expr(e.a, '-', name); break;
+                case '*': solution[e.b] = Expr(name, '/', e.a); break;
+                case '/': solution[e.b] = Expr(e.a, '/', name); break;
+                }
+            }
+            return {false, 0};
         };
-        return eval("root", eval);
+        eval("root", eval);
+
+        return Eval("humn", solution, ctx);
     }
 };
 
@@ -106,9 +184,11 @@ suite s = [] {
     "2022-21"_test = [] {
         Monkeys test{std::istringstream{TEST}};
         expect(152_i == test.Task1());
+        expect(301_i == test.Task2());
 
         Monkeys monkeys{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", monkeys.Task1());
+        Printer::Print(__FILE__, "2", monkeys.Task2());
     };
 };
 
