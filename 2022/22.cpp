@@ -183,6 +183,7 @@ struct MonkeyMap
         if (get_signature() == 0x2e30)
         {
             const int S = face_size;
+            // This is buggy, but works merely for the test case.
             auto cubeStep = [&](Position pos) -> Position {
                 switch (pos.facing)
                 {
@@ -233,9 +234,58 @@ struct MonkeyMap
 
             return Wander(cubeStep);
         }
-        else if (face_size == 50 && get_signature() == 0x64c8)
+        else if (get_signature() == 0x64c8)
         {
-            std::cout << "Ok2" << std::endl;
+            const int S = face_size;
+            auto cubeStep = [&](Position pos) -> Position {
+                switch (pos.facing)
+                {
+                case F_RIGHT:
+                    if (pos.col != edge[F_RIGHT][pos.row])
+                        return ++pos.col, pos;
+                    switch (pos.row / S)
+                    {
+                    case 0: return Position{S*1 - 1 - pos.row + S*2, S*2 - 1, F_LEFT};
+                    case 1: return Position{S*1 - 1, pos.row - S*1 + S*2, F_UP};
+                    case 2: return Position{S*3 - 1 - pos.row, S*3 - 1, F_LEFT};
+                    case 3: return Position{S*3 - 1, pos.row - S*3 + S*1, F_UP};
+                    }
+                    break;
+                case F_DOWN:
+                    if (pos.row != edge[F_DOWN][pos.col])
+                        return ++pos.row, pos;
+                    switch (pos.col / S)
+                    {
+                    case 0: return Position{S*0, pos.col + S*2, F_DOWN};
+                    case 1: return Position{pos.col - S*1 + S*3, S*1 - 1, F_LEFT};
+                    case 2: return Position{pos.col - S*2 + S*1, S*2 - 1, F_LEFT};
+                    }
+                    break;
+                case F_LEFT:
+                    if (pos.col != edge[F_LEFT][pos.row])
+                        return --pos.col, pos;
+                    switch (pos.row / S)
+                    {
+                    case 0: return Position{S*1 - 1 - pos.row + S*2, S*0, F_RIGHT};
+                    case 1: return Position{S*2, pos.row - S*1, F_DOWN};
+                    case 2: return Position{S*3 - 1 - pos.row + S*0, S*1, F_RIGHT};
+                    case 3: return Position{0, pos.row - S*3 + S*1, F_DOWN};
+                    }
+                    break;
+                case F_UP:
+                    if (pos.row != edge[F_UP][pos.col])
+                        return --pos.row, pos;
+                    switch (pos.col / S)
+                    {
+                    case 0: return Position{pos.col + S*1, S*1, F_RIGHT};
+                    case 1: return Position{pos.col - S*1 + S*3, 0, F_RIGHT};
+                    case 2: return Position{S*4 - 1, pos.col - S*2, F_UP};
+                    }
+                }
+                return pos;
+            };
+
+            return Wander(cubeStep);
         }
         else
         {
