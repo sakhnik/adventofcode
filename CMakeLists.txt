@@ -22,7 +22,7 @@ foreach(year RANGE 2015 2021)
     endforeach()
 endforeach()
 
-foreach(src RANGE 1 22)
+foreach(src RANGE 1 23)
     string(REGEX REPLACE "^(.)$" "0\\1" zero_src ${src})
     list(APPEND sources 2022/${zero_src}.cpp)
     add_test(NAME 2022-${zero_src} COMMAND ${CMAKE_BUILD_DIRECTORY}/aoc "2022-${zero_src}*")
