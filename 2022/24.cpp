@@ -69,17 +69,15 @@ struct Basin
         return true;
     }
 
-    int Task1() const
+    struct Pos
     {
-        struct Pos
-        {
-            int row{};
-            int col{};
-            bool operator==(const Pos &o) const = default;
-        };
+        int row{};
+        int col{};
+        bool operator==(const Pos &o) const = default;
+    };
 
-        const Pos TARGET{static_cast<int>(rows.size() - 1), static_cast<int>(cols.size() - 2)};
-
+    int FindRoute(const Pos &from, const Pos &to, int start_time) const
+    {
         struct State : Pos
         {
             int time{};
@@ -100,7 +98,7 @@ struct Basin
         std::unordered_set<State, StateHash> visited;
 
         auto distFromTarget = [&](const Pos &p) {
-            return std::abs(TARGET.row - p.row) + std::abs(TARGET.col - p.col);
+            return std::abs(to.row - p.row) + std::abs(to.col - p.col);
         };
 
         auto priority = [&](const State &a, const State &b) -> bool {
@@ -114,15 +112,15 @@ struct Basin
         };
 
         std::priority_queue<State, std::vector<State>, decltype(priority)> pq(priority);
-        pq.push({{0, 1}, 0});
-        visited.insert({{0, 1}, 0});
+        pq.push({from, start_time});
+        visited.insert({from, start_time});
 
         while (!pq.empty())
         {
             auto state = pq.top();
             pq.pop();
 
-            if (state.row == TARGET.row && state.col == TARGET.col)
+            if (state.row == to.row && state.col == to.col)
                 return state.time;
 
             auto tryGo = [&](int row, int col, int time) {
@@ -140,6 +138,18 @@ struct Basin
             tryGo(state.row, state.col, state.time + 1);
         }
         return -1;
+    }
+
+    std::vector<int> Tasks() const
+    {
+        const Pos START{0, 1};
+        const Pos FINISH{static_cast<int>(rows.size() - 1), static_cast<int>(cols.size() - 2)};
+
+        std::vector<int> times;
+        times.push_back(FindRoute(START, FINISH, 0));
+        times.push_back(FindRoute(FINISH, START, times.back()));
+        times.push_back(FindRoute(START, FINISH, times.back()));
+        return times;
     }
 };
 
@@ -171,10 +181,14 @@ suite s = [] {
         expect(!test.IsFree(1, 2, 10));
         expect(test.IsFree(1, 3, 10));
 
-        expect(18_i == test.Task1());
+        auto test_res = test.Tasks();
+        expect(18_i == test_res[0]);
+        expect(54_i == test_res.back());
 
         Basin basin{std::ifstream{INPUT}};
-        Printer::Print(__FILE__, "1", basin.Task1());
+        auto res = basin.Tasks();
+        Printer::Print(__FILE__, "1", res[0]);
+        Printer::Print(__FILE__, "2", res.back());
     };
 };
 
