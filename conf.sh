@@ -1,6 +1,7 @@
 #!/bin/bash -ex
 
-cd "$(dirname "${BASH_SOURCE[0]}")"
+this_dir="$(readlink -f "$(dirname "${BASH_SOURCE[0]}")")"
+cd "$this_dir"
 mkdir -p BUILD
 
 (
@@ -10,7 +11,7 @@ CC=/usr/bin/clang CXX=/usr/bin/clang++ cmake \
     -G Ninja \
     -DCMAKE_BUILD_TYPE=Debug \
     -DCMAKE_EXPORT_COMPILE_COMMANDS=Yes \
-    ..
+    "$this_dir"
 )
 
 ln -sf BUILD/compile_commands.json .

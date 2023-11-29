@@ -4,7 +4,7 @@ include(FetchContent)
 FetchContent_Declare(
     ut
     GIT_REPOSITORY "https://github.com/boost-ext/ut"
-    GIT_TAG "v1.1.8"
+    GIT_TAG "v2.0.0"
 )
 FetchContent_MakeAvailable(ut)
 
@@ -22,7 +22,7 @@ foreach(year RANGE 2015 2022)
     endforeach()
 endforeach()
 
-add_definitions(-std=c++20 -Wall)
+add_definitions(-std=c++20 -Wall -DOPENSSL_API_COMPAT=19999)
 
 foreach(src ${sources})
     string(REPLACE ".cpp" ".txt" input ${src})

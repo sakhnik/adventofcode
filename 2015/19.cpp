@@ -2,6 +2,7 @@
 #include <sstream>
 #include <vector>
 #include <unordered_set>
+#include <random>
 #include <algorithm>
 #include "../test.hpp"
 namespace {
@@ -47,6 +48,9 @@ public:
 
     size_t Count2()
     {
+        std::random_device rd;
+        std::mt19937 g(rd());
+
         size_t count{};
         std::string cur{_formula};
         while (cur != "e")
@@ -66,7 +70,7 @@ public:
             {
                 count = 0;
                 cur = _formula;
-                std::random_shuffle(_trans.begin(), _trans.end());
+                std::shuffle(_trans.begin(), _trans.end(), g);
             }
         }
         return count;

@@ -29,7 +29,7 @@ public:
                 continue;
             }
 
-            for (int i = 0; ; ++i)
+            while (true)
             {
                 auto j = rest.find_first_of(",.");
                 if (j == rest.npos)
