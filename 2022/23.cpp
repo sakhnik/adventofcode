@@ -172,10 +172,13 @@ suite s = [] {
         expect(110_i == test_res.first);
         expect(20_i == test_res.second);
 
-        Diffusion diffusion{std::ifstream{INPUT}};
-        auto res = diffusion.Simulate();
-        Printer::Print(__FILE__, "1", res.first);
-        Printer::Print(__FILE__, "2", res.second);
+        if (Printer::EnableAll())
+        {
+            Diffusion diffusion{std::ifstream{INPUT}};
+            auto res = diffusion.Simulate();
+            Printer::Print(__FILE__, "1", res.first);
+            Printer::Print(__FILE__, "2", res.second);
+        }
     };
 };
 

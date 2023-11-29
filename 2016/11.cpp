@@ -1,7 +1,6 @@
 #include <sstream>
 #include <iomanip>
 #include <array>
-#include <unordered_set>
 #include <unordered_map>
 #include <cassert>
 #include <queue>
@@ -237,17 +236,20 @@ suite s = [] {
 		// The third floor contains a promethium generator, a promethium-compatible microchip, a ruthenium generator, and a ruthenium-compatible microchip.
 		// The fourth floor contains nothing relevant.
 
-		// 0: thulium
-		// 1: plutonium
-		// 2: strotium
-		// 3: promethium
-		// 4: ruthenium
-		Printer::Print(__FILE__, "1", Solve<10>({0, 0, 0, 1, 0, 1, 2, 2, 2, 2}, {}));
+		if (Printer::EnableAll())
+		{
+			// 0: thulium
+			// 1: plutonium
+			// 2: strotium
+			// 3: promethium
+			// 4: ruthenium
+			Printer::Print(__FILE__, "1", Solve<10>({0, 0, 0, 1, 0, 1, 2, 2, 2, 2}, {}));
 
-		// <...>
-		// 5: elerium
-		// 6: dilithium
-		Printer::Print(__FILE__, "2", Solve<14>({0, 0, 0, 1, 0, 1, 2, 2, 2, 2, 0, 0, 0, 0}, {}));
+			// <...>
+			// 5: elerium
+			// 6: dilithium
+			Printer::Print(__FILE__, "2", Solve<14>({0, 0, 0, 1, 0, 1, 2, 2, 2, 2, 0, 0, 0, 0}, {}));
+		}
 	};
 };
 

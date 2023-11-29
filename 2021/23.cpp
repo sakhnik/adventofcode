@@ -216,31 +216,34 @@ using namespace std::string_literals;
 suite s = [] {
     "2021-23"_test = [] {
 
-        // #############
-        // #...........#
-        // ###B#C#B#D###
-        //   #A#D#C#A#
-        //   #########
-        Amphipods::Config test;
-        test.rooms = {"BA", "CD", "BC", "DA"};
-        expect(12521_u == Amphipods::Arrange(test));
+        if (Printer::EnableAll())
+        {
+            // #############
+            // #...........#
+            // ###B#C#B#D###
+            //   #A#D#C#A#
+            //   #########
+            Amphipods::Config test;
+            test.rooms = {"BA", "CD", "BC", "DA"};
+            expect(12521_u == Amphipods::Arrange(test));
 
-        // #############
-        // #...........#
-        // ###D#A#D#C###
-        //   #B#C#B#A#
-        //   #########
-        Amphipods::Config task;
-        task.rooms = {"DB", "AC", "DB", "CA"};
-        Printer::Print(__FILE__, "1", Amphipods::Arrange(task));
+            // #############
+            // #...........#
+            // ###D#A#D#C###
+            //   #B#C#B#A#
+            //   #########
+            Amphipods::Config task;
+            task.rooms = {"DB", "AC", "DB", "CA"};
+            Printer::Print(__FILE__, "1", Amphipods::Arrange(task));
 
-        Amphipods::Config test2(4);
-        test2.rooms = {"BDDA", "CCBD", "BBAC", "DACA"};
-        expect(44169_u == Amphipods::Arrange(test2));
+            Amphipods::Config test2(4);
+            test2.rooms = {"BDDA", "CCBD", "BBAC", "DACA"};
+            expect(44169_u == Amphipods::Arrange(test2));
 
-        Amphipods::Config task2(4);
-        task2.rooms = {"DDDB", "ACBC", "DBAB", "CACA"};
-        Printer::Print(__FILE__, "2", Amphipods::Arrange(task2));
+            Amphipods::Config task2(4);
+            task2.rooms = {"DDDB", "ACBC", "DBAB", "CACA"};
+            Printer::Print(__FILE__, "2", Amphipods::Arrange(task2));
+        }
     };
 };
 

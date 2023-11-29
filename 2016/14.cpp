@@ -115,11 +115,14 @@ using namespace boost::ut;
 
 suite s = [] {
 	"2016-14"_test = [] {
-		expect(22728_i == Solve("abc", 1));
-		Printer::Print(__FILE__, "1", Solve("cuanljph", 1));
+		if (Printer::EnableAll())
+		{
+			expect(22728_i == Solve("abc", 1));
+			Printer::Print(__FILE__, "1", Solve("cuanljph", 1));
 
-		expect(22551_i == Solve("abc", 2017));
-		Printer::Print(__FILE__, "2", Solve("cuanljph", 2017));
+			expect(22551_i == Solve("abc", 2017));
+			Printer::Print(__FILE__, "2", Solve("cuanljph", 2017));
+		}
 	};
 };
 

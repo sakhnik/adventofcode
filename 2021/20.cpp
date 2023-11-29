@@ -173,8 +173,11 @@ suite s = [] {
         image.Enhance();
         image.Enhance();
         Printer::Print(__FILE__, "1", image.GetCount());
-        image.Enhance(50 - 2);
-        Printer::Print(__FILE__, "2", image.GetCount());
+        if (Printer::EnableAll())
+        {
+            image.Enhance(50 - 2);
+            Printer::Print(__FILE__, "2", image.GetCount());
+        }
     };
 };
 

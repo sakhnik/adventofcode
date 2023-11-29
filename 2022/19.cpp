@@ -235,9 +235,12 @@ suite s = [] {
         Minerals test{std::istringstream{TEST}};
         expect(33_i == test.Task1());
 
-        Minerals minerals{std::ifstream{INPUT}};
-        Printer::Print(__FILE__, "1", minerals.Task1());
-        Printer::Print(__FILE__, "2", minerals.Task2());
+        if (Printer::EnableAll())
+        {
+            Minerals minerals{std::ifstream{INPUT}};
+            Printer::Print(__FILE__, "1", minerals.Task1());
+            Printer::Print(__FILE__, "2", minerals.Task2());
+        }
     };
 };
 

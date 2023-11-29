@@ -68,10 +68,13 @@ using namespace std::string_literals;
 suite s = [] {
 	"2016-05"_test = [] {
 		expect(eq("18f47a30"s, Solve("abc")));
-		Printer::Print(__FILE__, "1", Solve("reyedfim"));
-
 		expect(eq("05ace8e3"s, Solve2("abc")));
-		Printer::Print(__FILE__, "2", Solve2("reyedfim"));
+
+		if (Printer::EnableAll())
+		{
+			Printer::Print(__FILE__, "1", Solve("reyedfim"));
+			Printer::Print(__FILE__, "2", Solve2("reyedfim"));
+		}
 	};
 };
 

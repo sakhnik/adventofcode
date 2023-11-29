@@ -69,7 +69,8 @@ suite s = [] {
         //expect(18_i == Game{{3,2,1}}.Run(TARGET2));
         //expect(362_i == Game{{3,1,2}}.Run(TARGET2));
 
-        Printer::Print(__FILE__, "2", Game{{9,12,1,4,17,0,18}}.Run(TARGET2));
+        if (Printer::EnableAll())
+            Printer::Print(__FILE__, "2", Game{{9,12,1,4,17,0,18}}.Run(TARGET2));
     };
 };
 

@@ -124,8 +124,11 @@ suite s = [] {
 			"dec a\n";
 		expect(3_i == Solve(std::istringstream{test2}, {0, 0, 0, 0}));
 
-		Printer::Print(__FILE__, "1", Solve(std::ifstream{INPUT}, {7, 0, 0, 0}));
-		Printer::Print(__FILE__, "2", Solve(std::ifstream{INPUT}, {12, 0, 0, 0}));
+		if (Printer::EnableAll())
+		{
+			Printer::Print(__FILE__, "1", Solve(std::ifstream{INPUT}, {7, 0, 0, 0}));
+			Printer::Print(__FILE__, "2", Solve(std::ifstream{INPUT}, {12, 0, 0, 0}));
+		}
 	};
 };
 

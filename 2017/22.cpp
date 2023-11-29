@@ -192,7 +192,10 @@ suite s = [] {
         std::ifstream ifs(INPUT);
         auto grid = Parse(ifs);
         Printer::Print(__FILE__, "1", Count(10000, grid));
-        Printer::Print(__FILE__, "2", Count2(10000000, grid));
+        if (Printer::EnableAll())
+        {
+            Printer::Print(__FILE__, "2", Count2(10000000, grid));
+        }
     };
 };
 

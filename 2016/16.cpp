@@ -45,8 +45,11 @@ suite s = [] {
 		expect(eq("1111000010100101011110000"s, Generate("111100001010", 25)));
 		expect(eq("01100"s, Solve(20, "10000")));
 
-		Printer::Print(__FILE__, "1", Solve(272, "10011111011011001"));
-		Printer::Print(__FILE__, "2", Solve(35651584, "10011111011011001"));
+		if (Printer::EnableAll())
+		{
+			Printer::Print(__FILE__, "1", Solve(272, "10011111011011001"));
+			Printer::Print(__FILE__, "2", Solve(35651584, "10011111011011001"));
+		}
 	};
 };
 

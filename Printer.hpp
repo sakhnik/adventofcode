@@ -29,6 +29,11 @@ public:
         Instance()._Print(fname, suffix, msg);
     }
 
+    static bool EnableAll()
+    {
+        return getenv("ENABLE_ALL") != nullptr;
+    }
+
 private:
     Printer() = default;
     Printer(const Printer &) = delete;

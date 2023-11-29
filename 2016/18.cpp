@@ -57,7 +57,10 @@ suite s = [] {
 
 		const char *PUZZLE = ".^^^.^.^^^^^..^^^..^..^..^^..^.^.^.^^.^^....^.^...^.^^.^^.^^..^^..^.^..^^^.^^...^...^^....^^.^^^^^^^";
 		Printer::Print(__FILE__, "1", Solve(40, PUZZLE));
-		Printer::Print(__FILE__, "2", Solve(400000, PUZZLE));
+		if (Printer::EnableAll())
+		{
+			Printer::Print(__FILE__, "2", Solve(400000, PUZZLE));
+		}
 	};
 };
 

@@ -146,9 +146,12 @@ suite s = [] {
             }},
         };
 
-        Machine m;
-        m.Run(12656374, 'A' - 'A', desc);
-        Printer::Print(__FILE__, nullptr, m.GetChecksum());
+        if (Printer::EnableAll())
+        {
+            Machine m;
+            m.Run(12656374, 'A' - 'A', desc);
+            Printer::Print(__FILE__, nullptr, m.GetChecksum());
+        }
     };
 };
 

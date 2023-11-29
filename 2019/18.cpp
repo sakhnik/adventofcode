@@ -257,6 +257,7 @@ suite s = [] {
             expect(81_i == SearchMin<1>(m));
         }
 
+        if (Printer::EnableAll())
         {
             std::ifstream ifs{INPUT};
             std::string map(std::istreambuf_iterator<char>{ifs},

@@ -95,7 +95,10 @@ suite s = [] {
              10, 20, 47, 46, 34, 39, 1, 26,
              49, 9, 48, 36, 14, 15, 3, 18, 28};
         Printer::Print(__FILE__, "1", Play(a, b));
-        Printer::Print(__FILE__, "2", Play2(a, b));
+        if (Printer::EnableAll())
+        {
+            Printer::Print(__FILE__, "2", Play2(a, b));
+        }
     };
 };
 
