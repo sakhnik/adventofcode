@@ -49,11 +49,11 @@ private:
         auto year = fname.substr(year_start, base_start - year_start - 1);
         auto base = fname.substr(base_start, base_end - base_start);
 
-        std::cout << year << '-' << base;
+        std::cerr << year << '-' << base;
         if (suffix)
         {
-            std::cout << '.' << suffix;
+            std::cerr << '.' << suffix;
         }
-        std::cout << ": " << msg << "\n";
+        std::cerr << ": " << msg << "\n";
     }
 };
