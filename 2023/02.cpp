@@ -13,22 +13,40 @@ struct Config
     {
         return red <= o.red && green <= o.green && blue <= o.blue;
     }
+
+    void BulkUp(const Config &o)
+    {
+        red = std::max(red, o.red);
+        green = std::max(green, o.green);
+        blue = std::max(blue, o.blue);
+    }
+
+    uint64_t GetPower() const
+    {
+        return red * green * blue;
+    }
 };
 
-int Task1(std::istream &&is)
+struct Game
 {
-    const Config target_config = {.red = 12, .green = 13, .blue = 14};
-    int sum{};
+    int id{};
+    std::vector<Config> sets;
+};
+
+using GamesT = std::vector<Game>;
+
+GamesT Parse(std::istream &&is)
+{
+    GamesT games;
 
     std::string game;
     while (getline(is, game))
     {
-        bool is_valid = true;
+        Game g;
 
         std::istringstream iss{game};
         std::string discard;
-        int game_id{};
-        iss >> discard >> game_id >> discard;
+        iss >> discard >> g.id >> discard;
         std::string set;
         while (getline(iss, set, ';'))
         {
@@ -48,12 +66,46 @@ int Task1(std::istream &&is)
                 else if (color == "blue")
                     config.blue = count;
             }
-            if (!config.IsSubset(target_config))
-                is_valid = false;
+            g.sets.push_back(config);
         }
 
+        games.push_back(std::move(g));
+    }
+    return games;
+}
+
+int Task1(const GamesT &games)
+{
+    const Config target_config = {.red = 12, .green = 13, .blue = 14};
+    int sum{};
+
+    for (const auto &game : games)
+    {
+        bool is_valid = true;
+        for (const auto &set : game.sets)
+        {
+            if (!set.IsSubset(target_config))
+            {
+                is_valid = false;
+                break;
+            }
+        }
         if (is_valid)
-            sum += game_id;
+            sum += game.id;
+    }
+    return sum;
+}
+
+uint64_t Task2(const GamesT &games)
+{
+    uint64_t sum{};
+
+    for (const auto &game : games)
+    {
+        Config config;
+        for (const auto &set : game.sets)
+            config.BulkUp(set);
+        sum += config.GetPower();
     }
     return sum;
 }
@@ -66,10 +118,13 @@ Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
 Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
 Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
 )";
-        expect(8_i == Task1(std::istringstream{TEST1}));
+        auto test_games = Parse(std::istringstream{TEST1});
+        expect(8_i == Task1(test_games));
+        expect(2286_u == Task2(test_games));
 
-        Printer::Print(__FILE__, "1", Task1(std::ifstream{INPUT}));
-        //Printer::Print(__FILE__, "2", Calibrate2(std::ifstream{INPUT}));
+        auto games = Parse(std::ifstream{INPUT});
+        Printer::Print(__FILE__, "1", Task1(games));
+        Printer::Print(__FILE__, "2", Task2(games));
     };
 };
 
