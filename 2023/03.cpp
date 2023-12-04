@@ -127,7 +127,6 @@ private:
     }
 };
 
-using SchemeT = std::vector<std::string>;
 suite s = [] {
     "2023-03"_test = [] {
         const char *const TEST1 = R"(467..114..
