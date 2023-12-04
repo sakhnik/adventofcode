@@ -7,12 +7,11 @@ using namespace boost::ut;
 
 class Game
 {
-    uint64_t total{};
+    std::vector<int> wins;
 
 public:
     Game(std::istream &&is)
     {
-
         std::string line;
         while (getline(is, line))
         {
@@ -32,19 +31,35 @@ public:
                 winning.push_back(std::stoi(token));
             }
 
-            uint64_t points{};
+            int win_count{};
             while (iss >> token)
             {
                 if (is_winning(std::stoi(token)))
-                    !points ? points = 1 : points *= 2;
+                    ++win_count;
             }
-            total += points;
+            wins.push_back(win_count);
         }
     }
 
-    uint64_t GetTotal() const
+    uint32_t GetTotalPoints() const
     {
-        return total;
+        uint32_t points{};
+        for (int w : wins)
+            points += w ? (1ul << (w - 1)) : 0;
+        return points;
+    }
+
+    uint64_t GetTotalCopies() const
+    {
+        std::vector<uint64_t> counts(wins.size(), 1);
+        for (size_t i = 0; i < counts.size(); ++i)
+        {
+            for (int j = 1, jN = wins[i]; j <= jN && j < counts.size(); ++j)
+            {
+                counts[i + j] += counts[i];
+            }
+        }
+        return std::accumulate(counts.begin(), counts.end(), uint64_t{0});
     }
 };
 
@@ -58,12 +73,12 @@ Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36
 Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11
 )";
         Game test_game{std::istringstream{TEST1}};
-        expect(13_u == test_game.GetTotal());
-        //expect(467835_u == test_scheme.Task2());
+        expect(13_u == test_game.GetTotalPoints());
+        expect(30_u == test_game.GetTotalCopies());
 
         Game game{std::ifstream{INPUT}};
-        Printer::Print(__FILE__, "1", game.GetTotal());
-        //Printer::Print(__FILE__, "2", scheme.Task2());
+        Printer::Print(__FILE__, "1", game.GetTotalPoints());
+        Printer::Print(__FILE__, "2", game.GetTotalCopies());
     };
 };
 
