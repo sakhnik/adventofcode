@@ -29,11 +29,15 @@ public:
                 maps.emplace_back();
                 continue;
             }
-            Range range{};
+            Mapping mapping{};
             std::istringstream iss{line};
-            iss >> range.dst >> range.src >> range.len;
-            maps.back().ranges.push_back(range);
+            iss >> mapping.delta >> mapping.src >> mapping.len;
+            mapping.delta -= mapping.src;
+            maps.back().mappings.push_back(mapping);
         }
+
+        for (auto &m : maps)
+            m.Sort();
     }
 
     int64_t Task1() const
@@ -44,37 +48,119 @@ public:
         return min;
     }
 
+    int64_t Task2() const
+    {
+        int64_t min = std::numeric_limits<int64_t>::max();
+        for (int i = 0; i < seeds.size(); i += 2)
+            min = std::min(min, Map(Range{seeds[i], seeds[i+1]}));
+        return min;
+    }
+
 private:
     std::vector<int64_t> seeds;
 
     struct Range
     {
-        int64_t src{}, dst{}, len{};
+        int64_t src{}, len{};
+        bool operator<(const Range &o) const { return src < o.src; }
+        bool operator==(const Range &o) const { return src == o.src; }
     };
 
-    struct Ranges
+    struct Mapping : Range
     {
-        std::vector<Range> ranges;
+        int64_t delta{};
+    };
+
+    struct Mappings
+    {
+        std::vector<Mapping> mappings;
+
+        void Sort()
+        {
+            std::sort(mappings.begin(), mappings.end());
+        }
 
         int64_t Map(int64_t val) const
         {
-            for (const auto &range : ranges)
+            for (const auto &mapping : mappings)
             {
-                auto nv = val - range.src;
-                if (nv >= 0 && nv < range.len)
-                    return nv + range.dst;
+                auto nv = val - mapping.src;
+                if (nv >= 0 && nv < mapping.len)
+                    return val + mapping.delta;
             }
             return val;
         }
+
+        std::vector<Range> Map(Range range) const
+        {
+            std::vector<Range> res;
+
+            auto process = [&](Mapping m, auto &process_ref) {
+                if (m.src + m.len <= range.src)
+                    return true;
+                if (m.src >= range.src + range.len)
+                {
+                    res.push_back(range);
+                    return false;
+                }
+                if (m.src < range.src)
+                {
+                    auto d = range.src - m.src;
+                    return process_ref({{range.src, m.len - d}, m.delta}, process_ref);
+                }
+                if (m.src == range.src)
+                {
+                    auto cut = std::min(m.len, range.len);
+                    res.push_back({range.src + m.delta, cut});
+                    range.src += cut;
+                    range.len -= cut;
+                    return range.len != 0;
+                }
+                auto cut = m.src - range.src;
+                res.push_back({range.src, cut});
+                range.src += cut;
+                range.len -= cut;
+                return process_ref(m, process_ref);
+            };
+
+            for (const auto &mapping : mappings)
+            {
+                if (!process(mapping, process))
+                    break;
+            }
+            if (range.len)
+                res.push_back(range);
+
+            std::sort(res.begin(), res.end());
+            return res;
+        }
+
+        std::vector<Range> Map(const std::vector<Range> &ranges) const
+        {
+            std::vector<Range> res;
+            for (auto range : ranges)
+                for (auto r : Map(range))
+                    res.push_back(r);
+            std::sort(res.begin(), res.end());
+            return res;
+        }
     };
 
-    std::vector<Ranges> maps;
+    std::vector<Mappings> maps;
 
     int64_t Map(int64_t val) const
     {
-        for (auto &ranges : maps)
-            val = ranges.Map(val);
+        for (auto &mappings : maps)
+            val = mappings.Map(val);
         return val;
+    }
+
+    int64_t Map(Range range) const
+    {
+        std::vector ranges{range};
+        for (auto &mappings : maps)
+            ranges = mappings.Map(ranges);
+        return ranges[0].src;
     }
 };
 
@@ -116,11 +202,11 @@ humidity-to-location map:
 )";
         Almanac test_almanac{std::istringstream{TEST1}};
         expect(35_i == test_almanac.Task1());
-        //expect(30_u == test_game.GetTotalCopies());
+        expect(46_i == test_almanac.Task2());
 
         Almanac almanac{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", almanac.Task1());
-        //Printer::Print(__FILE__, "2", game.GetTotalCopies());
+        Printer::Print(__FILE__, "2", almanac.Task2());
     };
 };
 
