@@ -8,7 +8,7 @@ using namespace boost::ut;
 struct Course
 {
     int time{};
-    int distance{};
+    int64_t distance{};
 };
 
 class Race
@@ -19,17 +19,17 @@ public:
     {
     }
 
-    int CalcWins() const
+    int64_t CalcWins() const
     {
         std::cout << UpperBound() << std::endl;
         std::cout << LowerBound() << std::endl;
         return UpperBound() - LowerBound();
     }
 
-    static int Task1(int n, const Course *courses)
+    static int64_t Task1(size_t n, const Course *courses)
     {
-        int res{1};
-        for (int i = 0; i < n; ++i)
+        int64_t res{1};
+        for (size_t i = 0; i < n; ++i)
             res *= Race{courses[i]}.CalcWins();
         return res;
     }
@@ -37,24 +37,25 @@ public:
 private:
     Course _course;
 
-    int CalcDistance(int time) const
+    int64_t CalcDistance(int64_t time) const
     {
-        return time * (_course.time - time);
+        return static_cast<int64_t>(time) * (_course.time - time);
     }
 
-    int LowerBound() const
+    int64_t LowerBound() const
     {
-        auto times = std::ranges::iota_view(0, _course.time / 2);
-        auto it = std::upper_bound(times.begin(), times.end(), _course.distance,
-                [this](int a, int b) { return a < CalcDistance(b); });
+        auto times = std::views::iota(0, _course.time / 2);
+        // Dangerous application of operator<, this code may be implementation-dependent.
+        auto it = std::upper_bound(times.begin(), times.end(), -1,
+                [this](int a, int b) { return _course.distance < CalcDistance(b); });
         return *it;
     }
 
-    int UpperBound() const
+    int64_t UpperBound() const
     {
         auto times = std::ranges::iota_view(_course.time / 2, _course.time);
-        auto it = std::lower_bound(times.begin(), times.end(), _course.distance,
-                [this](int a, int b) { return CalcDistance(a) > b; });
+        auto it = std::lower_bound(times.begin(), times.end(), -1,
+                [this](int64_t a, int64_t b) { return CalcDistance(a) > _course.distance; });
         return *it;
     }
 };
@@ -66,10 +67,11 @@ suite s = [] {
         expect(8_i == Race{test_courses[1]}.CalcWins());
         expect(9_i == Race{test_courses[2]}.CalcWins());
         expect(288_i == Race::Task1(std::size(test_courses), test_courses));
+        expect(71503_i == Race{{71530, 940200ll}}.CalcWins());
 
         Course courses[] = {{42, 284}, {68, 1005}, {69, 1122}, {85, 1341}};
         Printer::Print(__FILE__, "1", Race::Task1(std::size(courses), courses));
-        //Printer::Print(__FILE__, "2", almanac.Task2());
+        Printer::Print(__FILE__, "2", Race{{42686985ll, 284100511221341ll}}.CalcWins());
     };
 };
 
