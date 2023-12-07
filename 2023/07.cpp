@@ -5,6 +5,33 @@ namespace {
 
 using namespace boost::ut;
 
+struct Values
+{
+    char NORMAL['Z'] = {0};
+    char JOKER['Z'] = {0};
+
+    Values()
+    {
+        for (int ch = '2'; ch <= '9'; ++ch)
+        {
+            NORMAL[ch] = ch;
+            JOKER[ch] = ch;
+        }
+        NORMAL[(int)'T'] = 'A';
+        NORMAL[(int)'J'] = 'B';
+        NORMAL[(int)'Q'] = 'C';
+        NORMAL[(int)'K'] = 'D';
+        NORMAL[(int)'A'] = 'E';
+        JOKER[(int)'T'] = 'A';
+        JOKER[(int)'J'] = '0';
+        JOKER[(int)'Q'] = 'C';
+        JOKER[(int)'K'] = 'D';
+        JOKER[(int)'A'] = 'E';
+    }
+
+} label_values;
+
+
 class Cards
 {
 public:
@@ -20,16 +47,24 @@ public:
     {
         Hand hand;
         while (is >> hand.card >> hand.bid)
-        {
-            hand.card = Normalize(hand.card);
             hands.push_back(hand);
-        }
     }
 
     int Task1()
     {
         std::sort(hands.begin(), hands.end(), [](const Hand &a, const Hand &b) {
             return CompareCards(a.card, b.card);
+        });
+        int sum{};
+        for (int i = 0; i < hands.size(); ++i)
+            sum += (i + 1) * hands[i].bid;
+        return sum;
+    }
+
+    int Task2()
+    {
+        std::sort(hands.begin(), hands.end(), [](const Hand &a, const Hand &b) {
+            return CompareCardsJoker(a.card, b.card);
         });
         int sum{};
         for (int i = 0; i < hands.size(); ++i)
@@ -48,24 +83,6 @@ public:
         FOUR_OF_A_KIND,
         FIVE_OF_A_KIND,
     };
-
-    static std::string Normalize(std::string card)
-    {
-        for (size_t i = 0; i < card.size(); ++i)
-        {
-            switch (card[i])
-            {
-            case 'T': card[i] = 'A'; break;
-            case 'J': card[i] = 'B'; break;
-            case 'Q': card[i] = 'C'; break;
-            case 'K': card[i] = 'D'; break;
-            case 'A': card[i] = 'E'; break;
-            case '2'...'9': break;
-            default: assert(false); break;
-            }
-        }
-        return card;
-    }
 
     static CardType GetType(const std::string &card)
     {
@@ -101,7 +118,45 @@ public:
             return true;
         if (typeA > typeB)
             return false;
-        return a < b;
+        for (int i = 0; i < 5; ++i)
+        {
+            auto va = label_values.NORMAL[(int)a[i]];
+            auto vb = label_values.NORMAL[(int)b[i]];
+            if (va < vb) return true;
+            if (va > vb) return false;
+        }
+        return false;
+    }
+
+    static bool CompareCardsJoker(std::string a, std::string b)
+    {
+        auto best_type = [](std::string card, auto &best_type) {
+            auto joker = card.find('J');
+            if (joker == card.npos)
+                return GetType(card);
+            CardType type = NOTHING;
+            static constexpr std::string labels = "23456789TQKA";
+            for (auto sub : labels)
+            {
+                card[joker] = sub;
+                type = std::max(type, best_type(card, best_type));
+            }
+            return type;
+        };
+        auto typeA = best_type(a, best_type);
+        auto typeB = best_type(b, best_type);
+        if (typeA < typeB)
+            return true;
+        if (typeA > typeB)
+            return false;
+        for (int i = 0; i < 5; ++i)
+        {
+            auto va = label_values.JOKER[(int)a[i]];
+            auto vb = label_values.JOKER[(int)b[i]];
+            if (va < vb) return true;
+            if (va > vb) return false;
+        }
+        return false;
     }
 };
 
@@ -123,11 +178,11 @@ QQQJA 483
 )";
         Cards test_cards{std::istringstream{TEST1}};
         expect(6440_i == test_cards.Task1());
-        //expect(46_i == test_almanac.Task2());
+        expect(5905_i == test_cards.Task2());
 
         Cards cards{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", cards.Task1());
-        //Printer::Print(__FILE__, "2", almanac.Task2());
+        Printer::Print(__FILE__, "2", cards.Task2());
     };
 };
 
