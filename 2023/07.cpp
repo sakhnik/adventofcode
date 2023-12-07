@@ -140,6 +140,9 @@ public:
             {
                 card[joker] = sub;
                 type = std::max(type, best_type(card, best_type));
+                // Break if the the best type has been achieved
+                if (type == FIVE_OF_A_KIND)
+                    break;
             }
             return type;
         };
