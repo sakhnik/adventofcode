@@ -52,14 +52,14 @@ public:
             if (std::adjacent_find(cur.begin(), cur.end(), std::not_equal_to<>()) == cur.end())
                 break;
         }
-        int backward{difs.back()[0]};
-        for (auto it = difs.rbegin(), it_end = difs.rend() - 1; it != it_end; ++it)
+        int forward{0};
+        int backward{0};
+        for (auto it = difs.rbegin(); it != difs.rend(); ++it)
         {
-            it->push_back(it->back());
-            (it+1)->push_back(it->back() + (it+1)->back());
-            backward = (*(it+1))[0] - backward;
+            forward += it->back();
+            backward = (*it)[0] - backward;
         }
-        return {difs[0].back(), backward};
+        return {forward, backward};
     }
 };
 
