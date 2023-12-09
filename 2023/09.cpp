@@ -10,7 +10,7 @@ class Mirage
 public:
     using NumsT = std::vector<int>;
 
-    int sum{};
+    int sum{}, backward{};
 
     Mirage(std::istream &&is)
     {
@@ -22,7 +22,9 @@ public:
             int num{};
             while (iss >> num)
                 nums.push_back(num);
-            sum += Extrapolate(nums);
+            auto res = Extrapolate(nums);
+            sum += res.first;
+            backward += res.second;
         }
     }
 
@@ -31,7 +33,12 @@ public:
         return sum;
     }
 
-    int Extrapolate(const NumsT &nums)
+    int Task2() const
+    {
+        return backward;
+    }
+
+    std::pair<int, int> Extrapolate(const NumsT &nums)
     {
         std::vector<NumsT> difs;
         difs.push_back(nums);
@@ -45,12 +52,14 @@ public:
             if (std::adjacent_find(cur.begin(), cur.end(), std::not_equal_to<>()) == cur.end())
                 break;
         }
+        int backward{difs.back()[0]};
         for (auto it = difs.rbegin(), it_end = difs.rend() - 1; it != it_end; ++it)
         {
             it->push_back(it->back());
             (it+1)->push_back(it->back() + (it+1)->back());
+            backward = (*(it+1))[0] - backward;
         }
-        return difs[0].back();
+        return {difs[0].back(), backward};
     }
 };
 
@@ -62,10 +71,11 @@ suite s = [] {
 )";
         Mirage test_mirage{std::istringstream{TEST1}};
         expect(114_i == test_mirage.Task1());
+        expect(2_i == test_mirage.Task2());
 
         Mirage mirage{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", mirage.Task1());
-        //Printer::Print(__FILE__, "2", map.Task2());
+        Printer::Print(__FILE__, "2", mirage.Task2());
     };
 };
 
