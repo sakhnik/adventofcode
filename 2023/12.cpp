@@ -25,7 +25,7 @@ struct Springs
                 runs.push_back(run);
                 iss.get();
             }
-            task1 += CountMatches(pattern, runs);
+            task1 += Counter{}.CountMatches(pattern, runs);
 
             std::string pattern2{pattern};
             std::string runs2{runs};
@@ -34,7 +34,7 @@ struct Springs
                 pattern2 += "?" + pattern;
                 runs2 += runs;
             }
-            task2 += CountMatches(pattern2, runs2);
+            task2 += Counter{}.CountMatches(pattern2, runs2);
         }
     }
 
@@ -48,49 +48,51 @@ struct Springs
         return task2;
     }
 
-    std::unordered_map<std::string, uint64_t> cache;
-
-    uint64_t CountMatches(std::string_view pattern, std::string_view runs)
+    struct Counter
     {
-        std::string key{pattern};
-        key.push_back('|');
-        key += runs;
+        std::unordered_map<uint32_t, uint64_t> cache;
 
-        auto it = cache.find(key);
-        if (it != cache.end())
-            return it->second;
-
-        while (pattern.front() == '.')
-            pattern = pattern.substr(1);
-
-        if (pattern.empty())
-            return runs.empty();
-
-        if (runs.empty())
-            return pattern.find('#') == pattern.npos;
-
-        uint64_t count{};
-        if (pattern.front() == '?')
-            count = CountMatches(pattern.substr(1), runs);
-
-        int num = runs.front();
-        if (pattern.size() < num)
-            return 0;
-
-        // Can we build a sequence long enough starting from the head of the pattern?
-        auto idx = pattern.substr(0, num).find_first_not_of("#?");
-        if (idx == pattern.npos) idx = num;
-        if (idx >= num)
+        uint64_t CountMatches(std::string_view pattern, std::string_view runs)
         {
-            if (idx == pattern.size())
-                count += CountMatches(pattern.substr(num), runs.substr(1));
-            else if (pattern[idx] == '.' || pattern[idx] == '?')
-                count += CountMatches(pattern.substr(num + 1), runs.substr(1));
-        }
+            uint32_t key = pattern.size() << 16;
+            key |= runs.size();
 
-        cache[key] = count;
-        return count;
-    }
+            auto it = cache.find(key);
+            if (it != cache.end())
+                return it->second;
+
+            while (pattern.front() == '.')
+                pattern = pattern.substr(1);
+
+            if (pattern.empty())
+                return runs.empty();
+
+            if (runs.empty())
+                return pattern.find('#') == pattern.npos;
+
+            uint64_t count{};
+            if (pattern.front() == '?')
+                count = CountMatches(pattern.substr(1), runs);
+
+            int num = runs.front();
+            if (pattern.size() < num)
+                return 0;
+
+            // Can we build a sequence long enough starting from the head of the pattern?
+            auto idx = pattern.substr(0, num).find_first_not_of("#?");
+            if (idx == pattern.npos) idx = num;
+            if (idx >= num)
+            {
+                if (idx == pattern.size())
+                    count += CountMatches(pattern.substr(num), runs.substr(1));
+                else if (pattern[idx] == '.' || pattern[idx] == '?')
+                    count += CountMatches(pattern.substr(num + 1), runs.substr(1));
+            }
+
+            cache[key] = count;
+            return count;
+        }
+    };
 };
 
 suite s = [] {
@@ -103,14 +105,14 @@ suite s = [] {
 ?###???????? 3,2,1
 )";
         Springs test1{std::istringstream{TEST1}};
-        expect(1_i == test1.CountMatches("??", ""));
-        expect(1_i == test1.CountMatches("???.###", "\1\1\3"));
-        expect(4_i == test1.CountMatches(".??..??...?##.", "\1\1\3"));
-        expect(1_i == test1.CountMatches("?#?#?#?#?#?#?#?", "\1\3\1\6"));
-        expect(1_i == test1.CountMatches("????.#...#...", "\4\1\1"));
-        expect(4_i == test1.CountMatches("????.######..#####.", "\1\6\5"));
-        expect(10_i == test1.CountMatches("???????", "\2\1"));
-        expect(10_i == test1.CountMatches("?###????????", "\3\2\1"));
+        expect(1_i == Springs::Counter{}.CountMatches("??", ""));
+        expect(1_i == Springs::Counter{}.CountMatches("???.###", "\1\1\3"));
+        expect(4_i == Springs::Counter{}.CountMatches(".??..??...?##.", "\1\1\3"));
+        expect(1_i == Springs::Counter{}.CountMatches("?#?#?#?#?#?#?#?", "\1\3\1\6"));
+        expect(1_i == Springs::Counter{}.CountMatches("????.#...#...", "\4\1\1"));
+        expect(4_i == Springs::Counter{}.CountMatches("????.######..#####.", "\1\6\5"));
+        expect(10_i == Springs::Counter{}.CountMatches("???????", "\2\1"));
+        expect(10_i == Springs::Counter{}.CountMatches("?###????????", "\3\2\1"));
         expect(21_i == test1.Task1());
         expect(525152_u == test1.Task2());
 
