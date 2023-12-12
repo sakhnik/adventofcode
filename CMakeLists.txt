@@ -23,7 +23,7 @@ foreach(year RANGE 2015 2022)
 endforeach()
 
 foreach(year RANGE 2023 2023)
-    foreach(src RANGE 1 11)
+    foreach(src RANGE 1 12)
         string(REGEX REPLACE "^(.)$" "0\\1" zero_src ${src})
         list(APPEND sources ${year}/${zero_src}.cpp)
         add_test(NAME ${year}-${zero_src} COMMAND ${CMAKE_BUILD_DIRECTORY}/aoc "${year}-${zero_src}*")
