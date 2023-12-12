@@ -8,6 +8,7 @@ using namespace boost::ut;
 struct Springs
 {
     int task1{};
+    uint64_t task2{};
 
     Springs(std::istream &&is)
     {
@@ -25,6 +26,15 @@ struct Springs
                 iss.get();
             }
             task1 += CountMatches(pattern, runs);
+
+            std::string pattern2{pattern};
+            std::string runs2{runs};
+            for (int i = 0; i < 4; ++i)
+            {
+                pattern2 += "?" + pattern;
+                runs2 += runs;
+            }
+            task2 += CountMatches(pattern2, runs2);
         }
     }
 
@@ -33,8 +43,23 @@ struct Springs
         return task1;
     }
 
-    static int CountMatches(std::string_view pattern, std::string_view runs)
+    uint64_t Task2() const
     {
+        return task2;
+    }
+
+    std::unordered_map<std::string, uint64_t> cache;
+
+    uint64_t CountMatches(std::string_view pattern, std::string_view runs)
+    {
+        std::string key{pattern};
+        key.push_back('|');
+        key += runs;
+
+        auto it = cache.find(key);
+        if (it != cache.end())
+            return it->second;
+
         while (pattern.front() == '.')
             pattern = pattern.substr(1);
 
@@ -44,7 +69,7 @@ struct Springs
         if (runs.empty())
             return pattern.find('#') == pattern.npos;
 
-        int count{};
+        uint64_t count{};
         if (pattern.front() == '?')
             count = CountMatches(pattern.substr(1), runs);
 
@@ -63,6 +88,7 @@ struct Springs
                 count += CountMatches(pattern.substr(num + 1), runs.substr(1));
         }
 
+        cache[key] = count;
         return count;
     }
 };
@@ -77,21 +103,20 @@ suite s = [] {
 ?###???????? 3,2,1
 )";
         Springs test1{std::istringstream{TEST1}};
-        expect(1_i == Springs::CountMatches("??", ""));
-        expect(1_i == Springs::CountMatches("???.###", "\1\1\3"));
-        expect(4_i == Springs::CountMatches(".??..??...?##.", "\1\1\3"));
-        expect(1_i == Springs::CountMatches("?#?#?#?#?#?#?#?", "\1\3\1\6"));
-        expect(1_i == Springs::CountMatches("????.#...#...", "\4\1\1"));
-        expect(4_i == Springs::CountMatches("????.######..#####.", "\1\6\5"));
-        expect(10_i == Springs::CountMatches("???????", "\2\1"));
-        expect(10_i == Springs::CountMatches("?###????????", "\3\2\1"));
+        expect(1_i == test1.CountMatches("??", ""));
+        expect(1_i == test1.CountMatches("???.###", "\1\1\3"));
+        expect(4_i == test1.CountMatches(".??..??...?##.", "\1\1\3"));
+        expect(1_i == test1.CountMatches("?#?#?#?#?#?#?#?", "\1\3\1\6"));
+        expect(1_i == test1.CountMatches("????.#...#...", "\4\1\1"));
+        expect(4_i == test1.CountMatches("????.######..#####.", "\1\6\5"));
+        expect(10_i == test1.CountMatches("???????", "\2\1"));
+        expect(10_i == test1.CountMatches("?###????????", "\3\2\1"));
         expect(21_i == test1.Task1());
-        //expect(1030_i == test1.Impl(10));
-        //expect(8410_i == test1.Impl(100));
+        expect(525152_u == test1.Task2());
 
         Springs springs{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", springs.Task1());
-        //Printer::Print(__FILE__, "2", cosmos.Impl(1000000));
+        Printer::Print(__FILE__, "2", springs.Task2());
     };
 };
 
