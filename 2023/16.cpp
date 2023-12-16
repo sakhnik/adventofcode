@@ -16,7 +16,7 @@ struct Mirrors
             map.push_back(line);
     }
 
-    int Task1() const
+    int Energize(int start_row, int start_col, int start_dir) const
     {
         std::vector<std::vector<int>> energized(map.size(), std::vector<int>(map[0].size(), 0));
 
@@ -63,7 +63,7 @@ struct Mirrors
                 break;
             }
         };
-        track(0, 0, 0, track);
+        track(start_row, start_col, start_dir, track);
 
         int sum{};
         for (int row = 0; row < energized.size(); ++row)
@@ -75,6 +75,29 @@ struct Mirrors
             }
         }
         return sum;
+    }
+
+    int Task1() const
+    {
+        return Energize(0, 0, 0);
+    }
+
+    int Task2() const
+    {
+        auto map_width = map[0].size();
+
+        int max{};
+        for (int row = 0; row < map.size(); ++row)
+        {
+            max = std::max(max, Energize(row, 0, 0));
+            max = std::max(max, Energize(row, map_width - 1, 2));
+        }
+        for (int col = 0; col < map[0].size(); ++col)
+        {
+            max = std::max(max, Energize(0, col, 1));
+            max = std::max(max, Energize(map.size() - 1, col, 3));
+        }
+        return max;
     }
 };
 
@@ -93,11 +116,11 @@ suite s = [] {
 )";
         Mirrors test1{std::istringstream{TEST1}};
         expect(46_i == test1.Task1());
-        //expect(145_i == test1.Task2());
+        expect(51_i == test1.Task2());
 
         Mirrors mirrors{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", mirrors.Task1());
-        //Printer::Print(__FILE__, "2", hash.Task2());
+        Printer::Print(__FILE__, "2", mirrors.Task2());
     };
 };
 
