@@ -17,7 +17,7 @@ struct Map
             map.push_back(line);
     }
 
-    int Task1() const
+    int Search(int min, int max) const
     {
         const auto height = map.size();
         const auto width = map[0].size();
@@ -50,12 +50,12 @@ struct Map
         };
 
         std::priority_queue<Edge> q;
-        q.push({{0, 0, 0, 0}, 0});
+        q.push({{0, 0, -1, 0}, 0});
         while (!q.empty())
         {
             auto e = q.top();
             q.pop();
-            if (e.row == height - 1 && e.col == width - 1)
+            if (e.row == height - 1 && e.col == width - 1 && e.streak >= min)
                 return e.dist;
 
             if (visited.count(e))
@@ -65,8 +65,12 @@ struct Map
             auto tryGo = [&](int row, int col, int new_dir) {
                 if (row < 0 || row >= height) return;
                 if (col < 0 || col >= width) return;
-                if (e.dir == new_dir && e.streak >= 3) return;
-                if (new_dir == (e.dir + 2) % 4) return;
+                if (e.streak >= max && e.dir == new_dir) return;
+                if (e.dir != -1)
+                {
+                    if (e.streak < min && e.dir != new_dir) return;
+                    if (new_dir == (e.dir + 2) % 4) return;
+                }
 
                 auto new_dist = e.dist + (map[row][col] - '0');
                 Edge edge{{row, col, new_dir, e.dir == new_dir ? e.streak + 1 : 1}, new_dist};
@@ -80,6 +84,16 @@ struct Map
         }
 
         return -1;
+    }
+
+    int Task1() const
+    {
+        return Search(1, 3);
+    }
+
+    int Task2() const
+    {
+        return Search(4, 10);
     }
 };
 
@@ -101,11 +115,20 @@ suite s = [] {
 )";
         Map test1{std::istringstream{TEST1}};
         expect(102_i == test1.Task1());
-        //expect(51_i == test1.Task2());
+        expect(94_i == test1.Task2());
+
+        const char *const TEST2 = R"(111111111111
+999999999991
+999999999991
+999999999991
+999999999991
+)";
+        Map test2{std::istringstream{TEST2}};
+        expect(71_i == test2.Task2());
 
         Map map{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", map.Task1());
-        //Printer::Print(__FILE__, "2", map.Task2());
+        Printer::Print(__FILE__, "2", map.Task2());
     };
 };
 
