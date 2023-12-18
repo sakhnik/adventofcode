@@ -1,6 +1,5 @@
 #include "../test.hpp"
 #include <fstream>
-#include <boost/functional/hash.hpp>
 
 namespace {
 
@@ -8,94 +7,55 @@ using namespace boost::ut;
 
 struct Lagoon
 {
-    std::vector<std::string> map;
-    struct Pos
+    struct AreaCalculator
     {
-        int x{}, y{};
-        bool operator==(const Pos &o) const = default;
-    };
-    static constexpr const auto posHash = [](Pos p) {
-        size_t seed = p.x;
-        boost::hash_combine(seed, p.y);
-        return seed;
-    };
-    std::unordered_set<Pos, decltype(posHash)> lagoon{0, posHash};
+        int64_t area{};
+        int64_t perimeter{};
+        int64_t x{}, y{};
 
-    Lagoon(std::istream &&is)
-    {
-        Pos pos{};
-        lagoon.insert(pos);
-        decltype(lagoon) rims[2] = {};
-
-        char dir{};
-        std::string scolour;
-        int count{};
-        while (is >> dir >> count >> scolour)
+        void AddSection(char dir, int64_t count)
         {
+            perimeter += count;
             switch (dir)
             {
-            case 'U':
-                while (count--)
-                {
-                    --pos.y;
-                    lagoon.insert(pos);
-                    rims[0].insert({pos.x - 1, pos.y});
-                    rims[1].insert({pos.x + 1, pos.y});
-                }
-                break;
-            case 'D':
-                while (count--)
-                {
-                    ++pos.y;
-                    lagoon.insert(pos);
-                    rims[0].insert({pos.x + 1, pos.y});
-                    rims[1].insert({pos.x - 1, pos.y});
-                }
-                break;
-            case 'L':
-                while (count--)
-                {
-                    --pos.x;
-                    lagoon.insert(pos);
-                    rims[0].insert({pos.x, pos.y + 1});
-                    rims[1].insert({pos.x, pos.y - 1});
-                }
-                break;
-            case 'R':
-                while (count--)
-                {
-                    ++pos.x;
-                    lagoon.insert(pos);
-                    rims[0].insert({pos.x, pos.y - 1});
-                    rims[0].insert({pos.x, pos.y + 1});
-                }
-                break;
+            case 'U': y -= count; break;
+            case 'D': y += count; break;
+            case 'L': area -= y * count; break;
+            case 'R': area += y * count; break;
             }
         }
 
-        // The inner part is smaller than the outer
-        auto &q = rims[0].size() < rims[1].size() ? rims[0] : rims[1];
-        while (!q.empty())
+        int64_t GetResult() const
         {
-            auto cur_pos = *q.begin();
-            q.erase(q.begin());
-            if (lagoon.count(cur_pos))
-                continue;
-            lagoon.insert(cur_pos);
-            auto enqueue = [&](Pos p) {
-                if (!lagoon.count(p))
-                    q.insert(p);
-            };
-            enqueue({cur_pos.x + 1, cur_pos.y});
-            enqueue({cur_pos.x - 1, cur_pos.y});
-            enqueue({cur_pos.x, cur_pos.y + 1});
-            enqueue({cur_pos.x, cur_pos.y - 1});
+            // https://en.wikipedia.org/wiki/Pick's_theorem
+            return std::abs(area) + perimeter / 2 + 1;
+        }
+    };
+
+    AreaCalculator task1, task2;
+
+    Lagoon(std::istream &&is)
+    {
+        char dir{};
+        std::string colour;
+        int count{};
+        while (is >> dir >> count >> colour)
+        {
+            task1.AddSection(dir, count);
+            int count2 = std::stoi(colour.substr(2, 5), nullptr, 16);
+            const char *const DIR = "RDLU";
+            task2.AddSection(DIR[colour[7] - '0'], count2);
         }
     }
 
     int Task1() const
     {
-        return lagoon.size();
+        return task1.GetResult();
+    }
+
+    int64_t Task2() const
+    {
+        return task2.GetResult();
     }
 };
 
@@ -118,11 +78,11 @@ U 2 (#7a21e3)
 )";
         Lagoon test1{std::istringstream{TEST1}};
         expect(62_i == test1.Task1());
-        //expect(94_i == test1.Task2());
+        expect(eq(952408144115ll, test1.Task2()));
 
         Lagoon lagoon{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", lagoon.Task1());
-        //Printer::Print(__FILE__, "2", lagoon.Task2());
+        Printer::Print(__FILE__, "2", lagoon.Task2());
     };
 };
 
