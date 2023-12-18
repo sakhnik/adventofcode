@@ -66,7 +66,7 @@ struct Map
                 if (row < 0 || row >= height) return;
                 if (col < 0 || col >= width) return;
                 if (e.streak >= max && e.dir == new_dir) return;
-                if (e.dir != -1)
+                if (e.streak)
                 {
                     if (e.streak < min && e.dir != new_dir) return;
                     if (new_dir == (e.dir + 2) % 4) return;
@@ -74,7 +74,8 @@ struct Map
 
                 auto new_dist = e.dist + (map[row][col] - '0');
                 Edge edge{{row, col, new_dir, e.dir == new_dir ? e.streak + 1 : 1}, new_dist};
-                q.push(edge);
+                if (!visited.count(edge))
+                    q.push(edge);
             };
 
             tryGo(e.row, e.col + 1, 0);
