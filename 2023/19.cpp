@@ -16,30 +16,26 @@ struct Workflows
             return std::accumulate(params.begin(), params.end(), 0, [](int a, const auto &p) { return a + p.second; });
         }
     };
+    std::vector<Part> parts;
 
-    using EvalT = std::function<bool(const Part &p)>;
-    std::unordered_map<std::string, EvalT> rules;
-
-    int task1{};
+    struct Condition
+    {
+        char field{};
+        char op{};
+        int val{};
+        std::string next;
+    };
+    using ConditionsT = std::vector<Condition>;
+    std::unordered_map<std::string, ConditionsT> rules;
 
     Workflows(std::istream &&is)
     {
-        rules["A"] = [](const Part &p) { return true; };
-        rules["R"] = [](const Part &p) { return false; };
-
         std::string line;
         while (getline(is, line))
         {
             if (line.empty())
                 break;
 
-            struct Condition
-            {
-                char field{};
-                char op{};
-                int val{};
-                std::string next;
-            };
             std::vector<Condition> conditions;
 
             auto idx = line.find('{');
@@ -70,20 +66,48 @@ struct Workflows
                 }
             }
 
-            rules[name] = [=, this](const Part &p) {
-                for (auto &condition : conditions)
+            rules[name] = std::move(conditions);
+        }
+
+        while (getline(is, line))
+        {
+            line = line.substr(1, line.size() - 2);
+            std::istringstream iss{line};
+            Part part;
+            std::string def;
+            while (getline(iss, def, ','))
+            {
+                char field = def[0];
+                int val = std::stoi(std::string{def.substr(2)});
+                part.params[field] = val;
+            }
+            parts.push_back(part);
+        }
+    }
+
+    int Task1() const
+    {
+        using EvalT = std::function<bool(const Part &p)>;
+        std::unordered_map<std::string, EvalT> evals;
+        evals["A"] = [](const Part &p) { return true; };
+        evals["R"] = [](const Part &p) { return false; };
+
+        for (const auto &rule : rules)
+        {
+            evals[rule.first] = [&](const Part &p) {
+                for (auto &condition : rule.second)
                 {
                     switch (condition.op)
                     {
                     case 0:
-                        return rules.at(condition.next)(p);
+                        return evals.at(condition.next)(p);
                     case '<':
                         if (p.params.at(condition.field) < condition.val)
-                            return rules.at(condition.next)(p);
+                            return evals.at(condition.next)(p);
                         break;
                     case '>':
                         if (p.params.at(condition.field) > condition.val)
-                            return rules.at(condition.next)(p);
+                            return evals.at(condition.next)(p);
                         break;
                     }
                 }
@@ -92,24 +116,64 @@ struct Workflows
             };
         }
 
-        while (getline(is, line))
+        int sum{};
+        for (const auto &p : parts)
         {
-            line = line.substr(1, line.size() - 2);
-            std::istringstream iss{line};
-            Part p;
-            std::string def;
-            while (getline(iss, def, ','))
-            {
-                char field = def[0];
-                int val = std::stoi(std::string{def.substr(2)});
-                p.params[field] = val;
-            }
-            if (rules.at("in")(p))
-                task1 += p.GetSum();
+            if (evals.at("in")(p))
+                sum += p.GetSum();
         }
+        return sum;
     }
 
-    int Task1() const { return task1; }
+    using RangeT = std::pair<int64_t, int64_t>;
+    using RangesT = std::unordered_map<char, RangeT>;
+
+    int64_t Task2Impl(std::string name, RangesT ranges) const
+    {
+        if (name == "R")
+            return 0;
+        if (name == "A")
+        {
+            auto rx = ranges.at('x');
+            auto rm = ranges.at('m');
+            auto ra = ranges.at('a');
+            auto rs = ranges.at('s');
+            return (rx.second - rx.first + 1) * (rm.second - rm.first + 1) * (ra.second - ra.first + 1) * (rs.second - rs.first + 1);
+        }
+
+        int64_t sum{};
+        for (const auto &condition : rules.at(name))
+        {
+            if (!condition.op)
+            {
+                sum += Task2Impl(condition.next, ranges);
+                continue;
+            }
+            auto range = ranges.at(condition.field);
+            if (range.first < condition.val && condition.val < range.second)
+            {
+                RangesT new_ranges{ranges};
+                if (condition.op == '<')
+                {
+                    new_ranges[condition.field].second = condition.val - 1;
+                    ranges[condition.field].first = condition.val;
+                }
+                else
+                {
+                    new_ranges[condition.field].first = condition.val + 1;
+                    ranges[condition.field].second = condition.val;
+                }
+                sum += Task2Impl(condition.next, new_ranges);
+            }
+        }
+        return sum;
+    }
+
+    int64_t Task2() const
+    {
+        RangesT ranges = {{'x', {1, 4000}}, {'m', {1, 4000}}, {'a', {1, 4000}}, {'s', {1, 4000}}};
+        return Task2Impl("in", ranges);
+    }
 };
 
 suite s = [] {
@@ -134,11 +198,11 @@ hdj{m>838:A,pv}
 )";
         Workflows test1{std::istringstream{TEST1}};
         expect(19114_i == test1.Task1());
-        //expect(eq(952408144115ll, test1.Task2()));
+        expect(eq(167409079868000ll, test1.Task2()));
 
         Workflows task{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", task.Task1());
-        //Printer::Print(__FILE__, "2", task.Task2());
+        Printer::Print(__FILE__, "2", task.Task2());
     };
 };
 
