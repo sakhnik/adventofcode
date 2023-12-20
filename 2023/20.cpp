@@ -41,8 +41,6 @@ struct Pulses
                     it = modules.insert({out, std::make_unique<Module>()}).first;
                 ++(it->second)->input_count;
             }
-
-        pulse_counters.fill(0);
     }
 
     struct Signal
@@ -53,7 +51,9 @@ struct Pulses
     };
 
     std::queue<Signal> signals;
-    std::array<size_t, 2> pulse_counters{};
+    using PulseCountersT = std::array<size_t, 2>;
+    PulseCountersT pulse_counters{};
+    std::unordered_map<std::string, PulseCountersT> module_pulse_counters;
 
     void Enqueue(Signal signal)
     {
@@ -74,6 +74,7 @@ struct Pulses
             {
                 Signal output{signal.to, "", pulse};
                 pulse_counters[pulse] += module->outputs.size();
+                ++module_pulse_counters[signal.to][pulse];
                 for (auto out : module->outputs)
                 {
                     output.to = out;
@@ -130,9 +131,26 @@ struct Pulses
         return pulse_counters[0] * pulse_counters[1];
     }
 
-    int64_t Task2() const
+    int64_t Task2()
     {
-        return 0;
+        // (&hn, &mp, &xf, &fz) -> &xn -> rx
+        std::vector<std::string> targets{"hn", "mp", "xf", "fz"};
+        std::unordered_map<std::string, size_t> periods;
+        for (int i = 1000; periods.size() < targets.size(); ++i)
+        {
+            Enqueue({"button", "broadcaster", false});
+            Process();
+            for (const auto &m : targets)
+            {
+                auto &highs = module_pulse_counters.at(m)[1];
+                if (highs && !periods.count(m))
+                    periods[m] = i + 1;
+            }
+        }
+        size_t res{1};
+        for (auto p : periods)
+            res = std::lcm(res, p.second);
+        return res;
     }
 };
 
@@ -158,7 +176,7 @@ suite s = [] {
 
         Pulses task{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", task.Task1());
-        //Printer::Print(__FILE__, "2", task.Task2());
+        Printer::Print(__FILE__, "2", task.Task2());
     };
 };
 
