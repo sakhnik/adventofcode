@@ -119,6 +119,9 @@ struct Bricks
 
     int Crumble(int i)
     {
+        // After the task has been solved, I realized that we only care about the relations between boxes.
+        // It'd be more efficient to precompute the supporting and supported boxes for every box.
+ 
         std::unordered_set<int> to_disintegrate = {i};
         auto zorder = [this](int a, int b) {
             return bricks[a][0][2] > bricks[b][0][2];
