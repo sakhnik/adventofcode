@@ -2,6 +2,7 @@
 #include <fstream>
 #include <boost/rational.hpp>
 #include <boost/multiprecision/gmp.hpp>
+#include <boost/process.hpp>
 
 namespace {
 
@@ -82,11 +83,18 @@ struct Snowstorm
         auto det = CalcDeterminant(a, b, c, d);
         if (det == 0)
             return {};
-        // Workaround boost::rational bug when denominator is negative
-        int sign = det < 0 ? -1 : 1;
         std::vector<R> res;
-        res.push_back(R{sign * CalcDeterminant(e, b, f, d), sign * det});
-        res.push_back(R{sign * CalcDeterminant(a, e, c, f), sign * det});
+        // Workaround boost::rational bug when denominator is negative
+        if (det < 0)
+        {
+            res.push_back(R{-CalcDeterminant(e, b, f, d), -det});
+            res.push_back(R{-CalcDeterminant(a, e, c, f), -det});
+        }
+        else
+        {
+            res.push_back(R{CalcDeterminant(e, b, f, d), det});
+            res.push_back(R{CalcDeterminant(a, e, c, f), det});
+        }
         return res;
     }
 
@@ -110,9 +118,71 @@ struct Snowstorm
         return count;
     }
 
-    int Task2()
+    std::string Task2()
     {
-        return 0;
+        // Use maxima to solve (life is too short to code in C++)
+        // Unknowns: x, y, z, vx, vy, vz
+        // One hailstone adds an unknown time of collision, but add three equations for x, y, z
+        // Three hailstones result in 9 equations with 9 unknowns.
+        // eqns : [
+        //     19 - 2 * t1 = x + vx * t1,
+        //     13 + 1 * t1 = y + vy * t1,
+        //     30 - 2 * t1 = z + vz * t1,
+        // 
+        //     18 - 1 * t2 = x + vx * t2,
+        //     19 - 1 * t2 = y + vy * t2,
+        //     22 - 2 * t2 = z + vz * t2,
+        // 
+        //     20 - 2 * t3 = x + vx * t3,
+        //     25 - 2 * t3 = y + vy * t3,
+        //     34 - 4 * t3 = z + vz * t3
+        // ];
+        // 
+        // solve(eqns, [x, y, z, vx, vy, vz, t1, t2, t3]);
+        std::ostringstream oss;
+        oss << "eqns: [\n";
+        const char *delim = "";
+        for (int i = 0; i < 3; ++i)
+        {
+            const auto &h = lines[i];
+            for (int j = 0; j < 3; ++j)
+            {
+                oss << delim;
+                delim = ",\n";
+                oss << "    " << h.pos[j] << " + " << "(" << h.slope[j] << ") * t" << i << " = x" << j << " + v" << j << " * t" << i;
+            }
+        }
+        oss << "\n];\n";
+        oss << "roots: solve(eqns, [x0, x1, x2, v0, v1, v2, t0, t1, t2]);\n";
+        oss << "res: ev(x0 + x1 + x2, roots);\n";
+        //std::cerr << oss.str() << std::endl;
+
+        const char *const fname = "/tmp/hailstorm.maxima";
+        {
+            std::ofstream ofs(fname);
+            ofs << oss.str();
+        }
+
+        namespace bp = boost::process;
+
+        std::string command = "maxima --very-quiet --batch=";
+        command += fname;
+
+        bp::ipstream pipe_stream;
+        bp::child process(command, bp::std_out > pipe_stream);
+
+        // Get the last line of the output
+        std::vector<std::string> lines;
+        std::string line;
+        while (std::getline(pipe_stream, line))
+            lines.push_back(line);
+        process.wait();
+
+        // The penultimate line
+        std::string res = lines[lines.size() - 2];
+        auto idx = res.find_first_not_of(' ');
+        res = res.erase(0, idx);
+        return res;
     }
 };
 
@@ -126,11 +196,11 @@ suite s = [] {
 )";
         Snowstorm test1{std::istringstream{TEST1}};
         expect(2_i == test1.Task1(7, 27));
-        //expect(154_i == test1.Task2());
+        expect("47" == test1.Task2());
 
         Snowstorm task{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", task.Task1(200000000000000ll, 400000000000000ll));
-        //Printer::Print(__FILE__, "2", task.Task2());
+        Printer::Print(__FILE__, "2", task.Task2());
     };
 };
 
