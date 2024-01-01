@@ -118,6 +118,7 @@ struct Snowstorm
         return count;
     }
 
+#ifndef NO_MAXIMA
     std::string Task2()
     {
         // Use maxima to solve (life is too short to code in C++)
@@ -184,6 +185,7 @@ struct Snowstorm
         res = res.erase(0, idx);
         return res;
     }
+#endif //NO_MAXIMA
 };
 
 suite s = [] {
@@ -196,12 +198,16 @@ suite s = [] {
 )";
         Snowstorm test1{std::istringstream{TEST1}};
         expect(2_i == test1.Task1(7, 27));
+#ifndef NO_MAXIMA
         expect("47" == test1.Task2());
+#endif
 
         Snowstorm task{std::ifstream{INPUT}};
         if (Printer::EnableAll())
             Printer::Print(__FILE__, "1", task.Task1(200000000000000ll, 400000000000000ll));
+#ifndef NO_MAXIMA
         Printer::Print(__FILE__, "2", task.Task2());
+#endif
     };
 };
 

@@ -135,7 +135,7 @@ public:
             if (joker == card.npos)
                 return GetType(card);
             CardType type = NOTHING;
-            static constexpr std::string labels = "23456789TQKA";
+            static constexpr const std::string_view labels = "23456789TQKA";
             for (auto sub : labels)
             {
                 card[joker] = sub;

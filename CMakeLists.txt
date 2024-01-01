@@ -4,13 +4,17 @@ include(FetchContent)
 FetchContent_Declare(
     ut
     GIT_REPOSITORY "https://github.com/boost-ext/ut"
-    GIT_TAG "v2.0.0"
+    GIT_TAG "v2.0.1"
 )
 FetchContent_MakeAvailable(ut)
 
 project(AdventOfCode)
 find_package(Threads)
-find_program(MAXIMA maxima REQUIRED)
+find_program(MAXIMA maxima)
+if(NOT MAXIMA)
+    message(STATUS "Maxima not found for computer algebra, will disable 2023-24")
+    add_definitions(-DNO_MAXIMA)
+endif()
 
 enable_testing()
 

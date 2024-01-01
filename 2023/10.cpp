@@ -98,11 +98,11 @@ private:
     };
     Pos start;
     int loop_dir{};
-    static constexpr std::string PIPES = "|-LF7J";
+    static constexpr const std::string_view PIPES = "|-LF7J";
     // Assumed directions: ↑ = 0, → = 1, ↓ = 2, ← = 3
-    static constexpr const std::string ENTRIES[6] = {{0, 2}, {1, 3}, {2, 3}, {3, 0}, {0, 1}, {1, 2}};
-    static constexpr const std::string EXITS[6] = {{0, 2}, {1, 3}, {1, 0}, {2, 1}, {3, 2}, {0, 3}};
-    static constexpr const std::string MOVE_ROW = {-1, 0, 1, 0}, MOVE_COL = {0, 1, 0, -1};
+    static constexpr const int ENTRIES[6][2] = {{0, 2}, {1, 3}, {2, 3}, {3, 0}, {0, 1}, {1, 2}};
+    static constexpr const int EXITS[6][2] = {{0, 2}, {1, 3}, {1, 0}, {2, 1}, {3, 2}, {0, 3}};
+    static constexpr const int MOVE_ROW[4] = {-1, 0, 1, 0}, MOVE_COL[4] = {0, 1, 0, -1};
 
     bool CheckPos(const Pos &pos) const
     {
@@ -119,9 +119,13 @@ private:
         if (pipe_idx == PIPES.npos)
             return false;
         auto entries = ENTRIES[pipe_idx];
-        auto entry_idx = entries.find(pos.dir);
-        if (entry_idx == entries.npos)
-            return false;
+        auto entry_idx = -1;
+	if (entries[0] == pos.dir)
+	    entry_idx = 0;
+	else if (entries[1] == pos.dir)
+	    entry_idx = 1;
+	else
+	    return false;
         auto exits = EXITS[pipe_idx];
         pos.dir = exits[entry_idx];
         Move(pos);
