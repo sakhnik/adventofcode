@@ -10,6 +10,8 @@ FetchContent_MakeAvailable(ut)
 
 project(AdventOfCode)
 find_package(Threads)
+find_program(MAXIMA maxima)
+
 enable_testing()
 
 list(APPEND sources main.cpp)
