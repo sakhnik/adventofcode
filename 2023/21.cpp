@@ -115,24 +115,27 @@ struct Garden
 
 suite s = [] {
     "2023-21"_test = [] {
-//        const char *const TEST1 = R"(...........
-//.....###.#.
-//.###.##..#.
-//..#.#...#..
-//....#.#....
-//.##..S####.
-//.##..#...#.
-//.......##..
-//.##.#.####.
-//.##..##.##.
-//...........
-//)";
-        //Garden test1{std::istringstream{TEST1}};
-        //expect(16_i == test1.Task1(6));
+        const char *const TEST1 = R"(...........
+.....###.#.
+.###.##..#.
+..#.#...#..
+....#.#....
+.##..S####.
+.##..#...#.
+.......##..
+.##.#.####.
+.##..##.##.
+...........
+)";
+        Garden test1{std::istringstream{TEST1}};
+        expect(16_i == test1.Task1(6));
 
-        Garden task{std::ifstream{INPUT}};
-        Printer::Print(__FILE__, "1", task.Task1(64));
-        Printer::Print(__FILE__, "2", task.Task2());
+        if (Printer::EnableAll())
+        {
+            Garden task{std::ifstream{INPUT}};
+            Printer::Print(__FILE__, "1", task.Task1(64));
+            Printer::Print(__FILE__, "2", task.Task2());
+        }
     };
 };
 

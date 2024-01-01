@@ -199,7 +199,8 @@ suite s = [] {
         expect("47" == test1.Task2());
 
         Snowstorm task{std::ifstream{INPUT}};
-        Printer::Print(__FILE__, "1", task.Task1(200000000000000ll, 400000000000000ll));
+        if (Printer::EnableAll())
+            Printer::Print(__FILE__, "1", task.Task1(200000000000000ll, 400000000000000ll));
         Printer::Print(__FILE__, "2", task.Task2());
     };
 };

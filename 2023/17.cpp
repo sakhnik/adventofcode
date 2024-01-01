@@ -129,7 +129,8 @@ suite s = [] {
 
         Map map{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", map.Task1());
-        Printer::Print(__FILE__, "2", map.Task2());
+        if (Printer::EnableAll())
+            Printer::Print(__FILE__, "2", map.Task2());
     };
 };
 

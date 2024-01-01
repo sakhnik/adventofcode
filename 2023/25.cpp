@@ -78,8 +78,11 @@ frs: qnr lhk lsr
         Partition test1{std::istringstream{TEST1}};
         expect(54_i == test1.Task1());
 
-        Partition task{std::ifstream{INPUT}};
-        Printer::Print(__FILE__, "1", task.Task1());
+        if (Printer::EnableAll())
+        {
+            Partition task{std::ifstream{INPUT}};
+            Printer::Print(__FILE__, "1", task.Task1());
+        }
     };
 };
 

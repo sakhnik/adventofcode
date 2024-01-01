@@ -244,7 +244,8 @@ suite s = [] {
 
         Bricks task{std::ifstream{INPUT}};
         Printer::Print(__FILE__, "1", task.Task1());
-        Printer::Print(__FILE__, "2", task.Task2());
+        if (Printer::EnableAll())
+            Printer::Print(__FILE__, "2", task.Task2());
     };
 };
 
