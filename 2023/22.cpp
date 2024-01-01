@@ -25,8 +25,10 @@ struct Bricks
             for (int i : {0, 1})
                 for (int j : {0, 1, 2})
                     iss >> brick[i][j];
+#ifndef NDEBUG
             for (int j : {0, 1, 2})
                 assert(brick[0][j] <= brick[1][j]);
+#endif
             bricks.push_back(brick);
         }
 
