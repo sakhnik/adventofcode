@@ -10,7 +10,7 @@ FetchContent_MakeAvailable(ut)
 
 project(AdventOfCode)
 find_package(Threads)
-find_program(MAXIMA maxima)
+find_program(MAXIMA maxima REQUIRED)
 
 enable_testing()
 
