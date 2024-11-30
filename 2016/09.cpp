@@ -92,7 +92,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-	"2016-09"_test = [] {
+	"09"_test = [] {
 		expect(eq(Decompress("ADVENT"), "ADVENT"s));
 		expect(eq(Decompress("A(1x5)BC"), "ABBBBBC"s));
 		expect(eq(Decompress("(3x3)XYZ"), "XYZXYZXYZ"s));

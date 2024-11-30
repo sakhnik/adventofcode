@@ -7,7 +7,7 @@ namespace {
 using namespace boost::ut;
 
 suite s = [] {
-    "2019-16"_test = [] {
+    "16"_test = [] {
         using MsgT = std::vector<int>;
 
         auto getInput = [](std::istream &is) {

@@ -49,7 +49,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-15"_test = [] {
+    "15"_test = [] {
         expect(436_i == Game{{0,3,6}}.Run(2020));
         expect(1_i == Game{{1,3,2}}.Run(2020));
         expect(10_i == Game{{2,1,3}}.Run(2020));

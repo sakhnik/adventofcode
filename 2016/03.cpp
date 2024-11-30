@@ -64,7 +64,7 @@ int Solve2(std::istream &&is)
 using namespace boost::ut;
 
 suite s = [] {
-	"2016-03"_test = [] {
+	"03"_test = [] {
 		Printer::Print(__FILE__, "1", Solve(std::ifstream{INPUT}));
 		Printer::Print(__FILE__, "2", Solve2(std::ifstream{INPUT}));
 	};

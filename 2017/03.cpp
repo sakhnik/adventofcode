@@ -94,7 +94,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-	"2017-03"_test = [] {
+	"03"_test = [] {
 		expect(1_u == Find(NumberIs{2}));
 		expect(2_u == Find(NumberIs{3}));
 		expect(1_u == Find(NumberIs{4}));

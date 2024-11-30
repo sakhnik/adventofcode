@@ -85,7 +85,7 @@ Result Calculate(std::istream &&is)
 }
 
 suite s = [] {
-    "2017-08"_test = [] {
+    "08"_test = [] {
         auto test = Calculate(std::istringstream(R"(b inc 5 if a > 1
 a inc 1 if b < 5
 c dec -10 if a >= 1

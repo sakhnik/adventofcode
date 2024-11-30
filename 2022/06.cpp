@@ -24,7 +24,7 @@ int FindStartOfPacket(int length, const std::string &message)
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-06"_test = [] {
+    "06"_test = [] {
         expect(5_i == FindStartOfPacket(4, "bvwbjplbgvbhsrlpgdmjqwftvncz"));
         expect(6_i == FindStartOfPacket(4, "nppdvjthqldpwncqszvftbrmjlhg"));
         expect(10_i == FindStartOfPacket(4, "nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"));

@@ -114,7 +114,7 @@ int Solve(const char *salt, int hash_count)
 using namespace boost::ut;
 
 suite s = [] {
-	"2016-14"_test = [] {
+	"14"_test = [] {
 		if (Printer::EnableAll())
 		{
 			expect(22728_i == Solve("abc", 1));

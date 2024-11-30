@@ -109,7 +109,7 @@ const char *const TEST = R"(1
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-20"_test = [] {
+    "20"_test = [] {
         Sequence test{std::istringstream{TEST}};
         expect(3_i == test.Task1());
         Sequence test2{std::istringstream{TEST}};

@@ -104,7 +104,7 @@ int Solve(std::istream &&is, std::initializer_list<int> init)
 }
 
 suite s = [] {
-	"2016-23"_test = [] {
+	"23"_test = [] {
 		const char *const test1 =
 			"cpy 41 a\n"
 			"inc a\n"

@@ -126,7 +126,7 @@ int FindClosestIntersection(const PathT &p1, const PathT &p2, FuncT func)
 using namespace boost::ut;
 
 suite s = [] {
-    "2019-03"_test = [] {
+    "03"_test = [] {
         expect(6_i == FindClosestIntersection(ParseInput("R8,U5,L5,D3"),
                                               ParseInput("U7,R6,D4,L4"),
                                               GetIntersection));

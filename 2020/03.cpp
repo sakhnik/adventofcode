@@ -40,7 +40,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-03"_test = [] {
+    "03"_test = [] {
         {
             const char *const TEST =
                 "..##.......\n"

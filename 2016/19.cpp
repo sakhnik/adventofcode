@@ -60,7 +60,7 @@ int Solve2(int count)
 using namespace boost::ut;
 
 suite s = [] {
-	"2016-19"_test = [] {
+	"19"_test = [] {
 		expect(3_i == Solve(5));
 		Printer::Print(__FILE__, "1", Solve(3004953));
 

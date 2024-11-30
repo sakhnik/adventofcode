@@ -128,7 +128,7 @@ private:
 };
 
 suite s = [] {
-    "2023-03"_test = [] {
+    "03"_test = [] {
         const char *const TEST1 = R"(467..114..
 ...*......
 ..35..633.

@@ -8,7 +8,7 @@ namespace {
 using namespace boost::ut;
 
 suite s = [] {
-    "2019-17"_test = [] {
+    "17"_test = [] {
         std::ifstream ifs{INPUT};
         IntCode prog{ifs};
 

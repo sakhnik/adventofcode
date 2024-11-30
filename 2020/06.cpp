@@ -57,7 +57,7 @@ int Count(std::istream &&is, std::function<void(std::string &, const std::string
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-06"_test = [] {
+    "06"_test = [] {
         const char *const TEST = R"(abc
 
 a

@@ -100,7 +100,7 @@ int Solve(std::istream &&is, std::initializer_list<int> init)
 using namespace boost::ut;
 
 suite s = [] {
-	"2016-12"_test = [] {
+	"12"_test = [] {
 		const char *const test =
 			"cpy 41 a\n"
 			"inc a\n"

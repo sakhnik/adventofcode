@@ -166,7 +166,7 @@ int Solve(std::istream &&is)
 }
 
 suite s = [] {
-	"2016-25"_test = [] {
+	"25"_test = [] {
 		Printer::Print(__FILE__, nullptr, Solve(std::ifstream{INPUT}));
 	};
 };

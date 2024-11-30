@@ -136,7 +136,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2018-23"_test = [] {
+    "23"_test = [] {
         {
             const char *const TEST =
                 "pos=<0,0,0>, r=4\n"

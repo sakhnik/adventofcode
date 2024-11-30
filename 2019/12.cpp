@@ -119,7 +119,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2019-12"_test = [] {
+    "12"_test = [] {
         {
             Moons test1({{-1, 0, 2}, {2, -10, -7}, {4, -8, 8}, {3, 5, -1}});
             test1.Simulate(10);

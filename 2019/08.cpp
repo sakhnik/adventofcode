@@ -7,7 +7,7 @@ namespace {
 using namespace boost::ut;
 
 suite s = [] {
-    "2019-08"_test = [] {
+    "08"_test = [] {
         const size_t WIDTH = 25;
         const size_t HEIGHT = 6;
 

@@ -122,7 +122,7 @@ Result Count(std::istream &&is)
 using namespace boost::ut;
 
 suite s = [] {
-    "2018-16"_test = [] {
+    "16"_test = [] {
         auto result = Count(std::ifstream{INPUT});
         Printer::Print(__FILE__, "1", result.task1);
         Printer::Print(__FILE__, "2", result.task2);

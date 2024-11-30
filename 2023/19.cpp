@@ -177,7 +177,7 @@ struct Workflows
 };
 
 suite s = [] {
-    "2023-19"_test = [] {
+    "19"_test = [] {
         const char *const TEST1 = R"(px{a<2006:qkq,m>2090:A,rfg}
 pv{a>1716:R,A}
 lnx{m>1548:A,A}

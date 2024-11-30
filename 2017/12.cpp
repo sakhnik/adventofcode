@@ -66,7 +66,7 @@ unsigned Count(const GraphT &graph)
 using namespace boost::ut;
 
 suite s = [] {
-    "2017-12"_test = [] {
+    "12"_test = [] {
         auto test_graph = ReadGraph(std::istringstream(R"(0 <-> 2
 1 <-> 1
 2 <-> 0, 3, 4

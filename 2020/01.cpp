@@ -55,7 +55,7 @@ public:
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-01"_test = [] {
+    "01"_test = [] {
         {
             Ledger l{std::istringstream{"1721\n979\n366\n299\n675\n1456"}};
             expect(514579_u == l.Find1());

@@ -49,7 +49,7 @@ int Twice(const TuneT &tune)
 using namespace boost::ut;
 
 suite s = [] {
-    "2018-01"_test = [] {
+    "01"_test = [] {
         expect(3_i == Sum(GetSample("+1 -2 +3 +1")));
         expect(3_i == Sum(GetSample("+1 +1 +1")));
         expect(0_i == Sum(GetSample("+1 +1 -2")));

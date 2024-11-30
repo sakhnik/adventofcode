@@ -76,7 +76,7 @@ std::vector<std::string> TopoSort(const std::string &name, const ReactionsT &rea
 using namespace boost::ut;
 
 suite s = [] {
-    "2019-14"_test = [] {
+    "14"_test = [] {
         auto reactions = ParseInput(std::ifstream{INPUT});
 
         auto order = TopoSort("FUEL", reactions);

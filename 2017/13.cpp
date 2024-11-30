@@ -64,7 +64,7 @@ bool IsCaught(unsigned delay, const ConfigT &config)
 using namespace boost::ut;
 
 suite s = [] {
-	"2017-13"_test = [] {
+	"13"_test = [] {
 		auto test_config = ReadConfig(std::istringstream{"0: 3\n1: 2\n4: 4\n6: 4"});
 		expect(24_u == CalcSeverity(0, test_config));
 

@@ -31,7 +31,7 @@ int Survey(const char *script, IntCode prog)
 using namespace boost::ut;
 
 suite s = [] {
-    "2019-21"_test = [] {
+    "21"_test = [] {
         std::ifstream ifs{INPUT};
         IntCode prog{ifs};
 

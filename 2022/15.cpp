@@ -97,7 +97,7 @@ Sensor at x=20, y=1: closest beacon is at x=15, y=3
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-15"_test = [] {
+    "15"_test = [] {
         Ranges ranges;
         expect(0_i == ranges.Count());
         ranges.Add(0, 5);

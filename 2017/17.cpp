@@ -46,7 +46,7 @@ unsigned SpinLock2(unsigned step, unsigned iterations)
 using namespace boost::ut;
 
 suite s = [] {
-	"2017-17"_test = [] {
+	"17"_test = [] {
 		expect(SpinLock(3) == 638_u);
 		expect(SpinLock2(3, 0) == 0_u);
 		expect(SpinLock2(3, 1) == 1_u);

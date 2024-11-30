@@ -85,7 +85,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2018-02"_test = [] {
+    "02"_test = [] {
         auto test_cs = Checksum({"abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab"});
         expect(12_i == test_cs);
 

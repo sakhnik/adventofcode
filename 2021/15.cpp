@@ -143,7 +143,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2021-15"_test = [] {
+    "15"_test = [] {
         Map test{std::istringstream{TEST_INPUT}};
         expect(40_i == test.CalcRisk(1));
         expect(315_i == test.CalcRisk(5));

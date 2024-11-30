@@ -181,7 +181,7 @@ hmdt: 32)";
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-21"_test = [] {
+    "21"_test = [] {
         Monkeys test{std::istringstream{TEST}};
         expect(152_i == test.Task1());
         expect(301_i == test.Task2());

@@ -65,7 +65,7 @@ int CountPasswords(int begin, int end, PredT pred)
 using namespace boost::ut;
 
 suite s = [] {
-    "2019-04"_test = [] {
+    "04"_test = [] {
         expect(IsPassword1(111111));
         expect(!IsPassword1(223450));
         expect(!IsPassword1(123789));

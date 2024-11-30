@@ -53,7 +53,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2018-05"_test = [] {
+    "05"_test = [] {
         expect(eq(""s, Reduce("aA")));
         expect(eq(""s, Reduce("abBA")));
         expect(eq("abAB"s, Reduce("abAB")));

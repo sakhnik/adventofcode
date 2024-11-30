@@ -166,7 +166,7 @@ const char *const TEST =
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-23"_test = [] {
+    "23"_test = [] {
         Diffusion test{std::istringstream{TEST}};
         auto test_res = test.Simulate();
         expect(110_i == test_res.first);

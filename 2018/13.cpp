@@ -240,7 +240,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2018-13"_test = [] {
+    "13"_test = [] {
         {
             Map m(std::istringstream{
                 "|\n"

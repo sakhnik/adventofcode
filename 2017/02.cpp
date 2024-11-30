@@ -69,7 +69,7 @@ unsigned Checksum2(const std::string &input)
 using namespace boost::ut;
 
 suite s = [] {
-	"2017-02"_test = [] {
+	"02"_test = [] {
 		expect(18_u == Checksum("5 1 9 5\n7 5 3\n2 4 6 8"));
 		expect(9_u == Checksum2("5 9 2 8\n9 4 7 3\n3 8 6 5"));
 

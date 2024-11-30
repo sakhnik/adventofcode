@@ -8,7 +8,7 @@ namespace {
 using namespace boost::ut;
 
 suite s = [] {
-    "2018-21"_test = [] {
+    "21"_test = [] {
         using namespace aoc2018;
 
         Cpu cpu(std::ifstream{INPUT});

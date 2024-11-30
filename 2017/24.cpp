@@ -81,7 +81,7 @@ InventoryT Parse(std::istream &is)
 using namespace boost::ut;
 
 suite s = [] {
-    "2017-24"_test = [] {
+    "24"_test = [] {
         {
             std::istringstream iss("0/2\n2/2\n2/3\n3/4\n3/5\n0/1\n10/1\n9/10");
             auto inventory = Parse(iss);

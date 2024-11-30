@@ -8,7 +8,7 @@ namespace {
 using namespace boost::ut;
 
 suite s = [] {
-    "2019-02"_test = [] {
+    "02"_test = [] {
         // Input the memory from the file
         std::ifstream ifs{INPUT};
         IntCode master{ifs};

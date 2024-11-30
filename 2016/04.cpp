@@ -109,7 +109,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-	"2016-04"_test = [] {
+	"04"_test = [] {
 		expect(123_i == CheckIsReal("aaaaa-bbb-z-y-x-123[abxyz]"));
 		expect(987_i == CheckIsReal("a-b-c-d-e-f-g-h-987[abcde]"));
 		expect(404_i == CheckIsReal("not-a-real-room-404[oarel]"));

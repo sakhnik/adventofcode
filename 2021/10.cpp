@@ -103,7 +103,7 @@ const char *TEST_INPUT = R"(
 using namespace boost::ut;
 
 suite s = [] {
-    "2021-10"_test = [] {
+    "10"_test = [] {
         Syntax test{std::istringstream{TEST_INPUT}};
         expect(26397_u == test.GetErrorScore());
         expect(288957_u == test.GetCompletionScore());

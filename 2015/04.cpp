@@ -31,7 +31,7 @@ uint64_t Mine(const std::string &key, Pred pred)
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-04"_test = [] {
+    "04"_test = [] {
         expect(609043_u == Mine("abcdef", HasFiveZeros));
         expect(1048970_u == Mine("pqrstuv", HasFiveZeros));
 

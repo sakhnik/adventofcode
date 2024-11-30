@@ -53,7 +53,7 @@ private:
 };
 
 suite s = [] {
-    "2020-05"_test = [] {
+    "05"_test = [] {
         expect(357_u == Seats::Parse("FBFBBFFRLR"));
         expect(567_u == Seats::Parse("BFFFBBFRRR"));
         expect(119_u == Seats::Parse("FFFBBBFRRR"));

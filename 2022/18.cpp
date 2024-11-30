@@ -141,7 +141,7 @@ const char *const TEST = R"(2,2,2
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-18"_test = [] {
+    "18"_test = [] {
         Droplet test{std::istringstream{TEST}};
         expect(64_i == test.CalcArea());
         expect(58_i == test.CalcExternalArea());

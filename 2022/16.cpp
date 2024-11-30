@@ -147,7 +147,7 @@ Valve JJ has flow rate=21; tunnel leads to valve II
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-16"_test = [] {
+    "16"_test = [] {
         Pipes test{std::istringstream{TEST}};
         expect(1651_i == test.Task1());
         expect(1707_i == test.Task2());

@@ -66,7 +66,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-	"2016-05"_test = [] {
+	"05"_test = [] {
 		expect(eq("18f47a30"s, Solve("abc")));
 		expect(eq("05ace8e3"s, Solve2("abc")));
 

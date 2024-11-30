@@ -58,7 +58,7 @@ const char *TEST_INPUT = "3,4,3,1,2";
 using namespace boost::ut;
 
 suite s = [] {
-    "2021-06"_test = [] {
+    "06"_test = [] {
         Fish test_fish(std::istringstream{TEST_INPUT});
         expect(26_u == test_fish.Simulate(18).CountTotal());
         expect(5934_u == test_fish.Simulate(80).CountTotal());

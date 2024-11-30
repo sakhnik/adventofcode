@@ -156,7 +156,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2021-16"_test = [] {
+    "16"_test = [] {
         Bits test{std::istringstream{TEST_INPUT}};
         expect(21_u == Bits::ParseLiteral(Bits::HexToBin("D2FE28")).length);
         expect(2021_i == Bits::ParseLiteral(Bits::HexToBin("D2FE28")).value);

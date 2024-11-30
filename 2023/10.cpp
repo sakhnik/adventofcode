@@ -159,7 +159,7 @@ private:
 };
 
 suite s = [] {
-    "2023-10"_test = [] {
+    "10"_test = [] {
         const char *const TEST1 = R"(-L|F7
 7S-7|
 L|7||

@@ -168,7 +168,7 @@ $ ls
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-07"_test = [] {
+    "07"_test = [] {
         auto test_root = ParseLog(std::istringstream{TEST});
         expect(95437_u == Task1(test_root.get()));
         expect(24933642_u == Task2(test_root.get()));

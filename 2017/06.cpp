@@ -52,7 +52,7 @@ Count(T banks)
 using namespace boost::ut;
 
 suite s = [] {
-	"2017-06"_test = [] {
+	"06"_test = [] {
 		auto c1 = Count(std::array<unsigned, 4>({0, 2, 7, 0}));
 		expect(5_u == c1.first);
 		expect(4_u == c1.second);

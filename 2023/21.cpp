@@ -114,7 +114,7 @@ struct Garden
 };
 
 suite s = [] {
-    "2023-21"_test = [] {
+    "21"_test = [] {
         const char *const TEST1 = R"(...........
 .....###.#.
 .###.##..#.

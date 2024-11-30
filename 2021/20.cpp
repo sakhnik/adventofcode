@@ -160,7 +160,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2021-20"_test = [] {
+    "20"_test = [] {
         TrenchMap test{std::istringstream{TEST_INPUT}};
         expect(10_u == test.GetCount());
         test.Enhance();

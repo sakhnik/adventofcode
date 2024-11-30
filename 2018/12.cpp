@@ -144,7 +144,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2018-12"_test = [] {
+    "12"_test = [] {
         const auto TEST_INPUT = R"(initial state: #..#.#..##......###...###
 
 ...## => #

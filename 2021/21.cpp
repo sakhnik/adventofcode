@@ -96,7 +96,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2021-21"_test = [] {
+    "21"_test = [] {
         expect(739785_u == DiracDice({4, 8}).GetScore());
         expect(eq(444356092776315ull, DiracDice2(4, 8).GetWinnerCounts()));
 

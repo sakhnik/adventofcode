@@ -61,7 +61,7 @@ private:
 };
 
 suite s = [] {
-    "2023-06"_test = [] {
+    "06"_test = [] {
         Course test_courses[] = {{7, 9}, {15, 40}, {30, 200}};
         expect(4_i == Race{test_courses[0]}.CalcWins());
         expect(8_i == Race{test_courses[1]}.CalcWins());

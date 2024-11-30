@@ -176,7 +176,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2018-07"_test = [] {
+    "07"_test = [] {
         const auto TEST = R"(Step C must be finished before step A can begin.
 Step C must be finished before step F can begin.
 Step A must be finished before step B can begin.

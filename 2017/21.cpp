@@ -153,7 +153,7 @@ unsigned Solve(unsigned iterations, const PatternsT &patterns)
 }
 
 suite s = [] {
-    "2017-21"_test = [] {
+    "21"_test = [] {
         {
             auto v = GetVariations("####");
             expect(v.size() == 1_u);

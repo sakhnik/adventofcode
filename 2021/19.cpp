@@ -474,7 +474,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2021-19"_test = [] {
+    "19"_test = [] {
         Scanners test{std::istringstream{TEST_INPUT}};
         expect(79_u == test.CountUniqueBeacons(12));
         expect(3621_u == test.GetMaxDistance());

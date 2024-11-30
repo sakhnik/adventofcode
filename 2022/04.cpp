@@ -41,7 +41,7 @@ std::pair<int, int> CountOverlaps(std::istream &&is)
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-04"_test = [] {
+    "04"_test = [] {
         auto test = CountOverlaps(std::istringstream{TEST});
         expect(2_i == test.first);
         expect(4_i == test.second);

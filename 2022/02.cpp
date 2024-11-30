@@ -44,7 +44,7 @@ std::pair<int, int> CalcScore(std::istream &&is)
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-02"_test = [] {
+    "02"_test = [] {
         auto test_score = CalcScore(std::istringstream{TEST});
         expect(15_i == test_score.first);
         expect(12_i == test_score.second);

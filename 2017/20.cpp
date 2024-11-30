@@ -134,7 +134,7 @@ unsigned SimulateCollisions(SwarmT swarm)
 using namespace boost::ut;
 
 suite s = [] {
-    "2017-20"_test = [] {
+    "20"_test = [] {
         std::ifstream ifs(INPUT);
         auto swarm = Parse(ifs);
         Printer::Print(__FILE__, "1", FindClosest(FilterLowestAcceleration(swarm)));

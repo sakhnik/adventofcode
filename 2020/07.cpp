@@ -94,7 +94,7 @@ private:
 };
 
 suite s = [] {
-    "2020-07"_test = [] {
+    "07"_test = [] {
         const std::string TARGET = "shiny gold";
         {
             const char *const TEST = ""

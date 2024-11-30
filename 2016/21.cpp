@@ -137,7 +137,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-	"2016-21"_test = [] {
+	"21"_test = [] {
 		expect(eq("ebcda"s, Scramble(std::istringstream{"swap position 4 with position 0"}, "abcde")));
 		expect(eq("edcba"s, Scramble(std::istringstream{"swap letter d with letter b"}, "ebcda")));
 		expect(eq("dabc"s, Scramble(std::istringstream{"rotate right 1 steps"}, "abcd")));

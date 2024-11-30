@@ -86,7 +86,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2021-14"_test = [] {
+    "14"_test = [] {
         Polymer test{std::istringstream{TEST_INPUT}};
         test.Iterate(10);
         expect(1588_u == test.CountScore());

@@ -91,7 +91,7 @@ size_t CountNice(std::istream &&is, Pred pred)
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-05"_test = [] {
+    "05"_test = [] {
         expect(IsNice("ugknbfddgicrmopn"));
         expect(IsNice("aaa"));
         expect(!IsNice("jchzalrnumimnmhp"));

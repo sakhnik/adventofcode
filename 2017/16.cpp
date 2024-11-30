@@ -96,7 +96,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2017-16"_test = [] {
+    "16"_test = [] {
         auto test_program = Parse(std::istringstream("s1,x3/4,pe/b"));
         std::string test_row = "abcde";
         expect(eq(Dance(test_row, test_program), "baedc"s));

@@ -55,7 +55,7 @@ int Solve2(std::istream &&is, uint32_t max)
 using namespace boost::ut;
 
 suite s = [] {
-	"2016-20"_test = [] {
+	"20"_test = [] {
 		expect(3_i == Solve(std::istringstream{"5-8\n0-2\n4-7"}));
 		Printer::Print(__FILE__, "1", Solve(std::ifstream{INPUT}));
 

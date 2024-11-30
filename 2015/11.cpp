@@ -83,7 +83,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2015-11.test"_test = [] {
+    "11.test"_test = [] {
         expect(eq("xy"s, Increment("xx")));
         expect(eq("xz"s, Increment("xy")));
         expect(eq("ya"s, Increment("xz")));
@@ -97,7 +97,7 @@ suite s = [] {
         expect(eq("ghjaabcc"s, Next("ghijklmn")));
     };
 
-    "2015-11.task"_test = [] {
+    "11.task"_test = [] {
         std::string pass("vzbxkghb");
         Next(pass);
         Printer::Print(__FILE__, "1", pass);

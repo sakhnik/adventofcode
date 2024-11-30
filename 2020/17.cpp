@@ -100,7 +100,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-17"_test = [] {
+    "17"_test = [] {
         const char *const TEST = ".#.\n..#\n###";
         Life<Point3> l{std::istringstream{TEST}};
         l.Evolve(6);

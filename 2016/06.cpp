@@ -37,7 +37,7 @@ std::string Solve(std::istream &&is, bool use_max)
 using namespace boost::ut;
 
 suite s = [] {
-	"2016-06"_test = [] {
+	"06"_test = [] {
 		const char *const test_input =
 			R"(eedadn
 drvtee

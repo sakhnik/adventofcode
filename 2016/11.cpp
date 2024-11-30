@@ -221,7 +221,7 @@ int Solve(const std::vector<int> &configuration,
 using namespace boost::ut;
 
 suite s = [] {
-	"2016-11"_test = [] {
+	"11"_test = [] {
 		// The first floor contains a hydrogen-compatible microchip and a lithium-compatible microchip.
 		// The second floor contains a hydrogen generator.
 		// The third floor contains a lithium generator.

@@ -106,7 +106,7 @@ int64_t Deal2(IntT count, IntT repeat, int pos, std::istream &is)
 }
 
 suite s = [] {
-    "2019-22"_test = [] {
+    "22"_test = [] {
         {
             std::istringstream iss{
                 "deal with increment 7\n"

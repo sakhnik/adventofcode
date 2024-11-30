@@ -68,7 +68,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-10"_test = [] {
+    "10"_test = [] {
         {
             const int r[] = {16, 10, 15, 5, 1, 11, 7, 19, 6, 12, 4};
             Adapters a{std::begin(r), std::end(r)};

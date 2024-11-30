@@ -315,7 +315,7 @@ const char *const TEST =
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-22"_test = [] {
+    "22"_test = [] {
         MonkeyMap test{std::istringstream{TEST}};
         expect(6032_i == test.Task1());
         expect(5031_i == test.Task2());

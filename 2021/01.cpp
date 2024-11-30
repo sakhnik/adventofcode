@@ -32,7 +32,7 @@ int TEST_DEPTHS[] = {199, 200, 208, 210, 200, 207, 240, 269, 260, 263};
 using namespace boost::ut;
 
 suite s = [] {
-    "2021-01"_test = [] {
+    "01"_test = [] {
         expect(7_i == CountIncreased(1, std::begin(TEST_DEPTHS), std::end(TEST_DEPTHS)));
         expect(5_i == CountIncreased(3, std::begin(TEST_DEPTHS), std::end(TEST_DEPTHS)));
 

@@ -337,7 +337,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2018-15"_test = [] {
+    "15"_test = [] {
         {
             Battle b{std::istringstream{
                 "#######\n"

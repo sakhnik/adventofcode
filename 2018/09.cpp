@@ -95,7 +95,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2018-09.mov"_test = [] {
+    "09.mov"_test = [] {
         Circle c(9, 25);
         expect(eq(" (0)"s, c.DumpMarbles()));
         c.Step();
@@ -150,7 +150,7 @@ suite s = [] {
         expect(eq(" 0 16 8 17 4 18 19 2 24 20 (25) 10 21 5 22 11 1 12 6 13 3 14 7 15"s, c.DumpMarbles()));
     };
 
-    "2018-09.play"_test = [] {
+    "09.play"_test = [] {
         expect(32_u == Play(9, 25));
         expect(8317_u == Play(10, 1618));
         expect(146373_u == Play(13, 7999));
@@ -159,7 +159,7 @@ suite s = [] {
         expect(37305_u == Play(30, 5807));
     };
 
-    "2018-09"_test = [] {
+    "09"_test = [] {
         Printer::Print(__FILE__, "1", Play(459, 71320));
         Printer::Print(__FILE__, "2", Play(459, 71320 * 100));
     };

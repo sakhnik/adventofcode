@@ -195,7 +195,7 @@ int64_t Task2(const ProgramT &program)
 using namespace boost::ut;
 
 suite s = [] {
-    "2017-18"_test = [] {
+    "18"_test = [] {
         {
             const char *const program = R"(set a 1
 add a 2

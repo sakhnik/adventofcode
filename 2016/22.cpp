@@ -124,7 +124,7 @@ void Solve(std::istream &&is)
 }
 
 suite s = [] {
-	"2016-22"_test = [] {
+	"22"_test = [] {
 		Solve(std::ifstream{INPUT});
 	};
 };

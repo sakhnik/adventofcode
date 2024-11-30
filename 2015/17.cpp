@@ -57,13 +57,13 @@ int Count2(int target, IterT first, IterT last)
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-17.test"_test = [] {
+    "17.test"_test = [] {
         int sizes[] = {20, 15, 10, 5, 5};
         expect(4_i == Count(25, std::begin(sizes), std::end(sizes)));
         expect(3_i == Count2(25, std::begin(sizes), std::end(sizes)));
     };
 
-    "2015-17.task"_test = [] {
+    "17.task"_test = [] {
         int sizes[] = {
             11, 30, 47, 31, 32, 36, 3, 1, 5, 3,
             32, 36, 15, 11, 46, 26, 28, 1, 19, 3

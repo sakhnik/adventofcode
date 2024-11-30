@@ -89,7 +89,7 @@ int Track2(std::istream &&is)
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-12"_test = [] {
+    "12"_test = [] {
         const char *const TEST = "F10\nN3\nF7\nR90\nF11";
         expect(25_i == Track(std::istringstream{TEST}));
         expect(286_i == Track2(std::istringstream{TEST}));

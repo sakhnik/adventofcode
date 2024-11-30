@@ -101,7 +101,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-13.test"_test = [] {
+    "13.test"_test = [] {
         const char *const TEST =
             "Alice would gain 54 happiness units by sitting next to Bob.\n"
             "Alice would lose 79 happiness units by sitting next to Carol.\n"
@@ -119,7 +119,7 @@ suite s = [] {
         expect(330_i == t.Arrange());
     };
 
-    "2015-13.task"_test = [] {
+    "13.task"_test = [] {
         Table t(std::ifstream{INPUT});
         Printer::Print(__FILE__, "1", t.Arrange());
         t.AddMyself();

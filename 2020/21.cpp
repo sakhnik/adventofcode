@@ -113,7 +113,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-21"_test = [] {
+    "21"_test = [] {
         {
             const char *const TEST = R"(mxmxvkd kfcds sqjhc nhms (contains dairy, fish)
 trh fvjkl sbzzf mxmxvkd (contains dairy)

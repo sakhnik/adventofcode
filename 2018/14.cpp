@@ -76,7 +76,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2018-14"_test = [] {
+    "14"_test = [] {
         {
             Recipes r;
             expect(eq("37"s, r.GetSeq()));

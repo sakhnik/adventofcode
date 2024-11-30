@@ -89,7 +89,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-19.test"_test = [] {
+    "19.test"_test = [] {
         const char *const TEST =
             "H => HO\n"
             "H => OH\n"
@@ -100,7 +100,7 @@ suite s = [] {
         expect(4_u == c.Count());
     };
 
-    "2015-19.task"_test = [] {
+    "19.task"_test = [] {
         Chem c(std::ifstream{INPUT});
         Printer::Print(__FILE__, "1", c.Count());
         Printer::Print(__FILE__, "2", c.Count2());

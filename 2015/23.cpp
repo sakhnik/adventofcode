@@ -99,7 +99,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-23"_test = [] {
+    "23"_test = [] {
         {
             Computer comp{std::istringstream{"inc a\njio a, +2\ntpl a\ninc a"}};
             comp.Run();

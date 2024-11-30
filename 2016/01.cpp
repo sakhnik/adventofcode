@@ -87,7 +87,7 @@ int walk(std::istream &&is)
 using namespace boost::ut;
 
 suite s = [] {
-	"2016-01"_test = [] {
+	"01"_test = [] {
 		expect(4_i == walk(std::istringstream{"R8, R4, R4, R8"}));
 
 		Printer::Print(__FILE__, nullptr, walk(std::ifstream{INPUT}));

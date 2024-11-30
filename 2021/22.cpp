@@ -225,7 +225,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2021-22"_test = [] {
+    "22"_test = [] {
         {
             Cube c1{{0,0,0}, {2,2,2}};
             expect(c1.Intersects(c1));

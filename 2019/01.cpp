@@ -7,7 +7,7 @@ namespace {
 using namespace boost::ut;
 
 suite s = [] {
-    "2019-01"_test = [] {
+    "01"_test = [] {
         std::ifstream ifs{INPUT};
         using IterT = std::istream_iterator<int>;
 

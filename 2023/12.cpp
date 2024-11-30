@@ -96,7 +96,7 @@ struct Springs
 };
 
 suite s = [] {
-    "2023-12"_test = [] {
+    "12"_test = [] {
         const char *const TEST1 = R"(???.### 1,1,3
 .??..??...?##. 1,1,3
 ?#?#?#?#?#?#?#? 1,3,1,6

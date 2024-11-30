@@ -45,7 +45,7 @@ unsigned Count2(uint64_t a, uint64_t b)
 using namespace boost::ut;
 
 suite s = [] {
-	"2017-15"_test = [] {
+	"15"_test = [] {
 		expect(588_u == Count(65, 8921));
 		expect(309_u == Count2(65, 8921));
 

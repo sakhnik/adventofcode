@@ -96,7 +96,7 @@ const char *TEST_INPUT = R"(
 using namespace boost::ut;
 
 suite s = [] {
-    "2021-09"_test = [] {
+    "09"_test = [] {
         Map test_map{std::istringstream{TEST_INPUT}};
         expect(15_i == test_map.CalcRiskLevel());
         expect(1134_u == test_map.CalcBasins());

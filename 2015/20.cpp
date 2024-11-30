@@ -24,7 +24,7 @@ size_t Find(size_t target, int mul, int max_repeat)
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-20"_test = [] {
+    "20"_test = [] {
         const size_t target = 36000000;
         Printer::Print(__FILE__, "1", Find(target, 10, target));
         Printer::Print(__FILE__, "2", Find(target, 11, 50));

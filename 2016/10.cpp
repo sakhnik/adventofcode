@@ -200,7 +200,7 @@ int Solve2(FactoryT &factory)
 using namespace boost::ut;
 
 suite s = [] {
-	"2016-10"_test = [] {
+	"10"_test = [] {
 		const char *const test =
 			R"(value 5 goes to bot 2
 bot 2 gives low to bot 1 and high to bot 0

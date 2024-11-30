@@ -96,7 +96,7 @@ int FindFit(int x0, int y0, int size, const IntCode &prog)
 }
 
 suite s = [] {
-    "2019-19"_test = [] {
+    "19"_test = [] {
         std::ifstream ifs{INPUT};
         IntCode prog{ifs};
 

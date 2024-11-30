@@ -37,7 +37,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-	"2016-16"_test = [] {
+	"16"_test = [] {
 		expect(eq("100"s, Checksum("110010110100")));
 		expect(eq("100"s, Generate("1", 3)));
 		expect(eq("001"s, Generate("0", 3)));

@@ -94,7 +94,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2021-25"_test = [] {
+    "25"_test = [] {
         Cucumber t1{std::istringstream{"...>>>>>..."}};
         expect(t1.Step());
         expect("...>>>>.>.."s == t1.Dump());

@@ -87,7 +87,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-	"2016-08"_test = [] {
+	"08"_test = [] {
 		Screen test{7, 3};
 		expect(eq(test.Dump(), ".......\n.......\n.......\n"s));
 		test.Execute("rect 3x2");

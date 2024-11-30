@@ -173,7 +173,7 @@ start-RW
 using namespace boost::ut;
 
 suite s = [] {
-    "2021-12"_test = [] {
+    "12"_test = [] {
         Map test{std::istringstream{TEST_INPUT}};
         expect(10_u == test.GetCount1());
         expect(36_u == test.GetCount2());

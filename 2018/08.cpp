@@ -84,7 +84,7 @@ int SumValues(const LicenseT &lic)
 using namespace boost::ut;
 
 suite s = [] {
-    "2018-08"_test = [] {
+    "08"_test = [] {
         expect(138_i == SumMeta({2, 3, 0, 3, 10, 11, 12, 1, 1, 0, 1, 99, 2, 1, 1, 2}));
         auto license = ReadLicense(std::ifstream{INPUT});
         Printer::Print(__FILE__, "1", SumMeta(license));

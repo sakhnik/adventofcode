@@ -168,7 +168,7 @@ unsigned Count2(unsigned iterations, GridT grid)
 }
 
 suite s = [] {
-    "2017-22"_test = [] {
+    "22"_test = [] {
         {
             std::istringstream iss("..#\n#..\n...");
             auto grid = Parse(iss);

@@ -239,7 +239,7 @@ const char *const TEST_RES =
     "#######.......#######.......#######.....\n";
 
 suite s = [] {
-    "2022-10"_test = [] {
+    "10"_test = [] {
         auto test = Execute(std::istringstream{TEST});
         expect(13140_u == test.first);
         expect(TEST_RES == test.second);

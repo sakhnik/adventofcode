@@ -158,7 +158,7 @@ private:
 };
 
 suite s = [] {
-    "2018-17"_test = [] {
+    "17"_test = [] {
         {
             const char *const TEST =
                 R"(x=495, y=2..7

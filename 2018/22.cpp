@@ -164,7 +164,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2018-22"_test = [] {
+    "22"_test = [] {
         {
             Cave c{510, 10, 10};
             expect(114_i == c.CalcRisk());

@@ -82,7 +82,7 @@ int FindIntersection(std::istream &&is)
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-03"_test = [] {
+    "03"_test = [] {
         expect(157_i == FindDuplicates(std::istringstream{TEST}));
         expect(70_i == FindIntersection(std::istringstream{TEST}));
 

@@ -146,7 +146,7 @@ int Strategy2(const StatsT &stats)
 using namespace boost::ut;
 
 suite s = [] {
-    "2018-04"_test = [] {
+    "04"_test = [] {
         const auto TEST_INPUT = R"([1518-11-01 00:00] Guard #10 begins shift
 [1518-11-01 00:05] falls asleep
 [1518-11-01 00:25] wakes up

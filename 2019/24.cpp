@@ -94,7 +94,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2019-24"_test = [] {
+    "24"_test = [] {
         {
             auto bugs = Parse("....#\n#..#.\n#..##\n..#..\n#....");
             bugs = Evolve(bugs);

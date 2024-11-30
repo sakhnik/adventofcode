@@ -231,7 +231,7 @@ Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsid
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-19"_test = [] {
+    "19"_test = [] {
         Minerals test{std::istringstream{TEST}};
         expect(33_i == test.Task1());
 

@@ -161,7 +161,7 @@ const char *const TEST =
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-08"_test = [] {
+    "08"_test = [] {
         auto test = Parse(std::istringstream{TEST});
         expect(21_i == CountVisible(test));
         expect(4_u == GetScenicScore(test, 1, 2));

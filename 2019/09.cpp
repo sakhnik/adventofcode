@@ -8,7 +8,7 @@ namespace {
 using namespace boost::ut;
 
 suite s = [] {
-    "2019-09"_test = [] {
+    "09"_test = [] {
         {
             const char *t = "109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99";
             IntCodeB p{std::istringstream{t}};

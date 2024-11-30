@@ -87,7 +87,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-23"_test = [] {
+    "23"_test = [] {
         {
             Cups c{"389125467"};
             c.Move(100);

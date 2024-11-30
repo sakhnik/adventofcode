@@ -59,7 +59,7 @@ int Calibrate2(std::istream &&is)
 }
 
 suite s = [] {
-    "2023-01"_test = [] {
+    "01"_test = [] {
         const char *const TEST1 = R"(1abc2
 pqr3stu8vwx
 a1b2c3d4e5f

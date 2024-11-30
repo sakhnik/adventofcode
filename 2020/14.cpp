@@ -118,7 +118,7 @@ uint64_t Initialize(std::istream &&is)
 }
 
 suite s = [] {
-    "2020-14"_test = [] {
+    "14"_test = [] {
         {
             const char *const TEST =
                 "mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X\n"

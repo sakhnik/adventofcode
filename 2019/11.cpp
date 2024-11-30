@@ -116,7 +116,7 @@ private:
 };
 
 suite s = [] {
-    "2019-11"_test = [] {
+    "11"_test = [] {
         std::ifstream ifs{INPUT};
         IntCodeB prog{ifs};
 

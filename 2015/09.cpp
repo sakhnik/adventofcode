@@ -84,7 +84,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-09.test"_test = [] {
+    "09.test"_test = [] {
         const char *const TEST =
             "London to Dublin = 464\n"
             "London to Belfast = 518\n"
@@ -95,7 +95,7 @@ suite s = [] {
         expect(982_i == d.second);
     };
 
-    "2015-09.task"_test = [] {
+    "09.task"_test = [] {
         Tsp tsp(std::ifstream{INPUT});
         auto d = tsp.Find();
         Printer::Print(__FILE__, "1", d.first);

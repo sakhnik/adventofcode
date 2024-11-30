@@ -94,7 +94,7 @@ std::string Rearrange2(std::istream &&is)
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-05"_test = [] {
+    "05"_test = [] {
         expect("CMZ" == Rearrange1(std::istringstream{TEST}));
         expect("MCD" == Rearrange2(std::istringstream{TEST}));
 

@@ -93,7 +93,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2018-20"_test = [] {
+    "20"_test = [] {
         {
             Map m(std::istringstream{"^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$"});
             expect(23_i == m.GetFartherst());

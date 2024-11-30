@@ -87,7 +87,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-14.test"_test = [] {
+    "14.test"_test = [] {
         const char *const TEST =
             "Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.\n"
             "Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.\n";
@@ -96,7 +96,7 @@ suite s = [] {
         expect(689_i == r.GetWinner2(1000));
     };
 
-    "2015-14.task"_test = [] {
+    "14.task"_test = [] {
         Race r(std::ifstream{INPUT});
         Printer::Print(__FILE__, "1", r.GetWinner(2503));
         Printer::Print(__FILE__, "2", r.GetWinner2(2503));

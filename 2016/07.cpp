@@ -115,7 +115,7 @@ int Solve(std::istream &&is, FuncT func)
 using namespace boost::ut;
 
 suite s = [] {
-	"2016-07"_test = [] {
+	"07"_test = [] {
 		expect(IsTls("abba[mnop]qrst"));
 		expect(!IsTls("abcd[bddb]xyyx"));
 		expect(!IsTls("aaaa[qwer]tyui"));

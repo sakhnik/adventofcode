@@ -90,7 +90,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-15.test"_test = [] {
+    "15.test"_test = [] {
         const char *const TEST =
             "Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8\n"
             "Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3\n";
@@ -99,7 +99,7 @@ suite s = [] {
         expect(57600000_i == r.FindMax(500));
     };
 
-    "2015-15.task"_test = [] {
+    "15.task"_test = [] {
         Recipe r(std::ifstream{INPUT});
         Printer::Print(__FILE__, "1", r.FindMax());
         Printer::Print(__FILE__, "2", r.FindMax(500));

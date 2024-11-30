@@ -37,7 +37,7 @@ int WeirdModifier(int &offset)
 using namespace boost::ut;
 
 suite s = [] {
-	"2017-05"_test = [] {
+	"05"_test = [] {
 		expect(5_u == CountJumps({0, 3, 0, 1, -3}, IncreaseModifier));
 
 		std::ifstream ifs(INPUT);

@@ -209,7 +209,7 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
 using namespace boost::ut;
 
 suite s = [] {
-    "2021-08"_test = [] {
+    "08"_test = [] {
         expect(26_u == CountUnique(std::istringstream{TEST_INPUT}));
         Printer::Print(__FILE__, "1", CountUnique(std::ifstream{INPUT}));
 

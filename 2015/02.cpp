@@ -47,7 +47,7 @@ int Accumulate(const BoxesT &boxes, Func func)
 }
 
 suite s = [] {
-    "2015-02"_test = [] {
+    "02"_test = [] {
         expect(58_i == CalcArea({2, 3, 4}));
         expect(43_i == CalcArea({1, 1, 10}));
 

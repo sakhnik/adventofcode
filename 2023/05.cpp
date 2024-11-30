@@ -165,7 +165,7 @@ private:
 };
 
 suite s = [] {
-    "2023-05"_test = [] {
+    "05"_test = [] {
         const char *const TEST1 = R"(seeds: 79 14 55 13
 
 seed-to-soil map:

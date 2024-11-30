@@ -9,7 +9,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2019-05"_test = [] {
+    "05"_test = [] {
         std::ifstream ifs{INPUT};
         IntCode master{ifs};
 

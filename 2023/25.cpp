@@ -60,7 +60,7 @@ struct Partition
 };
 
 suite s = [] {
-    "2023-25"_test = [] {
+    "25"_test = [] {
         const char *const TEST1 = R"(jqt: rhn xhk nvd
 rsh: frs pzl lsr
 xhk: hfx

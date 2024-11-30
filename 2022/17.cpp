@@ -147,7 +147,7 @@ const char *const TEST = ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>";
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-17"_test = [] {
+    "17"_test = [] {
         Rocks test{std::istringstream{TEST}};
         expect(3068_u == test.CalcHeight(2022));
         expect(eq(1514285714288ull, test.CalcHeight(1000000000000ull)));

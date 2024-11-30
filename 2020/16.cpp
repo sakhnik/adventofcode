@@ -148,7 +148,7 @@ private:
 };
 
 suite s = [] {
-    "2020-16"_test = [] {
+    "16"_test = [] {
         {
             const char *const TEST =
                 R"(class: 1-3 or 5-7

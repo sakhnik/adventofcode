@@ -158,7 +158,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-	"2016-17"_test = [] {
+	"17"_test = [] {
 		expect(eq((UP | DOWN | LEFT), GetDoors("hijkl")));
 		expect(eq((UP | LEFT | RIGHT), GetDoors("hijklD")));
 		expect(eq(RIGHT, GetDoors("hijklDU")));

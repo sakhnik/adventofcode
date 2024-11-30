@@ -94,7 +94,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-08"_test = [] {
+    "08"_test = [] {
         {
             const char *const TEST = ""
                 R"(nop +0

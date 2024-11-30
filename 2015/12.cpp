@@ -59,7 +59,7 @@ int SumNums2(const char *json)
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-12"_test = [] {
+    "12"_test = [] {
         expect(6_i == SumNums("[1,2,3]"));
         expect(6_i == SumNums(R"({"a":2,"b":4})"));
         expect(3_i == SumNums(R"([[[3]]])"));

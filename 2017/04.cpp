@@ -54,7 +54,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-	"2017-04"_test = [] {
+	"04"_test = [] {
 		expect(1_u == Count<ExactFilter>("aa bb cc dd ee"));
 		expect(0_u == Count<ExactFilter>("aa bb cc dd aa"));
 		expect(1_u == Count<ExactFilter>("aa bb cc dd aaa"));

@@ -128,7 +128,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2018-11"_test = [] {
+    "11"_test = [] {
         // level
         expect(-5_i == Grid::CalcLevel(122, 79, 57));
         expect(0_i == Grid::CalcLevel(217, 196, 39));

@@ -128,7 +128,7 @@ const char *const TEST =
     "#.#..#\n"
     "####..\n";
 suite s = [] {
-    "2015-18.test1"_test = [] {
+    "18.test1"_test = [] {
         Life l(std::istringstream{TEST});
         expect(15_u == l.CountOn());
         //l.Animate(1);
@@ -141,13 +141,13 @@ suite s = [] {
         expect(4_u == l.CountOn());
     };
 
-    "2015-18.task1"_test = [] {
+    "18.task1"_test = [] {
         Life l(std::ifstream{INPUT});
         l.Animate(100);
         Printer::Print(__FILE__, "1", l.CountOn());
     };
 
-    "2015-18.test2"_test = [] {
+    "18.test2"_test = [] {
         Life l(std::istringstream{TEST}, true);
         expect(17_u == l.CountOn());
         l.Animate(1);
@@ -162,7 +162,7 @@ suite s = [] {
         expect(17_u == l.CountOn());
     };
 
-    "2015-18.task2"_test = [] {
+    "18.task2"_test = [] {
         Life l(std::ifstream{INPUT}, true);
         l.Animate(100);
         Printer::Print(__FILE__, "2", l.CountOn());

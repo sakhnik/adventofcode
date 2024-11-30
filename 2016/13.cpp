@@ -80,7 +80,7 @@ int Solve(int start_x, int start_y, int target_x, int target_y, int number)
 }
 
 suite s = [] {
-	"2016-13"_test = [] {
+	"13"_test = [] {
 		expect(11_i == Solve(1, 1, 7, 4, 10));
 		Printer::Print(__FILE__, "1", Solve(1, 1, 31, 39, 1350));
 	};

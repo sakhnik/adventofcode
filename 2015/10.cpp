@@ -49,7 +49,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2015-10"_test = [] {
+    "10"_test = [] {
         expect(eq("11"s, Rle("1")));
         expect(eq("21"s, Rle("11")));
         expect(eq("1211"s, Rle("21")));

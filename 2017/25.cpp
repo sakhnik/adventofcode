@@ -59,7 +59,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2017-25"_test = [] {
+    "25"_test = [] {
         {
             State desc[] = {
                 {{{true, 1, StateIdx('B')}, {false, -1, StateIdx('B')}}},

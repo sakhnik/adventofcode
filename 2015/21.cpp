@@ -136,7 +136,7 @@ public:
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-21"_test = [] {
+    "21"_test = [] {
         expect(PlayerWins({8, 5, 5}, {12, 7, 2}));
 
         Printer::Print(__FILE__, "1", FindCost<MinCostTracker>());

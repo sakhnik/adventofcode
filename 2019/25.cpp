@@ -41,7 +41,7 @@ std::string Execute(std::string command, IntCodeB &prog)
 using namespace boost::ut;
 
 suite s = [] {
-    "2019-25"_test = [] {
+    "25"_test = [] {
         std::ifstream ifs{INPUT};
         IntCodeB prog{ifs};
 

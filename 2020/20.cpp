@@ -312,7 +312,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-20"_test = [] {
+    "20"_test = [] {
         {
             MapT t{{
                 "###",

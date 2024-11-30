@@ -178,7 +178,7 @@ int FindAreaWithin(const PointsT &points, int distance)
 using namespace boost::ut;
 
 suite s = [] {
-    "2018-06"_test = [] {
+    "06"_test = [] {
         auto test = GetInput(std::istringstream("1, 1\n1, 6\n8, 3\n3, 4\n5, 5\n8, 9"));
         expect(6_u == test.size());
         expect(Box{{1, 1}, {8, 9}} == GetBox(test));

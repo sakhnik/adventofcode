@@ -72,7 +72,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-16"_test = [] {
+    "16"_test = [] {
         Ticket t;
         Printer::Print(__FILE__, "1", t.Match(t.GetTicket0(), std::ifstream{INPUT}));
         Printer::Print(__FILE__, "2", t.Match(t.GetTicket1(), std::ifstream{INPUT}));

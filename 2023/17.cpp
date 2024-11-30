@@ -99,7 +99,7 @@ struct Map
 };
 
 suite s = [] {
-    "2023-17"_test = [] {
+    "17"_test = [] {
         const char *const TEST1 = R"(2413432311323
 3215453535623
 3255245654254

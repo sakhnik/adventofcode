@@ -8,7 +8,7 @@ namespace {
 using namespace boost::ut;
 
 suite s = [] {
-    "2018-19"_test = [] {
+    "19"_test = [] {
         using namespace aoc2018;
 
         {

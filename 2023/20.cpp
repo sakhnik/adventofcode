@@ -155,7 +155,7 @@ struct Pulses
 };
 
 suite s = [] {
-    "2023-20"_test = [] {
+    "20"_test = [] {
         const char *const TEST1 = R"(broadcaster -> a, b, c
 %a -> b
 %b -> c

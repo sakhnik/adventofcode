@@ -120,7 +120,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2019-10"_test = [] {
+    "10"_test = [] {
         {
             auto b = CalcBearing({0, 0}, {0, -1});
             expect(eq(b, Bearing{0.}));

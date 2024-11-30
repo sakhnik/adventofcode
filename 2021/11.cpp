@@ -186,7 +186,7 @@ const char *TEST194 =
 using namespace boost::ut;
 
 suite s = [] {
-    "2021-11"_test = [] {
+    "11"_test = [] {
         Octopuses test{std::istringstream{TEST_INPUT}};
         expect(eq(std::string{TEST1}, test.Evolve()));
         expect(eq(std::string{TEST2}, test.Evolve()));

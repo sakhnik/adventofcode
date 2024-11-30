@@ -87,7 +87,7 @@ Result Trace(const RouteT &route)
 }
 
 suite s = [] {
-    "2017-19"_test = [] {
+    "19"_test = [] {
         {
             const char *const test =
                 "     |          \n"

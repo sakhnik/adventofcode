@@ -60,7 +60,7 @@ struct Lagoon
 };
 
 suite s = [] {
-    "2023-18"_test = [] {
+    "18"_test = [] {
         const char *const TEST1 = R"(R 6 (#70c710)
 D 5 (#0dc571)
 L 2 (#5713f0)

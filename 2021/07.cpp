@@ -66,7 +66,7 @@ const char *TEST_INPUT = "16,1,2,0,4,2,7,1,2,14";
 using namespace boost::ut;
 
 suite s = [] {
-    "2021-07"_test = [] {
+    "07"_test = [] {
         Crabs test(std::istringstream{TEST_INPUT});
         expect(41_i == test.CalcAlignment(1));
         expect(39_i == test.CalcAlignment(3));

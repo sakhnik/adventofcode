@@ -95,7 +95,7 @@ const char *const TEST_INPUT = R"(
 )";
 
 suite s = [] {
-    "2021-05"_test = [] {
+    "05"_test = [] {
         auto test_lines = Parse(std::istringstream{TEST_INPUT});
         expect(5_u == CountIntersections(test_lines, true));
         expect(12_u == CountIntersections(test_lines, false));

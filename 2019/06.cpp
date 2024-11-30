@@ -76,7 +76,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2019-06"_test = [] {
+    "06"_test = [] {
         {
             std::istringstream iss(R"(COM)B
 B)C

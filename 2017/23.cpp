@@ -56,7 +56,7 @@ unsigned CountMuls(const ProgramT &program)
 using namespace boost::ut;
 
 suite s = [] {
-    "2017-23"_test = [] {
+    "23"_test = [] {
         std::ifstream ifs(INPUT);
         auto program = Parse(ifs);
 

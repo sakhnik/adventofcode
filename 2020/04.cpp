@@ -138,7 +138,7 @@ namespace bu = boost::ut;
 using namespace bu;
 
 bu::suite s = [] {
-    "2020-04"_test = [] {
+    "04"_test = [] {
         const char *const TEST =
             R"(ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
 byr:1937 iyr:2017 cid:147 hgt:183cm

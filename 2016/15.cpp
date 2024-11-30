@@ -32,7 +32,7 @@ int Solve(const std::vector<Disk> &disks)
 using namespace boost::ut;
 
 suite s = [] {
-	"2016-15"_test = [] {
+	"15"_test = [] {
 		expect(5_i == Solve({{5, 4}, {2, 1}}));
 		std::vector<Disk> disks = {
 			{13, 1},

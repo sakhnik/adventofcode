@@ -72,7 +72,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-09"_test = [] {
+    "09"_test = [] {
         {
             const char *const TEST = R"(35
 20

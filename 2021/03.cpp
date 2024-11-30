@@ -90,7 +90,7 @@ const char *const TEST_INPUT = R"(00100
 01010)";
 
 suite s = [] {
-    "2021-03"_test = [] {
+    "03"_test = [] {
         auto TEST_NUMBERS = Parse(std::istringstream{TEST_INPUT});
         expect(198_u == CalcConsumption(TEST_NUMBERS));
         auto NUMBERS = Parse(std::ifstream{INPUT});

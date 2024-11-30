@@ -80,7 +80,7 @@ private:
 };
 
 suite s = [] {
-    "2023-11"_test = [] {
+    "11"_test = [] {
         const char *const TEST1 = R"(...#......
 .......#..
 #.........

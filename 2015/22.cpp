@@ -179,7 +179,7 @@ void Explore(State s, Accumulator &acc, bool hard)
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-22"_test = [] {
+    "22"_test = [] {
         Accumulator acc1;
         Explore(State{}, acc1, false);
         Printer::Print(__FILE__, "1", acc1.minManaSpent);

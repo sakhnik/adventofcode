@@ -93,7 +93,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-	"2016-02"_test = [] {
+	"02"_test = [] {
 		expect(eq("1985"s, Solve(std::istringstream{"UUL\nRRDDD\nLURDL\nUUUUD"})));
 		Printer::Print(__FILE__, "1", Solve(std::ifstream{INPUT}));
 

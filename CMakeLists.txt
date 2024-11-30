@@ -45,6 +45,6 @@ foreach(year RANGE 2015 2023)
             TEST_NAME="${test_name}"
         )
 
-        add_test(NAME ${year}-${zero_src} COMMAND ${CMAKE_BUILD_DIRECTORY}/${aoc} "${year}-${zero_src}*")
+        add_test(NAME ${year}-${zero_src} COMMAND ${CMAKE_BUILD_DIRECTORY}/${aoc} "${zero_src}*")
     endforeach()
 endforeach()

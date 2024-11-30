@@ -59,7 +59,7 @@ Result Count(const char *s)
 using namespace boost::ut;
 
 suite s = [] {
-	"2017-09"_test = [] {
+	"09"_test = [] {
 		expect(eq(Count("{}"), Result(1, 0)));
 		expect(eq(Count("{{{}}}"), Result(6, 0)));
 		expect(eq(Count("{{},{}}"), Result(5, 0)));

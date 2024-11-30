@@ -78,7 +78,7 @@ size_t CountLit(std::ifstream &&is, OpT on, OpT off, OpT toggle)
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-06"_test = [] {
+    "06"_test = [] {
         Printer::Print(__FILE__, "1", CountLit(std::ifstream{INPUT}, On, Off, Toggle));
         Printer::Print(__FILE__, "2", CountLit(std::ifstream{INPUT}, On2, Off2, Toggle2));
     };

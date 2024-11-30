@@ -70,7 +70,7 @@ std::pair<unsigned, unsigned> Count(const char *path)
 using namespace boost::ut;
 
 suite s = [] {
-	"2017-11"_test = [] {
+	"11"_test = [] {
 		expect(3_u == Count("ne,ne,ne,").first);
 		expect(0_u == Count("ne,ne,sw,sw,").first);
 		expect(2_u == Count("ne,ne,s,s,").first);

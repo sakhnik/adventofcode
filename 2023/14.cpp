@@ -139,7 +139,7 @@ struct Stones
 };
 
 suite s = [] {
-    "2023-14"_test = [] {
+    "14"_test = [] {
         const char *const TEST1 = R"(O....#....
 O.OO#....#
 .....##...

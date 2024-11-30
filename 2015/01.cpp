@@ -36,7 +36,7 @@ int Position(const std::string_view &s)
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-01"_test = [] {
+    "01"_test = [] {
         expect(0_i == Count("(())"));
         expect(3_i == Count("((("));
         expect(3_i == Count("(()(()("));

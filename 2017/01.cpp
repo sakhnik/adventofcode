@@ -18,7 +18,7 @@ unsigned Sum(std::string_view s, unsigned dist)
 using namespace boost::ut;
 
 suite s = [] {
-	"2017-01"_test = [] {
+	"01"_test = [] {
 		expect(3_u == Sum("1122", 1));
 		expect(4_u == Sum("1111", 1));
 		expect(0_u == Sum("1234", 1));

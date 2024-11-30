@@ -129,7 +129,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2021-17"_test = [] {
+    "17"_test = [] {
         Probe test{std::istringstream{TEST_INPUT}};
         expect(3_i == test.Shoot(7, 2));
         expect(6_i == test.Shoot(6, 3));

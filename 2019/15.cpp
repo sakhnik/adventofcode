@@ -27,7 +27,7 @@ struct Pos
 using namespace boost::ut;
 
 suite s = [] {
-    "2019-15"_test = [] {
+    "15"_test = [] {
         std::ifstream ifs{INPUT};
         IntCode prog{ifs};
 

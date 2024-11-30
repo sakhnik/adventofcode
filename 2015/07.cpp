@@ -117,7 +117,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-07.test"_test = [] {
+    "07.test"_test = [] {
         const char *const TEST =
             "123 -> x\n"
             "456 -> y\n"
@@ -138,7 +138,7 @@ suite s = [] {
         expect(456_i == c.Eval("y"));
     };
 
-    "2015-07.task"_test = [] {
+    "07.task"_test = [] {
         Calc c(std::ifstream{INPUT});
         auto val = c.Eval("a");
         Printer::Print(__FILE__, "1", val);

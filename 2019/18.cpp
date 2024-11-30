@@ -203,7 +203,7 @@ int SearchMin(std::string &map)
 }
 
 suite s = [] {
-    "2019-18"_test = [] {
+    "18"_test = [] {
         {
             std::string m =
                 "#########\n"

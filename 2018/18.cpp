@@ -151,7 +151,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2018-18"_test = [] {
+    "18"_test = [] {
         {
             Area a(std::istringstream{
                 ".#.#...|#.\n"

@@ -91,7 +91,7 @@ const char *const TEST2 =
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-09"_test = [] {
+    "09"_test = [] {
         expect(13_u == TrackTail(2, std::istringstream{TEST}));
         expect(1_u == TrackTail(10, std::istringstream{TEST}));
         expect(36_u == TrackTail(10, std::istringstream{TEST2}));

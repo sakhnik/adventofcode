@@ -95,7 +95,7 @@ std::pair<int,int> CalcIntersection(int length, const BoxesT &boxes)
 using namespace boost::ut;
 
 suite s = [] {
-    "2018-03"_test = [] {
+    "03"_test = [] {
         auto test = CalcIntersection(8, GetInput("#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2"));
         expect(4_i == test.first);
         expect(3_i == test.second);

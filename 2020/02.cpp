@@ -46,7 +46,7 @@ CountsT CountValid(std::istream &&is)
 }
 
 suite s = [] {
-    "2020-02"_test = [] {
+    "02"_test = [] {
         expect(IsValid("1-3 a: abcde") == ChecksT{true, true});
         expect(IsValid("1-3 b: cdefg") == ChecksT{false, false});
         expect(IsValid("2-9 c: ccccccccc") == ChecksT{true, false});

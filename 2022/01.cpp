@@ -54,7 +54,7 @@ const char *const TEST = R"(1000
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-01"_test = [] {
+    "01"_test = [] {
         auto test_res = FindLargestCalories(std::istringstream{TEST});
         expect(24000_u == test_res.first);
         expect(45000_u == test_res.second);

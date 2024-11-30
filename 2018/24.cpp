@@ -293,7 +293,7 @@ private:
 };
 
 suite s = [] {
-    "2018-24"_test = [] {
+    "24"_test = [] {
         static constexpr char const *const TEST = R"(Immune System:
 17 units each with 5390 hit points (weak to radiation, bludgeoning) with an attack that does 4507 fire damage at initiative 2
 989 units each with 1274 hit points (immune to fire; weak to bludgeoning, slashing) with an attack that does 25 slashing damage at initiative 3

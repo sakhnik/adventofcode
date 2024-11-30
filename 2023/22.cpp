@@ -231,7 +231,7 @@ struct Bricks
 };
 
 suite s = [] {
-    "2023-22"_test = [] {
+    "22"_test = [] {
         const char *const TEST1 = R"(1,0,1~1,2,1
 0,0,2~2,0,2
 0,2,3~2,2,3

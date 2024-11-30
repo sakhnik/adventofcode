@@ -154,7 +154,7 @@ size_t Count(std::istream &&is, bool subst = false)
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-19"_test = [] {
+    "19"_test = [] {
         {
             const char *const TEST = R"(0: 4 1 5
 1: 2 3 | 3 2

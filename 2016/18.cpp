@@ -52,7 +52,7 @@ int Solve(unsigned rows, std::string row)
 using namespace boost::ut;
 
 suite s = [] {
-	"2016-18"_test = [] {
+	"18"_test = [] {
 		expect(38_i == Solve(10, ".^^.^.^^^^"));
 
 		const char *PUZZLE = ".^^^.^.^^^^^..^^^..^..^..^^..^.^.^.^^.^^....^.^...^.^^.^^.^^..^^..^.^..^^^.^^...^...^^....^^.^^^^^^^";

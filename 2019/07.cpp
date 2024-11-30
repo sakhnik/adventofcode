@@ -85,7 +85,7 @@ int FindMaxCombination(bool feedback, const IntCode &program)
 }
 
 suite s = [] {
-    "2019-07"_test = [] {
+    "07"_test = [] {
         {
             IntCode p{std::istringstream{"3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0"}};
             int phases[] = {4, 3, 2, 1, 0};

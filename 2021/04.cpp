@@ -140,7 +140,7 @@ const char *const TEST_INPUT = R"(
 )";
 
 suite s = [] {
-    "2021-04"_test = [] {
+    "04"_test = [] {
         Bingo test{std::istringstream{TEST_INPUT}};
         auto winners = test.Play();
         expect(4512_i == winners.first);

@@ -32,7 +32,7 @@ size_t FindLoopSize(uint64_t target)
 }
 
 suite s = [] {
-    "2020-25"_test = [] {
+    "25"_test = [] {
         expect(8_u == FindLoopSize(5764801));
         expect(11_u == FindLoopSize(17807724));
         expect(14897079_u == TransformLoop(8, 17807724));

@@ -47,7 +47,7 @@ size_t CountEscape2(std::istream &&is)
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-08"_test = [] {
+    "08"_test = [] {
         const char *const TEST = R"(""
 "abc"
 "aaa\"aaa"

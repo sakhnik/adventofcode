@@ -60,7 +60,7 @@ down 8
 forward 2)";
 
 suite s = [] {
-    "2021-02"_test = [] {
+    "02"_test = [] {
         expect(150_i == Trace(std::istringstream{TEST_INPUT}));
         Printer::Print(__FILE__, "1", Trace(std::ifstream{INPUT}));
 

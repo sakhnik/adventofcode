@@ -92,7 +92,7 @@ unsigned CheckWeight(const TreeT &tree, const std::string &node)
 using namespace boost::ut;
 
 suite s = [] {
-	"2017-07"_test = [] {
+	"07"_test = [] {
 		const char *const test =
 			R"(pbga (66)
 xhth (57)

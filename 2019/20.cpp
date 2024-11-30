@@ -197,7 +197,7 @@ private:
 };
 
 suite s = [] {
-    "2019-20"_test = [] {
+    "20"_test = [] {
         {
             std::istringstream iss{
                 "         A           \n"

@@ -143,7 +143,7 @@ Monkey 3:
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-11"_test = [] {
+    "11"_test = [] {
         auto test = Parse(std::istringstream{TEST});
         expect(10605_u == Task1(test));
         auto test2 = Parse(std::istringstream{TEST});

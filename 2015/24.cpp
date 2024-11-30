@@ -97,7 +97,7 @@ private:
 };
 
 suite s = [] {
-    "2015-24"_test = [] {
+    "24"_test = [] {
         expect(99_u == Arranger<3>{{1,2,3,4,5,7,8,9,10,11}}.Compact());
 
         const WeightsT TASK_INPUT{

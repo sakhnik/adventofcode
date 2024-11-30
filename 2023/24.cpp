@@ -189,7 +189,7 @@ struct Snowstorm
 };
 
 suite s = [] {
-    "2023-24"_test = [] {
+    "24"_test = [] {
         const char *const TEST1 = R"(19, 13, 30 @ -2,  1, -2
 18, 19, 22 @ -1, -1, -2
 20, 25, 34 @ -2, -2, -4

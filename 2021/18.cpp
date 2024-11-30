@@ -318,7 +318,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2021-18"_test = [] {
+    "18"_test = [] {
         expect("[[[[[9,8],1],2],3],4]"s == Number{"[[[[[9,8],1],2],3],4]"}.Dump());
         expect("[[[[0,9],2],3],4]"s == Number{"[[[[[9,8],1],2],3],4]"}.Reduce().Dump());
         expect("[7,[6,[5,[7,0]]]]"s == Number{"[7,[6,[5,[4,[3,2]]]]]"}.Reduce().Dump());

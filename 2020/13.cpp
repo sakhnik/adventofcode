@@ -48,7 +48,7 @@ uint64_t Task2(const std::vector<Bus> buses)
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-13"_test = [] {
+    "13"_test = [] {
         expect(295_u == Task1(939, { 7, 13, 59, 31, 19 }));
         Printer::Print(__FILE__, "1", Task1(1000186, { 17, 37, 907, 19, 23, 29, 653, 41, 13 }));
 

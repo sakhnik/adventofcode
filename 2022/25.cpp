@@ -99,7 +99,7 @@ const char *const TEST =
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-25"_test = [] {
+    "25"_test = [] {
         expect(Snafu("1=-0-2").val == 1747_i);
         expect(Snafu("12111").val == 906_i);
         expect(Snafu("2=0=").val == 198_i);

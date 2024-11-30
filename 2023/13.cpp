@@ -131,7 +131,7 @@ struct Mirrors
 };
 
 suite s = [] {
-    "2023-13"_test = [] {
+    "13"_test = [] {
         const char *const TEST1 = R"(#.##..##.
 ..#.##.#.
 ##......#

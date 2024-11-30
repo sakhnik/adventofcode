@@ -108,7 +108,7 @@ fold along x=5
 using namespace boost::ut;
 
 suite s = [] {
-    "2021-13"_test = [] {
+    "13"_test = [] {
         Origami test{std::istringstream{TEST_INPUT}};
         expect(17_u == test.GetCount1());
 

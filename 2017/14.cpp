@@ -86,7 +86,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2017-14"_test = [] {
+    "14"_test = [] {
         expect(eq(HexToBin(0xa0), "10100000"s));
 
         expect(8108_u == CountBits("flqrgnkx"));

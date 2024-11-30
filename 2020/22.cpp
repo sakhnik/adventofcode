@@ -81,7 +81,7 @@ size_t Play2(DeckT a, DeckT b)
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-22"_test = [] {
+    "22"_test = [] {
 
         {
             expect(306_u == Play({9, 2, 6, 3, 1}, {5, 8, 4, 7, 10}));

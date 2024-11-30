@@ -164,7 +164,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2021-24"_test = [] {
+    "24"_test = [] {
         expect(eq(4135231966ll, Alu::Calc("00000000000000")));
         expect(eq(4135231967ll, Alu::Calc("00000000000001")));
         expect(eq(159047383ll, Alu::Calc("00000000000002")));

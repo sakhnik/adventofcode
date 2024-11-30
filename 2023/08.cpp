@@ -103,7 +103,7 @@ private:
 };
 
 suite s = [] {
-    "2023-08"_test = [] {
+    "08"_test = [] {
         const char *const TEST1 = R"(RL
 
 AAA = (BBB, CCC)

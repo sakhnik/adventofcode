@@ -151,7 +151,7 @@ const char *const TEST =
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-14"_test = [] {
+    "14"_test = [] {
         Caves test{std::istringstream{TEST}};
         expect(24_i == test.Task1());
         expect(93_i == test.Task2());

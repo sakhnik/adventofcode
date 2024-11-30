@@ -214,7 +214,7 @@ using namespace boost::ut;
 using namespace std::string_literals;
 
 suite s = [] {
-    "2021-23"_test = [] {
+    "23"_test = [] {
 
         if (Printer::EnableAll())
         {

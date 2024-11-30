@@ -67,7 +67,7 @@ private:
 };
 
 suite s = [] {
-    "2018-25"_test = [] {
+    "25"_test = [] {
         {
             Sky s(std::istringstream{
                 " 0,0,0,0\n"

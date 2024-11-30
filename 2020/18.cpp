@@ -131,7 +131,7 @@ int64_t Task(EvalT eval, std::istream &&is)
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-18"_test = [] {
+    "18"_test = [] {
         expect(71_i == Evaluate("1 + 2 * 3 + 4 * 5 + 6"));
         expect(51_i == Evaluate("1 + (2 * 3) + (4 * (5 + 6))"));
         expect(26_i == Evaluate("2 * 3 + (4 * 5)"));

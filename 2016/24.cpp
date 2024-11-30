@@ -166,7 +166,7 @@ int Solve2(std::istream &&is)
 using namespace boost::ut;
 
 suite s = [] {
-	"2016-24"_test = [] {
+	"24"_test = [] {
 		const char *test_maze =
 			"###########\n"
 			"#0.1.....2#\n"

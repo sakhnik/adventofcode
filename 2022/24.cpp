@@ -164,7 +164,7 @@ const char *const TEST =
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-24"_test = [] {
+    "24"_test = [] {
         Basin test{std::istringstream{TEST}};
         expect(test.IsFree(0, 1, 10));
         expect(!test.IsFree(1, 1, 0));

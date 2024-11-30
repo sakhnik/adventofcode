@@ -91,7 +91,7 @@ const char *const TEST =
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-12"_test = [] {
+    "12"_test = [] {
         auto test = FindPath(std::istringstream{TEST});
         expect(31_i == test.first);
         expect(29_i == test.second);

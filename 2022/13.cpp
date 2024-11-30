@@ -100,7 +100,7 @@ const char *const TEST = R"([1,1,3,1,1]
 using namespace boost::ut;
 
 suite s = [] {
-    "2022-13"_test = [] {
+    "13"_test = [] {
         expect(13_i == Task1(std::istringstream{TEST}));
         expect(140_i == Task2(std::istringstream{TEST}));
 

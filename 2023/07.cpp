@@ -164,7 +164,7 @@ public:
 };
 
 suite s = [] {
-    "2023-07"_test = [] {
+    "07"_test = [] {
         expect(Cards::FIVE_OF_A_KIND == Cards::GetType("AAAAA"));
         expect(Cards::FOUR_OF_A_KIND == Cards::GetType("AA8AA"));
         expect(Cards::FULL_HOUSE == Cards::GetType("23332"));

@@ -149,7 +149,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2020-24"_test = [] {
+    "24"_test = [] {
         {
             expect(Tile{0, 1} == TracePath("esew"));
 

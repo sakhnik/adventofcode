@@ -51,7 +51,7 @@ private:
 using namespace boost::ut;
 
 suite s = [] {
-    "2015-03"_test = [] {
+    "03"_test = [] {
         expect(2_u == Map(1, std::istringstream{">"}).GetCount());
         expect(4_u == Map(1, std::istringstream{"^>v<"}).GetCount());
         expect(2_u == Map(1, std::istringstream{"^v^v^v^v^v"}).GetCount());
