@@ -2,29 +2,57 @@
 
 namespace {
 
+int Distance(std::istream &&is)
+{
+    std::vector<int> left, right;
+    int a{}, b{};
+    while (is >> a >> b) {
+        left.push_back(a);
+        right.push_back(b);
+    }
+    std::sort(left.begin(), left.end());
+    std::sort(right.begin(), right.end());
+
+    int r{};
+    for (int i = 0; i < left.size(); ++i) {
+        r += std::abs(right[i] - left[i]);
+    }
+    return r;
+}
+
+int SimilarityScore(std::istream &&is)
+{
+    std::vector<int> left;
+    std::unordered_map<int, int> right;
+    int a{}, b{};
+    while (is >> a >> b) {
+        left.push_back(a);
+        ++right[b];
+    }
+
+    int r{};
+    for (auto i : left) {
+        r += i * right[i];
+    }
+    return r;
+}
+
 using namespace boost::ut;
 
 suite s = [] {
     "01"_test = [] {
-//        const char *const TEST1 = R"(1abc2
-//pqr3stu8vwx
-//a1b2c3d4e5f
-//treb7uchet
-//)";
-//        expect(142_i == Calibrate1(std::istringstream{TEST1}));
-//
-//        const char *const TEST2 = R"(two1nine
-//eightwothree
-//abcone2threexyz
-//xtwone3four
-//4nineeightseven2
-//zoneight234
-//7pqrstsixteen
-//)";
-//        expect(281_i == Calibrate2(std::istringstream{TEST2}));
-//
-//        Printer::Print(__FILE__, "1", Calibrate1(std::ifstream{INPUT}));
-//        Printer::Print(__FILE__, "2", Calibrate2(std::ifstream{INPUT}));
+        const char *const TEST1 = R"(3   4
+4   3
+2   5
+1   3
+3   9
+3   3
+)";
+        expect(11_i == Distance(std::istringstream{TEST1}));
+        expect(31_i == SimilarityScore(std::istringstream{TEST1}));
+
+        Printer::Print(__FILE__, "1", Distance(std::ifstream{INPUT}));
+        Printer::Print(__FILE__, "2", SimilarityScore(std::ifstream{INPUT}));
     };
 };
 
