@@ -53,4 +53,4 @@ foreach(year RANGE 2015 2023)
     add_year(${year} 1 25)
 endforeach()
 
-add_year("2024" 1 19)
+add_year("2024" 1 20)
