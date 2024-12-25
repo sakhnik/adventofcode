@@ -49,8 +49,6 @@ macro(add_year year day_first day_last)
     endforeach()
 endmacro()
 
-foreach(year RANGE 2015 2023)
+foreach(year RANGE 2015 2024)
     add_year(${year} 1 25)
 endforeach()
-
-add_year("2024" 1 24)
