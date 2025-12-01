@@ -16,6 +16,7 @@ if(NOT MAXIMA)
     message(STATUS "Maxima not found for computer algebra, will disable 2023-24")
     add_definitions(-DNO_MAXIMA)
 endif()
+add_definitions(-DAOC_SUITE)
 
 enable_testing()
 
